@@ -194,7 +194,6 @@ export async function eliminarUsuario(id) {
 // Esta función arma el payload de registro a partir de los campos del formulario
 // y llama internamente a "crearUsuario".
 export async function registrarUsuario(desdeFormulario) {
-  // Limpia el teléfono para dejar solo números, y toma los últimos 9 dígitos.
   const telefonoLimpio = (desdeFormulario.telefono || "").replace(/\D/g, "");
   const telefonoNumero = Number(telefonoLimpio.slice(-9));
 
@@ -204,13 +203,27 @@ export async function registrarUsuario(desdeFormulario) {
     correo: (desdeFormulario.correo || "").trim(),
     telefono: telefonoNumero,
     password: (desdeFormulario.contrasena || "").trim(),
-    // Siempre se registra como cliente normal.
-    rol: { id: ROL_CLIENTE_ID },
+
+    // Backend espera rolId (Long), no un objeto "rol"
+    rolId: ROL_CLIENTE_ID,
+
+    // Dirección de relleno por ahora, para que pase la validación
+    // AJUSTA ESTO a lo que tenga tu DireccionRequestDTO
+    direccion: {
+      calle: "Sin información",
+      numero: "0",
+      complemento: null,
+      codigoPostal: "0000000",
+      // Si tu DireccionRequestDTO usa IDs:
+      // comunaId: 1,
+      // regionId: 1,
+    },
   };
 
   console.log("[registrarUsuario] payload:", payload);
   return crearUsuario(payload);
 }
+
 
 // ==========================================================
 // PERFIL (usa /me con sesión backend vía cookie)
