@@ -203,20 +203,16 @@ export async function registrarUsuario(desdeFormulario) {
     correo: (desdeFormulario.correo || "").trim(),
     telefono: telefonoNumero,
     password: (desdeFormulario.contrasena || "").trim(),
-
-    // Backend espera rolId (Long), no un objeto "rol"
     rolId: ROL_CLIENTE_ID,
 
-    // Dirección de relleno por ahora, para que pase la validación
-    // AJUSTA ESTO a lo que tenga tu DireccionRequestDTO
     direccion: {
       calle: "Sin información",
       numero: "0",
       complemento: null,
       codigoPostal: "0000000",
-      // Si tu DireccionRequestDTO usa IDs:
-      // comunaId: 1,
-      // regionId: 1,
+      // Usa IDs reales que existan en tu BD
+      comunaId: 1,
+      regionId: 1,
     },
   };
 
