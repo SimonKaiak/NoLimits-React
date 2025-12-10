@@ -1,0 +1,38 @@
+<!doctype html>
+<!--
+  Define el tipo de documento como HTML5.
+  Permite que el navegador interprete correctamente la estructura.
+-->
+<html lang="es">
+  <!--
+    El atributo lang="es" indica que el idioma principal del sitio es español.
+    Mejora la accesibilidad y el SEO.
+  -->
+  <head>
+    <!-- Codificación de caracteres en UTF-8 -->
+    <!-- Permite mostrar correctamente tildes, ñ y caracteres especiales -->
+    <meta charset="UTF-8" />
+
+    <!-- Configura el diseño responsive -->
+    <!-- Ajusta la escala según el tamaño del dispositivo -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Título que aparece en la pestaña del navegador -->
+    <title>NoLimits</title>
+  </head>
+
+  <body>
+    <!--
+      Contenedor principal donde React renderiza toda la aplicación.
+      Este div es tomado por ReactDOM en main.jsx
+    -->
+    <div id="root"></div>
+
+    <!--
+      Carga el archivo principal de React.
+      type="module" permite usar import/export ES6.
+      Desde main.jsx se monta toda la aplicación.
+    -->
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

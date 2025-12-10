@@ -1,0 +1,152 @@
+/* ============================
+   CONTENEDOR PRINCIPAL
+============================ */
+.mis-compras-wrapper {
+  max-width: 900px;
+  margin: 10px auto 50px auto;
+  background: #111;
+  padding: 30px;
+  border-radius: 20px;
+  border: 2px solid #ff25d0;
+  color: #fff;
+  box-shadow: 0 0 10px #ff25d044;
+}
+
+/* Título */
+.mis-compras-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #ff25d0;
+}
+
+/* ============================
+   TARJETAS DE COMPRA
+============================ */
+.compra-card {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #333;
+  transition: 0.2s ease-in-out;
+}
+
+.compra-card:hover {
+  border-color: #ff25d0;
+  transform: translateY(-2px);
+}
+
+/* Header */
+.compra-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.compra-header h2 {
+  color: #ff25d0;
+  margin: 0;
+}
+
+/* Detalles */
+.compra-detalle p {
+  margin: 3px 0;
+}
+
+/* ============================
+   LISTA DE PRODUCTOS
+============================ */
+.lista-productos {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+
+  display: flex;         /* fila */
+  flex-wrap: wrap;       /* permite que bajen a otra línea si son muchos */
+  gap: 12px;             /* espacio entre productos */
+}
+
+.item-producto {
+  background: #222;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #333;
+
+  flex: 0 1 calc(33.33% - 10px);  /* 2 columnas */
+}
+
+.item-producto p {
+  margin: 2px 0;
+}
+
+/* En pantallas chicas: 1 por fila */
+@media (max-width: 768px) {
+  .item-producto {
+    flex: 0 1 100%;
+  }
+}
+
+/* ============================
+   TOTAL COMPRA
+============================ */
+.total-compra {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  text-align: right;
+  font-weight: bold;
+  color: #ff25d0;
+}
+
+/* ============================
+   MENSAJES
+============================ */
+.mensaje {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+.loading-text {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 40px;
+}
+
+/* ============================
+   PAGINACIÓN
+============================ */
+.paginacion button {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* Contenedor de las compras: 2 columnas centradas */
+.mis-compras-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;           /* separación entre cards */
+  margin-top: 20px;
+}
+
+/* Cada compra ocupa ~la mitad del ancho del contenedor */
+.mis-compras-grid .compra-card {
+  flex: 0 1 min(480px, 48%);
+}
+
+/* En pantallas chicas: 1 por fila */
+@media (max-width: 768px) {
+  .mis-compras-grid .compra-card {
+    flex: 0 1 100%;
+  }
+}
+
+/* Opcional: centrar la paginación debajo */
+.paginacion {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}

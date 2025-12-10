@@ -1,0 +1,251 @@
+.perfil-page {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4.5rem 1.8rem;
+}
+
+.perfil-card {
+  width: 100%;
+  max-width: 1250px;
+  border-radius: 24px;
+  padding: 2rem 3.5rem;
+  background: radial-gradient(circle at top, rgba(123, 92, 255, 0.18), rgba(5, 6, 30, 0.98));
+  border: 1.8px solid rgba(120, 94, 255, 0.8);
+  box-shadow: 0 0 30px rgba(120, 94, 255, 0.7);
+  color: #f5f6ff;
+}
+
+.perfil-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 12px rgba(123, 92, 255, 0.9);
+}
+
+.perfil-subtitle {
+  margin-top: 1.5rem;
+  margin-bottom: 0.55rem;
+  font-size: 1.04rem;
+  color: #cbd2ff;
+  text-align: center;
+}
+
+.perfil-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ============================= */
+/* CONTENEDOR PRINCIPAL FILAS */
+/* ============================= */
+
+.perfil-row-principal {
+  display: flex;
+  gap: 3rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.perfil-col-datos {
+  flex: 2;
+}
+
+.perfil-col-direccion {
+  flex: 1;
+}
+
+/* ============================= */
+/* GRIDS */
+/* ============================= */
+
+/* Datos personales 4 campos -> 2x2 */
+.perfil-grid-dos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.3rem 2.2rem;
+}
+
+/* Dirección completa -> 3 columnas */
+.perfil-grid-tres {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.4rem 2.2rem;
+}
+
+/* Dirección lateral derecha -> vertical */
+.perfil-grid-tres-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* ============================= */
+/* CAMPOS */
+/* ============================= */
+
+.perfil-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.perfil-field label {
+  font-size: 0.86rem;
+  color: #aab4ff;
+  text-align: center;
+}
+
+.perfil-field input,
+.perfil-field select {
+  border-radius: 18px;
+  border: 1px solid rgba(132, 94, 255, 0.7);
+  background: rgba(8, 10, 38, 0.97);
+  padding: 0.9rem 1.4rem;
+  color: #f7f7ff;
+  font-size: 1rem;
+  outline: none;
+  transition: 
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.perfil-field input:focus,
+.perfil-field select:focus {
+  border-color: #00f5ff;
+  box-shadow: 0 0 12px rgba(0, 245, 255, 0.8);
+  background: rgba(13, 17, 50, 0.98);
+}
+
+.perfil-field input[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ============================= */
+/* BOTONES */
+/* ============================= */
+
+.perfil-btn {
+  min-width: 210px;
+  padding: 0.8rem 2.1rem;
+  border-radius: 999px;
+  border: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: rgb(140, 232, 255);
+  color: #050615;
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.95);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.perfil-btn-secundario {
+  background: linear-gradient(90deg, #ff4bdb, #7b5cff);
+  color: #ffffff;
+}
+
+.perfil-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  background-color: #000000;
+  color: white;
+}
+
+.perfil-btn:active {
+  transform: translateY(1px) scale(0.97);
+}
+
+/* ============================= */
+/* MENSAJES */
+/* ============================= */
+
+.perfil-msg {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.92rem;
+}
+
+.perfil-msg-error {
+  margin-top: 1rem;
+  text-align: center;
+  color: #ff8ba7;
+}
+
+.perfil-loading {
+  text-align: center;
+  color: #dfe3ff;
+  margin-top: 3rem;
+}
+
+/* ============================= */
+/* RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 768px) {
+  .perfil-card {
+    padding: 2.4rem 1.6rem;
+  }
+
+  .perfil-row-principal {
+    flex-direction: column;
+  }
+
+  .perfil-grid-dos,
+  .perfil-grid-tres {
+    grid-template-columns: 1fr;
+  }
+
+  .perfil-actions {
+    flex-direction: column;
+  }
+
+  .perfil-btn {
+    width: 100%;
+  }
+}
+
+/* Botón cambiar contraseña bajo dirección, alineado izquierda */
+.perfil-cambiar-pass-left {
+  margin-top: 40px;
+  margin-left: 80px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Centrar botón Guardar */
+.perfil-actions-center {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Botón Cambiar contraseña SIN color */
+.perfil-btn-secundario {
+  background: rgb(0, 0, 0);
+  border: 1.5px solid rgba(180, 160, 255, 0.6);
+  color: #cbd2ff;
+  box-shadow: none;
+}
+
+.perfil-btn-secundario:hover {
+  background: rgb(255, 255, 255);
+  color: #000000;
+}
+
+/* Ruta: src/styles/perfilUsuario.css */
+
+.perfil-alerts {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.perfil-msg-pass {
+  color: #a1e4ff;
+}

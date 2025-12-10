@@ -1,0 +1,574 @@
+/******************************************************
+ *  ESTILOS BASE PARA TODOS LOS MANTENEDORES ADMIN
+ *  (Tipos, Clasificaciones, Estados, Géneros, etc.)
+ ******************************************************/
+
+/* --- Layout general --- */
+.admin-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  margin-top: -40px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+}
+
+/* --- Títulos --- */
+.admin-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+/* --- Formularios --- */
+.admin-form {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.admin-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.admin-input:focus {
+  border-color: #0074ff;
+  outline: none;
+}
+
+/* --- Botones estándar --- */
+.admin-btn,
+.admin-btn-secondary {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.admin-btn {
+  background: #007bff;
+  color: white;
+}
+
+.admin-btn:hover {
+  background: #005fcc;
+}
+
+.admin-btn-secondary {
+  background: #666;
+  color: white;
+}
+
+.admin-btn-secondary:hover {
+  background: #444;
+}
+
+/* --- Tabla --- */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: white;
+}
+
+.admin-table th {
+  background: #007bff;
+  color: white;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.admin-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.admin-table tr:hover {
+  background: #f5f5f5;
+}
+
+/* --- Acciones dentro de la tabla --- */
+.admin-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.admin-action-btn {
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.admin-action-edit {
+  background: #ffa600;
+  color: #fff;
+}
+
+.admin-action-edit:hover {
+  background: #d48800;
+}
+
+.admin-action-delete {
+  background: #d9534f;
+  color: white;
+}
+
+.admin-action-delete:hover {
+  background: #b52b27;
+}
+
+/* --- Mensajes dentro de tablas --- */
+.admin-msg {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #555;
+}
+
+/* --- Paginación --- */
+.admin-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 25px;
+}
+
+.admin-page-info {
+  font-weight: bold;
+}
+
+/* --- Botones de paginación --- */
+.admin-page-btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #007bff;
+  color: white;
+  border: none;
+  transition: 0.2s;
+}
+
+.admin-page-btn:disabled {
+  background: #a0a0a0;
+  cursor: not-allowed;
+}
+
+.admin-page-btn:hover:not(:disabled) {
+  background: #005fcc;
+}
+
+/*  ARREGLA BOTONES QUE NO FUNCIONAN EN PANEL ADMIN */
+.admin-wrapper,
+.admin-container,
+.admin-form,
+.admin-table,
+.admin-actions,
+.admin-pagination,
+.modal-admin,
+button,
+input,
+textarea,
+select,
+label {
+  pointer-events: auto !important;
+}
+
+/*  Asegura que nada tape la parte del admin */
+body.route-admin * {
+  z-index: 10;
+}
+
+body.route-admin .admin-wrapper {
+  z-index: 50 !important;
+}
+
+button:disabled,
+.admin-page-btn:disabled {
+  pointer-events: none !important;
+  opacity: 0.6 !important;
+}
+
+/**********************************************
+ * RESPONSIVE
+ **********************************************/
+@media (max-width: 700px) {
+  .admin-form {
+    flex-direction: column;
+  }
+
+  .admin-actions {
+    flex-direction: column;
+  }
+}
+
+/******************************************************
+ * ESTILOS ESPECÍFICOS ADMIN USUARIOS
+ ******************************************************/
+
+/* Buscador por ID */
+.admin-search-user {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.admin-search-user input {
+  flex: 1;
+}
+
+/* Bloque resultado usuario por ID */
+.admin-user-result {
+  background: #000000;
+  border: 2px solid #007bff33;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+/* Título pequeño encima del resultado */
+.admin-user-result h4 {
+  margin-bottom: 10px;
+  color: #007bff;
+  font-weight: bold;
+}
+
+/* Acciones Editar / Eliminar destacadas al buscar por ID */
+.admin-user-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Botones resaltados */
+.admin-user-actions .admin-action-edit {
+  font-size: 15px;
+  padding: 8px 14px;
+}
+
+.admin-user-actions .admin-action-delete {
+  font-size: 15px;
+  padding: 8px 14px;
+}
+
+/* Separador visual entre crear y lista */
+.admin-separator {
+  border-top: 2px dashed #ccc;
+  margin: 30px 0;
+}
+
+/* Tabla más aireada */
+.admin-table td, 
+.admin-table th {
+  text-align: center;
+}
+
+/* efecto hover suave */
+.admin-table tr {
+  transition: background 0.2s ease;
+}
+
+.admin-venta-detalle {
+  background: #f4f6ff;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+/******************************************************
+ *   LAYOUT RESPONSIVE — ADMIN VENTAS
+ ******************************************************/
+
+/* Wrapper que contiene tabla + detalle */
+.ventas-layout {
+  display: flex;
+  flex-direction: column;   /* Móviles -> 1 columna */
+  gap: 25px;
+}
+
+/* Cuando hay detalle → activar 2 columnas en pantallas grandes */
+.ventas-layout.con-detalle {
+  flex-direction: row;      /* Desktop -> 2 columnas */
+  align-items: flex-start;
+}
+
+/* Columna de lista */
+.ventas-lista {
+  flex: 1;
+  min-width: 380px;
+}
+
+/* Panel de detalle a la derecha */
+.ventas-detalle {
+  flex: 1;
+  min-width: 380px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+  max-height: 80vh;
+  overflow-y: auto;      /*para que nunca se corte el botón */
+  position: sticky;
+  top: 100px;
+}
+
+/* Botón cerrar detalle siempre visible */
+.cerrar-detalle-btn {
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 992px) {
+  .ventas-layout.con-detalle {
+    flex-direction: column;   /* Móviles -> todo abajo */
+  }
+
+  .ventas-detalle {
+    position: static;         /* quitar sticky */
+    max-height: none;
+  }
+}
+
+/******************************************************
+ *   ESTILOS ESPECÍFICOS — ADMIN UBICACIÓN (Compacto y Ordenado)
+ ******************************************************/
+
+/* Afecta solo a esta pantalla */
+.admin-ubicacion-container .admin-form {
+  display: flex;
+  flex-wrap: wrap;      /* permite que los inputs bajen si no caben */
+  gap: 12px;
+  align-items: center;
+}
+
+/* Cada input ocupa espacio sin romper layout */
+.admin-ubicacion-container .admin-input {
+  flex: 1 1 calc(33% - 12px);   /* 3 columnas en pantallas grandes */
+  min-width: 180px;             /* evita que se achique demasiado */
+}
+
+/* Botón alineado correctamente */
+.admin-ubicacion-container .admin-form button {
+  flex: 0 0 auto;   /* mantiene tamaño fijo del botón Crear */
+}
+
+/* BLOQUES más ordenados */
+.admin-ubicacion-container .admin-block {
+  background: #ffffff;
+  padding: 22px;
+  border-radius: 10px;
+  margin-bottom: 35px;
+  border-left: 5px solid #007bff44;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+
+.admin-ubicacion-container .admin-block-title {
+  font-size: 21px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #007bff;
+}
+
+/* Tablas más compactas */
+.admin-ubicacion-container .admin-table th,
+.admin-ubicacion-container .admin-table td {
+  padding: 9px 6px;
+  font-size: 14px;
+}
+
+/* Botones dentro de la tabla */
+.admin-ubicacion-container .admin-actions button {
+  padding: 5px 10px !important;
+  font-size: 13px !important;
+}
+
+/* RESPONSIVE: pantallas pequeñas → 2 columnas */
+@media (max-width: 900px) {
+  .admin-ubicacion-container .admin-input {
+    flex: 1 1 calc(50% - 12px);
+  }
+}
+
+/* RESPONSIVE: celulares → 1 columna */
+@media (max-width: 600px) {
+  .admin-ubicacion-container .admin-input {
+    flex: 1 1 100%;
+  }
+}
+
+/* FIX específico para Direcciones */
+.admin-ubicacion-container .direcciones-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Todos los inputs ocupan ancho flexible */
+.admin-ubicacion-container .direcciones-form .admin-input {
+  flex: 1 1 calc(25% - 12px); /* 4 columnas → perfecto para 5–6 campos */
+  min-width: 160px;
+}
+
+/* Botón Crear alineado */
+.admin-ubicacion-container .direcciones-form button {
+  flex: 0 0 auto;
+  height: 42px;
+  margin-left: auto; /* Esto fuerza el botón a la derecha SIN romper el layout */
+}
+
+.admin-form-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center; /* ⬅ centramos */
+  gap: 15px;               /* espacio entre los botones */
+  width: 100%;
+}
+
+/* Formularios grandes en columna (crear/editar usuario, etc.) */
+.admin-form-vertical {
+  flex-direction: column;   /* hijos uno debajo de otro */
+  align-items: stretch;
+  gap: 10px;
+}
+
+/* Opcional: ordenar bien los inputs dentro del bloque */
+.admin-form-vertical .admin-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/************************************
+    🎮 NoLimits – Neon Admin Theme
+*************************************/
+
+/* Fondo global del panel admin */
+body.route-admin {
+  background: #04040f;
+  color: #e9efff;
+}
+
+/* Tarjetas internas de los mantenedores (sí llevan fondo) */
+.admin-wrapper,
+.admin-container {
+  background: rgba(5, 5, 20, 0.85);
+  border: 1px solid rgba(255, 0, 255, 0.35);
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
+  padding: 24px;
+}
+
+/* Títulos */
+.admin-title {
+  color: #00eaff !important;
+  text-shadow: 0 0 10px #00eaff;
+}
+
+/* Inputs */
+.admin-input,
+.admin-products-input {
+  background: rgba(8, 8, 30, 0.9);
+  border-radius: 999px;
+  border: 2px solid rgba(255, 0, 255, 0.5);
+  color: #fff;
+}
+
+.admin-input:focus,
+.admin-products-input:focus {
+  box-shadow: 0 0 14px rgba(0, 255, 255, 0.8);
+}
+
+/* Botones genericos */
+button,
+.admin-btn {
+  border-radius: 999px;
+  background: rgba(0, 234, 255, 0.12);
+  border: 2px solid #00eaff;
+  color: #00eaff;
+  font-weight: 600;
+  transition: 0.25s ease-in-out;
+}
+
+button:hover:not(:disabled),
+.admin-btn:hover {
+  background: rgba(0, 234, 255, 0.25);
+  box-shadow: 0 0 12px rgba(0, 234, 255, 0.4);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Tablas tron */
+.admin-table {
+  background: transparent;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.admin-table thead {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.admin-table th,
+.admin-table td {
+  color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  padding: 12px;
+}
+
+/* Hover celeste */
+.admin-table tr:hover {
+  background: rgba(0, 255, 255, 0.15) !important;
+}
+
+/* Paginación */
+.admin-pagination button {
+  background: rgba(15, 15, 50, 0.9);
+  color: #00eaff;
+  border: 1px solid #00eaff;
+}
+
+.admin-pagination button:hover {
+  background: #00eaff;
+  color: #0a0a0a;
+}
+
+/************************************
+ Acciones (Editar / Eliminar)
+*************************************/
+.admin-action-edit {
+  background: rgba(255, 175, 0, 0.25);
+  color: #ffaf00;
+  border: 1px solid #ffaf00;
+}
+.admin-action-edit:hover {
+  background: #ffaf00;
+  color: #000;
+}
+
+.admin-action-delete {
+  background: rgba(255, 0, 80, 0.25);
+  color: #ff518a;
+  border: 1px solid #ff518a;
+}
+.admin-action-delete:hover {
+  background: #ff518a;
+  color: #000;
+}

@@ -1,0 +1,1703 @@
+/************************************************************
+ * NoLimits – Hoja de estilos (limpia, ordenada, sin duplicados)
+ ************************************************************/
+
+/* ==========================================================
+   1) Reset y base
+   ========================================================== */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { background: #000; }
+
+:root{
+  /* Dimensiones / layout */
+  --nav-h: 120px;
+  --frame-r: 28px;
+  --frame-b: 3px;
+  --cta-btn-h: 42px;
+  --cta-border-w: 3px;
+
+  /* Paleta NoLimits */
+  --c-pink:   #ff25d0;
+  --c-purple: #991dff;
+  --c-cyan:   #00b7ff;
+
+  --magenta: var(--c-pink,   #ff4dec);
+  --violet:  var(--c-purple, #7b5cff);
+
+  /* Gradientes reutilizables */
+  --grad-cta:     linear-gradient(90deg, var(--c-pink), var(--c-purple), var(--c-cyan));
+  --grad-cta-rev: linear-gradient(90deg, var(--c-cyan), var(--c-purple), var(--c-pink));
+
+  /* Títulos con borde animado */
+  --tit-b: 3px;
+  --tit-base: rgba(0,231,255,.70);
+  --tit-arc: 500deg;
+  --tit-speed: 5s;
+  --tit-pink: #39e8ff;
+  --tit-purple: #c021e0;
+
+  /* Borde unificado para pills del nav */
+  --pill-border: rgba(255,255,255,.28);
+}
+
+html.route-principal{
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  scroll-padding-top: calc(var(--nav-h) + 10px); /* ← mueve el offset aquí */
+}
+
+html { scroll-padding-top: 0; }
+[id]{ scroll-margin-top: 0 !important; }/* Base body + overlay y compensaciones de nav fijo */
+
+body.route-principal{
+  /* 1) define la imagen una sola vez */
+  --bg-url: url("../assets/img/fondos/fondo1.webp");
+
+  /* 2) parallax del fondo principal */
+  background-image: var(--bg-url);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 0;   /* comienza arriba */
+  background-attachment: fixed; /* se mueve más lento al scrollear */
+
+  /* lo que ya tienes */
+  position: relative;
+  margin: 0;
+  /*  Altura de la pagina */
+  min-height: 100vh; /* altura mínima, no fija */
+  height: auto;      /* deja que crezca según el contenido */
+  padding-top: calc(var(--nav-h) - 40px);
+}
+body.route-principal::before{
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(rgba(19, 4, 238, 0.12), rgba(0, 0, 0, 0.55));
+}
+
+
+
+/* Fix de compatibilidad (typo) */
+.align-item-center{ align-items: center; }
+
+/* ==========================================================
+   2) Navbar superior (Bootstrap .fixed-top) – neón + glass
+   ========================================================== */
+/* Anula pintura de Bootstrap en cualquier navbar con bg-body-tertiary */
+.navbar.bg-body-tertiary{
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Nav superior: igual que el nav inferior (vidrio traslúcido) */
+nav.navbar.bg-body-tertiary.fixed-top{
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 1050;
+  min-height: var(--nav-h);
+  background: rgba(0,0,0,.6) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 6px 18px rgba(0,0,0,.20);
+  isolation: isolate;
+}
+
+/* Línea inferior animada (subrayado del nav) */
+nav.navbar.bg-body-tertiary.fixed-top::after{
+  content:"";
+  position:absolute; left:0; right:0; bottom:-1px; height:2.2px; pointer-events:none; z-index:2;
+  background: linear-gradient(270deg, var(--violet), var(--c-cyan), var(--magenta), var(--violet));
+  background-size: 400% 100%;
+  animation: navline-gradient-flow 8s linear infinite;
+  box-shadow: 0 0 10px rgba(255,77,236,.55), 0 0 14px rgba(0,231,255,.45), 0 0 18px rgba(123,92,255,.45);
+}
+@keyframes navline-gradient-flow{
+  0%   { background-position: 200% 0; }
+  100% { background-position:   0% 0; }
+}
+
+nav.navbar.bg-body-tertiary.fixed-top::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;                 /* debajo de los links; encima del fondo */
+  pointer-events:none;
+  background: url("../img/inicio.png") center/cover no-repeat;
+  opacity:.12;
+  mix-blend-mode: screen;    /* screen | soft-light | overlay */
+  filter: saturate(1.1) brightness(1.05) blur(.4px);
+  -webkit-mask-image: linear-gradient(to bottom,
+                    rgba(0,0,0,1) 35%, rgba(0,0,0,.4) 75%, rgba(0,0,0,0) 100%);
+          mask-image: linear-gradient(to bottom,
+                    rgba(0,0,0,1) 35%, rgba(0,0,0,.4) 75%, rgba(0,0,0,0) 100%);
+}
+
+/* Texto y enlaces del navbar (glow + legibilidad) */
+.bg-body-tertiary .nav-link{
+  position: relative;
+  padding: 8px 18px;
+  margin: 0 15px;
+  border-radius: 10px;
+  z-index: 1;
+}
+.bg-body-tertiary .nav-link::before{
+  content: "";
+  position: absolute;
+  inset: -4px -6px;
+  background: rgba(0,0,0,.55);
+  border-radius: 12px;
+  z-index: -1;
+  mix-blend-mode: lighten;
+}
+.bg-body-tertiary .nav-link,
+.bg-body-tertiary .navbar-brand{
+  font-weight: 700;
+  background: linear-gradient(270deg, #00e7ff, #ff4dec, #7b5cff, #00e7ff);
+  background-size: 600% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 0 5px rgba(0,231,255,.6),
+    0 0 10px rgba(255,77,236,.5),
+    0 0 15px rgba(123,92,255,.45);
+  animation: neon-color 5s linear infinite;
+  transition: transform .3s ease, text-shadow .3s ease;
+}
+@keyframes neon-color{
+  0%  { background-position:   0% 0; }
+  50% { background-position: 100% 0; }
+  100%{ background-position:   0% 0; }
+}
+.bg-body-tertiary .nav-link:hover,
+.bg-body-tertiary .navbar-brand:hover{
+  transform: scale(1.02);
+  text-shadow:
+    0 0 10px rgba(0,231,255,.75),
+    0 0 20px rgba(255,77,236,.6),
+    0 0 30px rgba(123,92,255,.55);
+}
+
+/* Acomodo del collapse */
+.bg-body-tertiary .navbar-collapse{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+}
+/* Hamburguesa visible */
+nav.navbar.bg-body-tertiary.fixed-top .navbar-toggler{ border-color: rgba(255,255,255,.5); }
+nav.navbar.bg-body-tertiary.fixed-top .navbar-toggler-icon{ filter: invert(1) contrast(1.1); }
+
+/* Marca centrada (opcional si usas #brand) */
+#brand{
+  font-family: 'Poppins', sans-serif;
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  line-height: 1;
+  font-weight: 800;
+  font-size: clamp(1rem, 6vw, 4rem);
+  color: #e4e0e0;
+  text-shadow:
+    0 0 12px rgba(0,0,0,.85),
+    0 0 22px rgba(123,92,255,.75),
+    0 0 34px rgba(255,77,236,.65);
+  animation: nl-pulse 5s ease-in-out infinite;
+  transition: text-shadow .25s ease, transform .25s ease, filter .25s ease;
+}
+#brand:hover{
+  filter: brightness(1.12);
+  transform: translate(-50%, -50%) scale(1.015);
+  text-shadow:
+    0 0 5px rgba(255,255,255,.5),
+    0 0 28px rgba(123,92,255,.85),
+    0 0 40px rgba(255,77,236,.75),
+    0 0 30px rgba(0,231,255,.30);
+}
+@keyframes nl-pulse{ 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.25)} }
+
+/* Subrayado con degradado en items (coherente con nav) */
+.navbar .navbar-brand,
+.navbar .nav-link,
+.navbar .btn,
+.navbar .form-control{
+  position: relative;
+  transition: color .3s ease, border-color .4s ease;
+}
+.navbar .navbar-brand::after,
+.navbar .nav-link::after,
+.navbar .btn::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-5px;
+  width:0%;
+  height:3px;
+  transform:translateX(-50%);
+  background: linear-gradient(90deg, #00f7ff, #a020f0, #ff1493, #00f7ff);
+  border-radius: 5px;
+  transition: width .4s ease;
+  box-shadow: 0 0 8px #00f7ff, 0 0 15px #a020f0, 0 0 20px #ff1493;
+}
+.navbar .navbar-brand:hover::after,
+.navbar .nav-link:hover::after,
+.navbar .btn:hover::after{ width:100%; }
+
+/* Desactivar efectos cuando el item está abierto/activo */
+nav.navbar.bg-body-tertiary.fixed-top .nav-link[aria-expanded="true"]::after,
+nav.navbar.bg-body-tertiary.fixed-top .btn[aria-expanded="true"]::after,
+nav.navbar.bg-body-tertiary.fixed-top .nav-item.show > .nav-link::after,
+nav.navbar.bg-body-tertiary.fixed-top .dropdown.show > .btn::after,
+nav.navbar.bg-body-tertiary.fixed-top .nav-link.active::after,
+nav.navbar.bg-body-tertiary.fixed-top .btn.active::after{
+  width: 0;
+  box-shadow: none;
+}
+nav.navbar.bg-body-tertiary.fixed-top .nav-link[aria-expanded="true"],
+nav.navbar.bg-body-tertiary.fixed-top .btn[aria-expanded="true"],
+nav.navbar.bg-body-tertiary.fixed-top .nav-item.show > .nav-link,
+nav.navbar.bg-body-tertiary.fixed-top .dropdown.show > .btn,
+nav.navbar.bg-body-tertiary.fixed-top .nav-link.active,
+nav.navbar.bg-body-tertiary.fixed-top .btn.active{
+  transform: none;
+  text-shadow: none;
+  animation: none;
+}
+
+/* ---------- Píldoras del nav (Cerrar sesión + Categorías) ---------- */
+
+/* Botón Cerrar sesión (pill) */
+.btn-cerrarSesion{
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  padding:10px 12px; border-radius:12px; text-decoration:none; font-weight:700;
+  background:rgba(0, 0, 0, 0.55); color:#78d2ff;
+  border:1.5px solid var(--pill-border);
+  transition: transform .18s ease, box-shadow .25s ease, background .25s ease, color .25s ease;
+}
+.btn-cerrarSesion:hover,
+.btn-cerrarSesion:focus-visible{
+  transform: translateY(-2px);
+  background: rgba(2,20,27,.75);
+  box-shadow:
+    0 0 18px rgba(0,231,255,.45),
+    0 0 22px rgba(123,92,255,.28),
+    0 0 26px rgba(255,77,236,.22);
+}
+.btn-cerrarSesion a{ color:#cfefff; text-decoration:none; }
+.btn-cerrarSesion a:hover,
+.btn-cerrarSesion a:focus-visible{
+  color:#83e2ff;
+  text-shadow:0 0 6px rgba(0,231,255,.45), 0 0 10px rgba(123,92,255,.30);
+}
+
+/* Botón Perfil – mismo estilo pill que Cerrar sesión / Categorías */
+.btn-perfil{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  padding:10px 12px;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:700;
+  background:rgba(0, 0, 0, 0.55);
+  color:#78d2ff;
+  border:1.5px solid var(--pill-border);
+  transition:
+    transform .18s ease,
+    box-shadow .25s ease,
+    background .25s ease,
+    color .25s ease;
+}
+
+.btn-perfil:hover,
+.btn-perfil:focus-visible{
+  transform: translateY(-2px);
+  background: rgba(2,20,27,.75);
+  box-shadow:
+    0 0 18px rgba(0,231,255,.45),
+    0 0 22px rgba(123,92,255,.28),
+    0 0 26px rgba(255,77,236,.22);
+}
+
+
+/* Botón Categorías (YA NO dropdown). Mismo look que .btn-cerrarSesion */
+nav.navbar.bg-body-tertiary.fixed-top .btn-categoria{
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  padding:10px 12px; border-radius:12px; font-weight:700; text-decoration:none;
+  background:rgba(0, 0, 0, 0.55); color:#78d2ff;
+  border:1.5px solid var(--pill-border);
+
+  /* anula gradientes/animaciones heredadas del nav */
+  background-image:none;
+  -webkit-background-clip: border-box;
+  -webkit-text-fill-color: currentColor;
+  text-shadow:none;
+  animation:none;
+  transform:none;
+
+  transition: transform .18s ease, box-shadow .25s ease, background .25s ease, color .25s ease;
+}
+/* quitar subrayados/recursos del nav en Categorías */
+nav.navbar.bg-body-tertiary.fixed-top .btn-categoria::before,
+nav.navbar.bg-body-tertiary.fixed-top .btn-categoria::after{ display:none !important; }
+/* hover/focus igual a .btn-cerrarSesion */
+nav.navbar.bg-body-tertiary.fixed-top .btn-categoria:hover,
+nav.navbar.bg-body-tertiary.fixed-top .btn-categoria:focus-visible{
+  transform: translateY(-2px);
+  background: rgba(2,20,27,.75);
+  box-shadow:
+    0 0 18px rgba(0,231,255,.45),
+    0 0 22px rgba(123,92,255,.28),
+    0 0 26px rgba(255,77,236,.22);
+}
+
+/* Botón del carrito más curvo */
+.carrito-btn{ border-radius: 20cm; }
+
+/* Zona secreta (+18) */
+.zona-secreta-btn{
+  background:#000; color:#ff0000; border:2px solid #ff0000;
+  cursor:pointer; border-radius:100px; padding:10px;
+  font-size:medium; font-weight:700; transition: transform .2s, box-shadow .25s ease;
+}
+.zona-secreta-btn:hover{
+  box-shadow:
+    0 0 12px rgba(255,77,236,.7),
+    0 0 20px rgba(123,92,255,.4),
+    0 0 24px rgba(0,231,255,.4);
+}
+
+/* ==========================================================
+   3) Buscador compacto
+   ========================================================== */
+.search-box{
+  position: relative; z-index:1;
+  width:45px; height:45px; border-radius:50%;
+  overflow:hidden; background:#fff; display:flex; align-items:center; justify-content:flex-start;
+  box-shadow:0 0 10px rgba(0,0,0,.3); margin-right:10px; transition: all .4s ease;
+}
+.search-box input{
+  flex: 1; height:100%; border:0; outline:0;
+  font-size:1rem; border-radius:50px; opacity:0; width:0; transition: all .4s ease; cursor:text;
+}
+.search-box .icon{
+  position:absolute; right:9px; font-size:1.2rem; cursor:pointer; z-index:2; transition: color .3s ease;
+}
+.search-box:is(:hover, :focus-within){ width:250px; border-radius:40px; }
+.search-box:is(:hover, :focus-within) input{ opacity:1; width:100%; }
+.search-box:is(:hover, :focus-within) .icon{ color:#00f7ff; }
+
+/* ==========================================================
+   4) Botones generales y contador
+   ========================================================== */
+.btn-comprar,
+.btn-cerrar{
+  background:#000000; color:#000; border:1px solid green;
+  padding:10px 20px; display:inline-block; font-size:16px; margin:4px 2px;
+  cursor:pointer; border-radius:5px;
+}
+.btn-cerrar{ border-color:#ccc; }
+
+.carrito-btn{
+  background:transparent; border:none; font-size:24px; cursor:pointer; position:relative;
+}
+#contador{
+  position:absolute; top:-8px; right:-8px; background:red; color:#fff;
+  border-radius:50%; padding:2px 6px; font-size:12px; line-height:1;
+}
+
+/* ==========================================================
+   5) Carrito lateral (panel)
+   ========================================================== */
+
+/* Overlay de fondo que ocupa toda la pantalla */
+.fondo-carrito{
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  display: none;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Se muestra cuando cartOpen = true */
+.fondo-carrito.is-open{
+  display: block;
+}
+
+/* Panel lateral pegado a la derecha */
+.modelo-contenido{
+  position: absolute;
+  top: var(--nav-h);                 /* debajo del navbar */
+  right: 0;
+  width: 100%;
+  max-width: 320px;
+  max-height: calc(100vh - var(--nav-h) - 100px); /* deja aire para el footer */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 22px 18px 16px;
+  border-radius: 18px 0 0 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  color:#fff;
+  background:
+    linear-gradient(rgba(0,0,0,.75), rgba(0, 0, 0, 0.92)),
+    url("../img/slide3.png") no-repeat center/cover;
+  box-shadow: 0 0 24px rgba(255,0,255,.35);
+}
+
+/* Título del panel */
+.modelo-contenido h2{
+  margin: 0;
+  text-align: center;
+}
+
+/* Lista del carrito */
+.modelo-contenido ul{
+  list-style:none;
+  padding:0;
+  margin:8px 0 10px;
+}
+.modelo-contenido li{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,0.18);
+}
+.modelo-contenido li:last-child{
+  border-bottom:0;
+}
+
+/* Bloque de texto (nombre + precio + cantidad) */
+.carrito-item-main{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  flex:1;
+}
+.carrito-item-name{
+  font-weight:700;
+  font-size:0.95rem;
+}
+.carrito-item-meta{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.85rem;
+}
+.carrito-item-qty{
+  padding:2px 8px;
+  border-radius:999px;
+  background:rgba(255,37,208,.16);
+  border:1px solid rgba(255,37,208,.6);
+  color:#ffc8f3;
+}
+.carrito-item-price{
+  font-weight:600;
+  color:#18e3ff;
+}
+
+/* Botones - / + / eliminar */
+.carrito-item-actions{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+
+.btn-cart-qty{
+  padding:4px 9px;
+  font-size:0.85rem;
+  border-radius:6px;
+  background:#000;
+  border:1px solid transparent;
+  cursor:pointer;
+}
+.btn-cart-qty--minus{
+  border-color: var(--c-pink);
+  color: var(--c-pink);
+}
+.btn-cart-qty--plus{
+  border-color: var(--c-cyan);
+  color: var(--c-cyan);
+}
+
+.btn-cart-remove{
+  padding:4px 9px;
+  font-size:0.85rem;
+  border-radius:6px;
+  background:#000;
+  border:1px solid #ff4b6b;
+  color:#ff9dad;
+  cursor:pointer;
+}
+
+/* Total y botones inferiores */
+.modelo-contenido h3{
+  margin:8px 0 4px;
+  font-size:1rem;
+}
+.modelo-contenido .btn-comprar,
+.modelo-contenido .btn-cerrar{
+  width:100%;
+  text-align:center;
+  margin-top:6px;
+}
+
+/* Colores de los botones dentro del carrito */
+.modelo-contenido .btn-comprar{
+  color:#00b7ff;
+  border-color:#00b7ff;
+}
+.modelo-contenido .btn-cerrar{
+  color:#ff25d0;
+  border-color:#ff25d0;
+}
+.modelo-contenido .btn-comprar:hover,
+.modelo-contenido .btn-cerrar:hover{
+  color:#ffffff;
+  background:#000;
+  box-shadow:
+    0 0 4px rgba(255,255,255,0.45),
+    0 0 10px rgba(255,255,255,0.35);
+}
+
+/* ==========================================================
+   6) Modal centrado (genérico)
+   ========================================================== */
+.modelo{
+  background:#fff; border:2px solid #ccc; border-radius:10px;
+  box-shadow:0 4px 8px rgba(0,0,0,.1);
+  max-width:600px; width:80%; padding:20px;
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:1000;
+}
+
+@keyframes aparecer{ from{opacity:0; transform:translateY(-20px)} to{opacity:1; transform:translateY(0)} }
+.animar{ animation: aparecer .3s ease-out; }
+
+/* ==========================================================
+   7) Listado / tarjetas de producto
+   ========================================================== */
+.prin-sub h2{
+  text-align:center; color:#ff1493; font-size:30px; margin:0;
+}
+.productos-container{
+  padding:100px 16px; display:flex; flex-direction:column; align-items:center; gap:2rem;
+  position:relative; z-index:1;
+}
+.producto{
+  width:min(100%, 1800px);
+  background: rgba(255,255,255,0.1);
+  border:1px solid #ccc; border-radius:10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,.1);
+  margin:10px; padding:10px; text-align:center;
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.producto:hover{ transform: translateY(-10px); box-shadow:0 8px 16px rgba(0,0,0,.2); }
+.producto img{ max-width:100%; border-radius:100px; }
+.producto h5{ margin:10px 0; font-size:1.2rem; color:#ff4dec; }
+.producto p { font-size:1rem; color:#00f7ff; }
+.producto .btn{
+  background:#00f7ff; color:#000; border:2px;
+  padding:10px 20px; display:inline-block; font-size:16px; margin:10px 0;
+  cursor:pointer; border-radius:5px; transition: background-color .3s ease, color .3s ease;
+}
+.producto .btn:hover{ background:#000; color:#00f7ff; }
+.videojuegos .nl-cta .btn:hover,
+.peliculas  .nl-cta .btn:hover{ border-color:#00f7ff; }
+.collapse img{ max-width:100%; border-radius:10px; margin-top:10px; }
+
+/* ==========================================================
+   8) Carrusel embebido (Videojuegos / Películas / Accesorios)
+   ========================================================== */
+.producto.card#videojuegos,
+.producto.card#peliculas,
+.producto.card#accesorios{
+  border:0; background:transparent; box-shadow:none; padding:0;
+}
+/* Marco del carrusel */
+.videojuegos .nl-carousel,
+.peliculas  .nl-carousel,
+.accesorios .nl-carousel{
+  height: clamp(360px, 50vh, 640px);
+  position: relative; isolation:isolate; width:100%; margin:0 auto 1rem;
+  border:0; border-radius: var(--frame-r); overflow:hidden; z-index:1;
+  box-shadow:
+    0 0 8px rgba(0,231,255,.60),
+    0 0 3px rgba(255,255,255,0.45),
+    0 0 28px rgba(162,0,255,0.35);
+  transition: box-shadow .35s ease;
+}
+/* Aro degradado (borde visual) */
+.videojuegos .nl-carousel::before,
+.peliculas  .nl-carousel::before,
+.accesorios .nl-carousel::before{
+  content:""; position:absolute; inset:0; padding: var(--frame-b); border-radius: inherit;
+  background: linear-gradient(90deg, rgb(0,229,255), rgb(174,0,255), rgba(255,0,179,.85));
+  pointer-events:none; z-index:2;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  transition: background .35s ease, filter .35s ease;
+}
+/* Fondo glass + glow */
+.videojuegos .nl-carousel::after,
+.peliculas  .nl-carousel::after,
+.accesorios .nl-carousel::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:0;
+  background:
+    linear-gradient(0deg, rgba(0, 68, 255, 0.5), rgba(3, 7, 18, 0.8)),
+    radial-gradient(120% 100% at 50% 120%, rgba(0,231,255,0.08) 0%, rgba(0,0,0,0) 60%),
+    linear-gradient(135deg, rgba(8,10,26,0.22), rgba(8,10,26,0.08));
+  filter:
+    drop-shadow(0 0 6px rgba(255, 42, 191, 0.45))
+    drop-shadow(0 0 8px rgba(24, 227, 255, 0.40));
+}
+/* Pista y slides */
+.videojuegos .nl-carousel-track,
+.peliculas  .nl-carousel-track,
+.accesorios .nl-carousel-track,
+.videojuegos .nl-slide,
+.peliculas  .nl-slide,
+.accesorios .nl-slide{ height:100%; }
+.videojuegos .nl-carousel-track,
+.peliculas  .nl-carousel-track,
+.accesorios .nl-carousel-track{
+  display:flex; width:100%; height:100%;
+  transition: transform .45s ease; will-change: transform; position:relative; z-index:1;
+}
+.videojuegos .nl-slide,
+.peliculas  .nl-slide,
+.accesorios .nl-slide{
+  position:relative; min-width:100%; display:flex; align-items:center; justify-content:center;
+}
+/* Overlays (por sección) */
+.videojuegos .nl-slide .overlay{
+  position:absolute; top:50%; left:7%; transform:translateY(-50%);
+  width:auto; max-height:78%; object-fit:contain; z-index:2; border-radius:40px;
+  transition: transform .25s ease, filter .25s ease; transform-origin:center; will-change: transform, filter;
+}
+.peliculas .nl-slide .overlay{
+  position:absolute; top:50%; left:17.5%; transform:translateY(-50%);
+  width:auto; max-height:85%; object-fit:contain; z-index:2; border-radius:40px;
+  transition: transform .25s ease, filter .25s ease; transform-origin:center; will-change: transform, filter;
+}
+#accesorios.accesorios .nl-slide .overlay{
+  position:absolute; top:50%; left:14%; transform:translateY(-50%);
+  width:auto; max-height:82%; object-fit:contain; z-index:2; border-radius:40px;
+  transition: transform .25s ease, filter .25s ease; transform-origin:center; will-change: transform, filter;
+}
+/* Hover overlay */
+.videojuegos .nl-slide .overlay:hover,
+.peliculas  .nl-slide .overlay:hover,
+#accesorios.accesorios .nl-slide .overlay:hover{
+  transform: translateY(-50%) scale(1.08);
+  filter: drop-shadow(0 0 18px rgba(0,0,0,0.8));
+}
+/* Controles */
+.videojuegos .nl-prev, .videojuegos .nl-next,
+.peliculas  .nl-prev,  .peliculas  .nl-next,
+.accesorios .nl-prev,  .accesorios .nl-next{
+  position:absolute; z-index:10; top:50%; transform:translateY(-50%);
+  background: rgba(0,0,0,.55); color:#fff; border:0; cursor:pointer; padding:16px; border-radius:100%;
+}
+.videojuegos .nl-prev, .peliculas .nl-prev, .accesorios .nl-prev{ left:40px; }
+.videojuegos .nl-next, .peliculas .nl-next, .accesorios .nl-next{ right:50px; }
+/* CTA */
+.videojuegos .nl-cta,
+.peliculas  .nl-cta,
+.accesorios .nl-cta{
+  position:absolute; left:50%; bottom:14px; transform:translateX(-50%);
+  z-index:5; display:flex; flex-direction:column; align-items:center; text-align:center; gap:.6rem;
+  padding:1.05rem 1rem .75rem; border-radius:16px;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  border:0;
+  box-shadow:
+    0 0 10px rgba(0,231,255,.9),
+    0 0 20px rgba(0,231,255,.4),
+    0 6px 22px rgba(0,0,0,.35);
+  transition: box-shadow .35s ease, background .35s ease, opacity .2s ease;
+}
+.videojuegos .nl-cta.nl-cta--fade,
+.peliculas  .nl-cta.nl-cta--fade,
+.accesorios .nl-cta.nl-cta--fade{ opacity:0; }
+.videojuegos .nl-cta::before,
+.peliculas  .nl-cta::before,
+.accesorios .nl-cta::before{
+  content:""; position:absolute; inset:0; padding: var(--cta-border-w); border-radius:inherit;
+  background: var(--grad-cta); pointer-events:none; z-index:0;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  transition: background .35s ease, filter .35s ease;
+}
+.videojuegos .nl-cta:is(:hover, :focus-within)::before,
+.peliculas  .nl-cta:is(:hover, :focus-within)::before,
+.accesorios .nl-cta:is(:hover, :focus-within)::before{ background: var(--grad-cta-rev); }
+/* Precio (pill) */
+.videojuegos .nl-cta .nl-price,
+.peliculas  .nl-cta .nl-price,
+.accesorios  .nl-cta .nl-price{
+  font-weight:700; color:#18e3ff; padding:10px; border:1px solid #18e3ff; background:#000; border-radius:10px; margin:0;
+}
+/* Acciones */
+.videojuegos .nl-cta .nl-actions,
+.peliculas  .nl-cta .nl-actions,
+.accesorios .nl-cta .nl-actions{
+  display:flex; gap:.6rem; justify-content:center; margin-top:.35rem;
+}
+.videojuegos .nl-cta .btn,
+.peliculas  .nl-cta .btn,
+.accesorios .nl-cta .btn{
+  padding:.5rem .9rem; border-radius:.6rem; border:3px solid #000; font-size:15px; font-weight:700; margin:0;
+}
+/* Posición CTA desktop */
+#videojuegos.videojuegos .nl-carousel .nl-cta,
+#peliculas.peliculas   .nl-carousel .nl-cta,
+#accesorios.accesorios .nl-carousel .nl-cta{
+  left:auto; right: clamp(350px, 3vw, 40px); top:50%; bottom:auto; transform: translateY(-50%);
+}
+/* Separación bajo carrusel */
+#videojuegos .nl-carousel,
+#peliculas  .nl-carousel,
+#accesorios .nl-carousel{ margin-bottom:1rem; }
+/* Panel info dentro CTA */
+.videojuegos .nl-cta .nl-info,
+.peliculas  .nl-cta .nl-info,
+.accesorios .nl-cta .nl-info{
+  width: clamp(650px, 64vw, 650px); margin:.5rem auto .4rem;
+}
+.videojuegos .nl-cta .nl-info .card,
+.peliculas  .nl-cta .nl-info .card,
+.accesorios .nl-cta .nl-info .card{
+  border-radius:20px; background: rgba(8,14,25,.8); color:#91f2ff; border-color: rgba(0,231,255,.35); padding:.75rem .9rem;
+}
+/* Fila inferior agregada por JS */
+.nl-below-actions{
+  display:flex; align-items:center; justify-content:center; gap:.6rem;
+  margin-top:0; margin-bottom:.35rem; flex-wrap:nowrap;
+}
+.nl-below-actions .nl-price,
+.nl-below-actions .btn{
+  height: var(--cta-btn-h); display:inline-flex; align-items:center; line-height:1; padding:0 .9rem;
+}
+/* Hover global carrusel/CTA */
+.videojuegos .nl-cta:hover,
+.peliculas  .nl-cta:hover,
+.accesorios .nl-cta:hover{
+  background: rgba(0,0,0,.65);
+  box-shadow:
+    0 0 80px rgb(45,108,145),
+    0 0 28px rgb(0,162,255),
+    0 0 26px rgb(255,2,242);
+}
+.videojuegos .nl-carousel:hover::before,
+.videojuegos .nl-carousel:has(.nl-cta:hover)::before,
+.peliculas  .nl-carousel:hover::before,
+.peliculas  .nl-carousel:has(.nl-cta:hover)::before,
+.accesorios .nl-carousel:hover::before,
+.accesorios .nl-carousel:has(.nl-cta:hover)::before{
+  background: linear-gradient(90deg, rgba(255,37,208,.9), #991dff, rgba(0,183,255,.9));
+}
+
+/* Único glow permitido en tarjetas que contienen carrusel */
+.productos-container .producto#videojuegos,
+.productos-container .producto#videojuegos:hover,
+.productos-container .producto#peliculas,
+.productos-container .producto#peliculas:hover,
+.productos-container .producto#accesorios,
+.productos-container .producto#accesorios:hover{
+  border:0; outline:0; box-shadow:none; transform:none; background:transparent;
+}
+
+/* ==========================================================
+   9) Responsive
+   ========================================================== */
+@media (max-width: 992px){
+  .nl-below-actions{ flex-wrap: wrap; }
+}
+@media (max-width: 768px){
+  .videojuegos .nl-slide .overlay,
+  .peliculas  .nl-slide .overlay,
+  .accesorios .nl-slide .overlay{ left:12px; width:min(82%, 520px); }
+
+  .videojuegos .nl-prev, .videojuegos .nl-next,
+  .peliculas  .nl-prev,  .peliculas  .nl-next,
+  .accesorios .nl-prev,  .accesorios .nl-next{ padding:12px; }
+
+  #videojuegos.videojuegos .nl-carousel .nl-cta,
+  #peliculas.peliculas   .nl-carousel .nl-cta,
+  #accesorios.accesorios .nl-carousel .nl-cta{
+    left:12px; right:12px; top:auto; bottom:18px; transform:none; align-items:center; text-align:center;
+  }
+
+  #videojuegos.videojuegos .nl-cta .nl-actions,
+  #peliculas.peliculas   .nl-cta .nl-actions,
+  #accesorios.accesorios .nl-cta .nl-actions{
+    justify-content:center; flex-wrap:wrap;
+  }
+
+  .accesorios .nl-slide .overlay,
+  .videojuegos .nl-slide .overlay{
+    left:12px; width:min(82%, 520px); max-height:none; transform:none;
+  }
+}
+
+/* ==========================================================
+   10) Títulos con borde animado
+   ========================================================== */
+@property --scan{ syntax:"<angle>"; initial-value:0deg; inherits:false; }
+
+.titulos{
+  padding:20px; border-radius:50px; color:hsl(189 100% 64%);
+  border: var(--tit-b) solid transparent;
+  background:
+    linear-gradient(#02141b, #02141b) padding-box,
+    conic-gradient(from var(--scan),
+      transparent 0 calc(250deg - var(--tit-arc)),
+      var(--tit-pink) calc(220deg - var(--tit-arc)),
+      var(--tit-purple) 360deg
+    ) border-box,
+    linear-gradient(var(--tit-base), var(--tit-base)) border-box;
+  animation: tit-scan var(--tit-speed) linear infinite;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.titulos:is(:hover, :focus-visible){
+  transform: scale(1.04);
+  border-color: transparent;
+  box-shadow:
+    0 0 100px rgb(226,5,255),
+    0 0 28px rgba(22,239,255,.336);
+}
+@keyframes tit-scan{ to{ --scan: 1turn; } }
+@media (prefers-reduced-motion: reduce){ .titulos{ animation:none; } }
+
+/* ==========================================================
+   11) Hero (neon | glass)
+   ========================================================== */
+/* HERO ajustado: sin offset extra por la navbar */
+.page-hero{
+  width:100%;
+  margin: 0 auto 14px !important;   /* ← antes: calc(var(--nav-h) + 10px) auto 16px */
+  margin-top: calc(var(--nav-h) + 12px) !important; 
+  padding-inline: clamp(12px, 3vw, 32px);
+  text-align:center;
+  position:relative;
+  z-index:1;
+}
+
+
+.page-hero .page-subtitle{
+  display:inline-block;
+  margin: 0; 
+  font-size: clamp(1.25rem, 3.2vw, 1.9rem);
+  font-weight:800; letter-spacing:.2px; color:#83e2ff;
+  padding:.55rem 1rem .95rem; line-height:1.2;
+  background: linear-gradient(0deg, rgba(3,7,18,.55), rgba(3,7,18,.75));
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  border-radius:16px; position:relative; isolation:isolate;
+  box-shadow:
+    0 0 20px rgba(0,231,255,.25),
+    0 0 32px rgba(153,29,255,.20),
+    0 0 40px rgba(255,37,208,.18);
+  transition: transform .45s cubic-bezier(.2,.8,.2,1);
+}
+
+@media (min-width: 769px){
+  .page-hero{ margin-top: -72px !important; } /* usa -4 a -8 según gusto */
+}
+
+.page-hero .page-subtitle::before{
+  content:""; position:absolute; inset:0; padding:3px; border-radius:inherit;
+  background: linear-gradient(270deg, var(--c-cyan), var(--c-purple), var(--c-pink), var(--c-cyan));
+  background-size:300% 300%;
+  pointer-events:none; z-index:-1;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  filter:
+    drop-shadow(0 0 8px rgba(0,231,255,.55))
+    drop-shadow(0 0 14px rgba(153,29,255,.35))
+    drop-shadow(0 0 18px rgba(255,37,208,.30));
+  animation: borderFlow 6s linear infinite;
+}
+@keyframes borderFlow{
+  0%{ background-position: 0% 50%; }
+  50%{ background-position: 100% 50%; }
+  100%{ background-position: 0% 50%; }
+}
+.page-hero .page-subtitle:hover{ transform: translateY(-1px) scale(1.04); }
+.page-hero .sub-underline{
+  display:block; height:3px; margin-top:8px; border-radius:999px;
+  background: linear-gradient(90deg, var(--c-cyan), var(--c-purple), var(--c-pink));
+  box-shadow:
+    0 0 8px rgba(0,183,255,.6),
+    0 0 12px rgba(153,29,255,.35),
+    0 0 14px rgba(255,37,208,.28);
+}
+
+/* ==========================================================
+   12) Nav inferior (sticky) – .nl-nav1
+   ========================================================== */
+.nl-nav1{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:100px;
+  z-index:1000;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  border-top:1px solid rgba(255,255,255,.1);
+  box-shadow:0 -6px 18px rgba(0,0,0,.2);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Foto sutil encima del fondo del nav inferior */
+.nl-nav1::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;                       /* debajo del contenido, encima del fondo */
+  pointer-events:none;
+  background: url("../img/inicio.png") center/cover no-repeat;
+  opacity:.12;                     /* ajustá 0.08–0.18 a gusto */
+  mix-blend-mode: screen;          /* screen | soft-light | overlay */
+  filter: saturate(1.1) brightness(1.05) blur(.4px);
+
+  /* Desvanecer hacia ARRIBA (porque el nav está abajo) */
+  -webkit-mask-image: linear-gradient(to top,
+                    rgba(0,0,0,1) 35%, rgba(0,0,0,.4) 75%, rgba(0,0,0,0) 100%);
+          mask-image: linear-gradient(to top,
+                    rgba(0,0,0,1) 35%, rgba(0,0,0,.4) 75%, rgba(0,0,0,0) 100%);
+}
+
+/* Asegurá el orden de capas: línea arriba, contenido en medio, foto abajo */
+.nl-nav1::after{ z-index:2; }
+.nl-nav1-inner{ position:relative; z-index:1; }
+
+.nl-nav1::after{
+  content:""; position:absolute; left:0; right:0; top:0; height:1.7px; pointer-events:none;
+  background: linear-gradient(270deg, var(--violet), var(--c-cyan), var(--magenta), var(--violet));
+  background-size: 400% 100%;
+  animation: navline-move-right 8s linear infinite;
+  box-shadow:
+    0 0 10px rgba(255,77,236,.55),
+    0 0 14px rgba(0,231,255,.45),
+    0 0 18px rgba(123,92,255,.45);
+}
+@keyframes navline-move-right{ 0%{background-position:200% 0} 100%{background-position:0% 0} }
+
+.nl-nav1-inner{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:16px;
+  height:100%;
+  /* ANTES: padding: 12px 20px; */
+  padding: 4px 20px 20px;  /* top más chico, bottom más grande → sube el contenido */
+  width:100%;
+  margin-inline:0;
+}
+.nl-nav1-left, .nl-nav1-right{ display:flex; align-items:center; gap:10px; }
+.nl-nav1-right{ justify-self:end; }
+.nl-nav1-center{ justify-self:center; display:flex; flex-direction:column; align-items:center; text-align:center; gap:4px; min-width:0; }
+.nl-nav1 a{ color:#cfefff; text-decoration:none; }
+.nl-nav1 a:hover, .nl-nav1 a:focus-visible{ color:#83e2ff; text-shadow:0 0 6px rgba(0,231,255,.45), 0 0 10px rgba(123,92,255,.30); }
+
+.nl-nav1-item{
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  padding:10px 12px; border-radius:12px; text-decoration:none; font-weight:700;
+  background:rgba(2,20,27,.55); color:#cfefff; border:0;
+  transition: transform .18s ease, box-shadow .25s ease, background .25s ease, color .25s ease;
+}
+.nl-nav1-item:hover, .nl-nav1-item:focus-visible{
+  transform: translateY(-2px);
+  background: rgba(2,20,27,.75);
+  box-shadow:
+    0 0 18px rgba(0,231,255,.45),
+    0 0 22px rgba(123,92,255,.28),
+    0 0 26px rgba(255,77,236,.22);
+}
+.nl-nav1-meta{
+  display:flex; align-items:center; gap:8px; font-size:13px; color:#cfefff;
+}
+.nl-nav1-meta .dot{ opacity:.5; }
+.nl-nav1-end{ display:flex; align-items:center; gap:14px; }
+@media (max-width: 520px){ .nl-nav1-end{ flex-wrap:wrap; gap:8px 12px; } }
+@media (prefers-reduced-motion:reduce){
+  .nl-nav1::after{ animation:none; }
+  #sub-brand{ animation:none; }
+  .nl-nav1-item{ transition:none; }
+}
+
+/* ==========================================================
+   13) Sub-brand y footer
+   ========================================================== */
+#sub-brand{
+  display:inline-block; line-height:1; user-select:none; text-align:center; margin:0 auto; font-weight:500;
+  font-size:clamp(.8rem,4vw,2rem);
+  background:linear-gradient(90deg,#ff4dec,#00e7ff,#7b5cff);
+  background-size:300% 100%;
+  -webkit-background-clip:text; color:transparent;
+  -webkit-text-stroke:1.5px #a366ff;
+  text-shadow:0 0 2px rgba(111,241,255,.4), 0 0 6px rgba(123,92,255,.25);
+  animation: nl-sheen 8s linear infinite;
+}
+#sub-brand:hover{ -webkit-text-stroke-color:#c28cff; }
+@keyframes nl-sheen{ 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+
+/* === Dropdown de Categorías con look NoLimits (glass + mismo borde) === */
+nav.navbar.bg-body-tertiary.fixed-top .dropdown-toggle.btn-categoria::after{
+  /* oculta el caret de Bootstrap */
+  display:none !important;
+}
+
+/* Caja del menú */
+nav.navbar.bg-body-tertiary.fixed-top .dropdown-menu{
+  background: rgba(2,20,27,.90) !important;   /* fondo oscuro translúcido */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid var(--pill-border) !important;  /* mismo borde que los pills */
+  border-radius: 12px;
+  padding: 8px;
+  margin-top: 10px;                            /* separadito del botón */
+  box-shadow:
+    0 0 18px rgba(0,231,255,.25),
+    0 0 22px rgba(123,92,255,.18),
+    0 6px 26px rgba(0,0,0,.35);
+  overflow: hidden;
+  z-index: 1060; /* por encima del nav */
+}
+
+/* Ítems del menú */
+nav.navbar.bg-body-tertiary.fixed-top .dropdown-item{
+  color: #cfefff;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+/* Hover / active en ítems */
+nav.navbar.bg-body-tertiary.fixed-top .dropdown-item:hover,
+nav.navbar.bg-body-tertiary.fixed-top .dropdown-item:focus,
+nav.navbar.bg-body-tertiary.fixed-top .dropdown-item.active{
+  background: rgba(0,0,0,.55);
+  color: #83e2ff;
+  box-shadow:
+    0 0 12px rgba(0,231,255,.20),
+    0 0 16px rgba(123,92,255,.16);
+}
+
+/* Alinear el dropdown bajo el botón, a la IZQUIERDA */
+nav.navbar.bg-body-tertiary.fixed-top .nav-item.dropdown{ position: relative; }
+
+nav.navbar.bg-body-tertiary.fixed-top .dropdown-menu[data-bs-popper]{
+  left: 0 !important;
+  right: auto !important;
+  margin-top: 10px;
+  transform: translate3d(0, 0, 0) !important; /* evita desfasajes */
+}
+
+/* === Restaurar GLASS + SHADOW del marco del carrusel === */
+.videojuegos .nl-carousel,
+.peliculas  .nl-carousel,
+.accesorios .nl-carousel{
+  /* capa base translúcida */
+  background: rgba(255, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  /* shadow más marcado */
+  box-shadow:
+    0 12px 26px rgba(0,0,0,.45),
+    0 0 10px rgba(0,231,255,.40),
+    0 0 22px rgba(153,29,255,.30),
+    0 0 30px rgba(255,37,208,.22);
+  transition: box-shadow .35s ease, background .25s ease;
+}
+
+/* Un poco más de glow al pasar el mouse */
+.videojuegos .nl-carousel:hover,
+.peliculas  .nl-carousel:hover,
+.accesorios .nl-carousel:hover{
+  background: rgba(0, 0, 0, 0.774);
+  box-shadow:
+    0 0 36px rgb(115, 219, 231),
+    0 0 28px rgba(153,29,255,.40),
+    0 0 36px rgba(255,37,208,.28);
+}
+
+/* === Fondo del carrusel más TRANSPARENTE (glass liviano) === */
+.videojuegos .nl-carousel,
+.peliculas  .nl-carousel,
+.accesorios .nl-carousel{
+  background: rgba(2, 20, 27, 0.404);        /* antes ~.35 → más transparente */
+  backdrop-filter: blur(10px);  
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Reducimos la opacidad de las capas internas que oscurecen */
+.videojuegos .nl-carousel::after,
+.peliculas  .nl-carousel::after,
+.accesorios .nl-carousel::after{
+  background:
+    /* bajá estos alfas si querés aún más claridad */
+    linear-gradient(0deg, rgba(3, 7, 18, 0.01), rgba(3, 7, 18, 0.32)),
+    radial-gradient(120% 100% at 50% 120%, rgba(0,231,255,0.06) 0%, rgba(0,0,0,0) 60%),
+    linear-gradient(135deg, rgba(8,10,26,0.12), rgba(8,10,26,0.06));
+}
+
+/* ===== Scroll suave ===== */
+html{ scroll-behavior:smooth; }
+
+/* Ruta: src/styles/principal.css */
+.fondo-carrito.is-open{ display: block; }
+
+/* Ruta: src/styles/Style.css */
+:root.route-principal {
+  /* evita que estilos del home/login/registro afecten a principal */
+}
+
+/*  Logo debajo de _.- Variedad, estilo y calidad en un solo lugar -._ */
+
+/* ===== Logo estilo TRON (ajustado y visible sobre fondo) ===== */
+.hero-logo {
+  margin-top: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 5; /* lo eleva sobre efectos de fondo */
+}
+
+.hero-logo-img {
+  width: clamp(300px, 40vw, 560px);
+  max-width: 95%;
+  border: 3px solid transparent;
+  border-radius: 18px;
+  background: linear-gradient(45deg, #00e7ff, #ff4dec) border-box;
+  box-shadow:
+    0 0 30px rgba(0, 231, 255, 0.7),
+    0 0 60px rgba(255, 77, 236, 0.4);
+  animation: tron-flicker 3s infinite ease-in-out;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  margin-bottom: 130px;
+}
+
+.hero-logo-img:hover {
+  transform: scale(1.05);
+  background: linear-gradient(100deg, #ff4dec, #00e7ff) border-box; /* invertido */
+  box-shadow:
+    0 0 40px rgba(255, 77, 236, 0.9),
+    0 0 80px rgba(0, 231, 255, 0.6);
+}
+
+@keyframes tron-flicker {
+  0%, 100% {
+    opacity: 1;
+    box-shadow:
+      0 0 20px rgba(0, 231, 255, 0.7),
+      0 0 40px rgba(255, 77, 236, 0.5);
+  }
+  50% {
+    opacity: 0.92;
+    box-shadow:
+      0 0 35px rgba(0, 229, 255, 0.11),
+      0 0 70px rgba(255, 77, 236, 0.6);
+  }
+}
+
+
+
+/* El ancla #top no necesita compensar nav (react-scroll usa offset) */
+#top { scroll-margin-top: 0 !important; }
+
+/* ===== Espaciado entre secciones (con la nueva estructura de <Element>) =====
+   Aplica un margen superior general a todos los títulos, excepto el primero. */
+
+/* Todos los títulos dentro de productos */
+.productos-container .titulos {
+  margin-top: 9rem;   /* Desktop */
+}
+
+/* El primer título (Películas) también tendrá un margen, pero más suave */
+.productos-container .titulos:first-of-type {
+  margin-top: 5rem;   /* ajusta 4–6rem según lo que veas en pantalla */
+}
+
+
+/* (Opcional) Si quieres que Accesorios tenga un extra de espacio, déjalo.
+   Si no, puedes BORRAR esta regla porque la general ya resuelve el gap. */
+#accesorios-title {
+  margin-top: 10rem;
+}
+
+/* ===== Espaciado consistente: TÍTULO que viene DESPUÉS de cada carrusel ===== */
+.producto + [name] .titulos {
+  margin-top: 9rem;   /* Desktop */
+}
+
+/* Mobile */
+@media (max-width: 768px){
+  .producto + [name] .titulos {
+    margin-top: 5rem;
+  }
+}
+
+
+
+/*  Ancho de carrusel */
+:root {
+  --carousel-w: clamp(360px, 93vw, 1800px);
+}
+
+/* El carrusel ocupa todo el ancho permitido */
+.videojuegos .nl-carousel,
+.peliculas  .nl-carousel,
+.accesorios .nl-carousel {
+  width: var(--carousel-w);
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+/* Contenedor del carrusel debe permitir ese ancho */
+.producto {
+  width: var(--carousel-w);
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+/* Empuje leve a la derecha solo en Videojuegos (desktop) */
+:root{
+  --vg-overlay-offset: 30px; /* ajusta 4–24px según gusto */
+}
+
+@media (min-width: 769px){
+  .videojuegos .nl-slide .overlay{
+    left: calc(7% + var(--vg-overlay-offset)); /* antes: left: 7% */
+  }
+}
+
+/* ===== AJUSTE FINO DE POSICIÓN CTA ===== */
+@media (min-width: 769px){
+
+  /* Películas → un poco más a la izquierda */
+  #peliculas.peliculas .nl-carousel .nl-cta {
+    right: clamp(480px, 22vw, 820px); /* +60px más que antes */
+  }
+
+  /* Accesorios → un poco más a la izquierda */
+  #accesorios.accesorios .nl-carousel .nl-cta {
+    right: clamp(460px, 21vw, 780px) !important;
+  }
+
+
+  /* Videojuegos → se mantiene perfecto */
+  #videojuegos.videojuegos .nl-carousel .nl-cta {
+    right: clamp(360px, 18vw, 680px);
+  }
+}
+
+/* Efecto al abrir el más información.  */
+/* 1) Declaramos una variable para la sombra de la CTA */
+.videojuegos .nl-cta,
+.peliculas  .nl-cta,
+.accesorios .nl-cta{
+  --cta-shadow: 0 0 10px rgba(0,231,255,.35), 0 0 18px rgba(153,29,255,.25);
+  box-shadow: var(--cta-shadow);
+}
+
+/* 2) En .is-open animamos SOLO la variable (y la opacidad) */
+@media (min-width: 769px){
+  #peliculas.peliculas .nl-carousel .nl-cta.is-open{
+    position:absolute; left:64%; top:50%; right:auto;
+    transform:translate(-50%,-50%);
+    opacity:0;
+    animation: ctaNeonInVar .45s ease-out forwards;
+  }
+}
+
+@keyframes ctaNeonInVar{
+  0%{
+    opacity:0;
+    --cta-shadow:
+      0 0 40px rgba(0,231,255,.70),
+      0 0 60px rgba(255,37,208,.50);
+  }
+  100%{
+    opacity:1;
+    --cta-shadow:
+      0 0 10px rgba(0,231,255,.35),
+      0 0 18px rgba(153,29,255,.25);
+  }
+}
+
+/* 3) Hover: subimos el glow cambiando la variable */
+@media (min-width: 769px){
+  #peliculas.peliculas .nl-carousel .nl-cta.is-open:hover{
+    --cta-shadow:
+      0 0 25px rgba(0,231,255,.70),
+      0 0 45px rgba(255,37,208,.60),
+      0 0 65px rgba(0,231,255,.40);
+    transition: box-shadow .3s ease-in-out; /* opcional */
+  }
+}
+
+/*  Centrar mas info de videojuegos. */
+
+/* === Ajuste de Videojuegos: mover CTA abierta hacia la derecha === */
+@media (min-width: 769px) {
+  #videojuegos.videojuegos .nl-carousel .nl-cta.is-open {
+    right: clamp(160px, 9vw, 440px) !important; /* ← mueve hacia la derecha */
+  }
+}
+
+/*  Centrar mas info de accesorios. */
+
+@media (min-width: 769px) {
+  #accesorios.accesorios .nl-carousel .nl-cta.is-open {
+    right: clamp(260px, 11vw, 540px) !important;
+  }
+}
+
+/* Solo separar PELÍCULAS de VIDEOJUEGOS */
+.productos-container > .producto.card#peliculas{
+  margin-bottom: clamp(7rem, 9vw, 10rem) !important;
+}
+
+@media (max-width: 768px){
+  .productos-container > .producto.card#peliculas{
+    margin-bottom: 5rem !important;
+  }
+}
+
+/* Ruta: src/styles/principal.css */
+.search-box .icon-btn {
+  border: none;
+  background: transparent;
+  padding: 0 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+/* ==========================================================
+   Banda de ayuda bajo el carrusel de sagas — Pegada al carrusel
+   ========================================================== */
+.sagas-section + .productos-container .saga-helper-wrapper,
+.saga-helper-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  margin-top: 0;   /* Pegado al carrusel */
+  padding-top: 0;  /* Sin separación extra */
+
+  position: relative;
+  z-index: 1;
+}
+
+.saga-helper-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: var(--carousel-w);
+  max-width: 75%;
+
+  padding: 0.55rem 1.4rem 0.95rem;
+  border-radius: 50px;
+
+  font-weight: 800;
+  font-size: clamp(1.25rem, 2.4vw, 1.4rem);
+  letter-spacing: 0.2px;
+  color: #83e2ff;
+  text-align: center;
+
+  background: linear-gradient(
+    0deg,
+    rgba(3, 7, 18, 0.55),
+    rgba(3, 7, 18, 0.75)
+  );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  position: relative;
+  isolation: isolate;
+  box-shadow:
+    0 0 20px rgba(0, 231, 255, 0.25),
+    0 0 32px rgba(153, 29, 255, 0.20),
+    0 0 40px rgba(255, 37, 208, 0.18);
+  
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+
+/* Borde degradado animado */
+.saga-helper-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 3px;
+  border-radius: inherit;
+
+  background: var(--grad-cta);
+  background-size: 300% 300%;
+
+  pointer-events: none;
+  z-index: -1;
+
+  -webkit-mask: linear-gradient(#000 0 0) content-box,
+                 linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  filter:
+    drop-shadow(0 0 8px rgba(0, 231, 255, 0.55))
+    drop-shadow(0 0 14px rgba(153, 29, 255, 0.35))
+    drop-shadow(0 0 18px rgba(255, 37, 208, 0.30));
+
+  animation: borderFlow 6s linear infinite;
+}
+
+/* Subrayado inferior */
+.saga-helper-underline {
+  display: block;
+  height: 3px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--c-cyan),
+    var(--c-purple),
+    var(--c-pink)
+  );
+  box-shadow:
+    0 0 8px rgba(0, 183, 255, 0.6),
+    0 0 12px rgba(153, 29, 255, 0.35),
+    0 0 14px rgba(255, 37, 208, 0.28);
+}
+
+/* Hover suave */
+.saga-helper-banner:hover {
+  transform: scale(1.02); /* crece menos */
+  box-shadow:
+    0 0 16px rgba(0, 231, 255, 0.35),
+    0 0 24px rgba(153, 29, 255, 0.25),
+    0 0 30px rgba(255, 37, 208, 0.22);
+}
+
+/* Reducir el espacio entre el carrusel de sagas y la banda de ayuda */
+.sagas-section + .productos-container {
+  padding-top: 3rem;  /* antes eran 100px, ahora mucho más cerca */
+}
+
+.sagas-title {
+  max-width: 420px;
+  width: 90%;
+  margin: 3rem auto 3rem;
+  padding: 0.85rem 1.2rem;
+  border-radius: 1.8rem;
+  position: relative;
+  z-index: 5;
+  isolation: isolate;
+
+  /* Fondo y borde prendidos */
+  background: rgba(0, 10, 20, 0.88);
+  border: 2px solid rgba(0, 255, 255, 0.9);
+  backdrop-filter: blur(8px) saturate(180%);
+
+  /* Texto iluminado pero sin sombra externa */
+  color: #7ff7ff;
+  font-weight: 900;
+  text-align: center;
+
+  /* Estado base sin glow de caja */
+  box-shadow: none;
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+/* Glow solo en hover */
+.sagas-title:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow:
+    0 0 60px rgba(0, 255, 255, 0.349),
+    0 0 90px rgba(0, 255, 255, 0.24);
+}
+
+/* Botones de acceso rápido a Películas / Accesorios / Videojuegos */
+.saga-category-buttons {
+  margin: 0 auto 3.5rem;
+  padding-top: 3.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.saga-cat-btn {
+  background: rgba(3, 7, 18, 0.88);
+  border: 2px solid rgba(0, 255, 255, 0.6);
+  color: #7ff7ff;
+  font-weight: 800;
+  font-size: 1.05rem; /* texto más grande */
+  padding: 1rem 2.4rem; /* más alto y más ancho */
+  border-radius: 2rem; /* más redondeado */
+  transition: transform .25s ease, box-shadow .25s ease, background .2s ease;
+}
+
+.saga-cat-btn:hover {
+  transform: translateY(-3px);
+  background: rgba(0, 20, 30, 0.95);
+  box-shadow:
+    0 0 18px rgba(0, 231, 255, .45),
+    0 0 26px rgba(153, 29, 255, .35);
+}
+
+
+.saga-cat-btn:hover,
+.saga-cat-btn:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(2, 20, 27, 0.9);
+  color: #bdf3ff;
+  box-shadow:
+    0 0 18px rgba(0, 231, 255, 0.6),
+    0 0 24px rgba(153, 29, 255, 0.38),
+    0 0 30px rgba(255, 37, 208, 0.3);
+}
+
+/* Mobile: botones apilados si no caben */
+@media (max-width: 768px) {
+  .saga-category-buttons {
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+
+  .saga-cat-btn {
+    min-width: 120px;
+    padding-inline: 1rem;
+  }
+}
+
+/*  ESTILOS HAMBURGUESA */
+/* HAMBURGUESA NoLimits — ACTUALIZADA */
+
+/* Contenedor en el NAV — IZQUIERDA ahora */
+.user-menu-wrapper {
+  display: inline-flex;
+  align-items: center;
+  margin-right: auto; /* Esto empuja el resto a la derecha */
+}
+
+/* Botón hamburguesa con estilo pill NoLimits */
+.btn-hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 14px;
+  cursor: pointer;
+
+  background: rgba(0, 0, 0, 0.55);
+  color: #78d2ff;
+  border: 1.5px solid var(--pill-border);
+
+  font-size: 1.4rem;
+  line-height: 1;
+
+  transition:
+    transform .18s ease,
+    box-shadow .25s ease,
+    background .25s ease,
+    color .25s ease;
+}
+
+/* Quitar subrayados / efectos heredados del nav */
+.btn-hamburger::before,
+.btn-hamburger::after {
+  display: none !important;
+}
+
+.btn-hamburger:hover,
+.btn-hamburger:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(2, 20, 27, 0.85);
+  color: #bdf3ff;
+  box-shadow:
+    0 0 18px rgba(0, 231, 255, .45),
+    0 0 22px rgba(123, 92, 255, .28),
+    0 0 26px rgba(255, 77, 236, .22);
+}
+
+/* Dropdown con estilo Glass NoLimits */
+.user-menu.dropdown-menu {
+  background: rgba(2, 20, 27, .94) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid var(--pill-border) !important;
+  border-radius: 12px;
+  padding: 6px;
+  min-width: 190px;
+  box-shadow:
+    0 0 18px rgba(0, 231, 255, .25),
+    0 0 22px rgba(123, 92, 255, .18),
+    0 6px 26px rgba(0, 0, 0, .35);
+}
+
+/* === Menú de usuario pegado al NAVBAR y a la pared izquierda === */
+nav.navbar.bg-body-tertiary.fixed-top .user-menu.dropdown-menu[data-bs-popper]{
+  position: fixed !important;     /* se ancla a la ventana, no al botón   */
+  top: var(--nav-h) !important;   /* justo bajo el navbar (altura 120px)  */
+  left: 0 !important;             /* pegado a la pared izquierda          */
+  right: auto !important;
+
+  margin-top: 0 !important;
+  transform: none !important;
+
+  border-top-left-radius: 0;      /* se “engancha” al borde superior      */
+  z-index: 2000;                  /* por encima de todo lo demás          */
+}
+
+
+/* Items del menú */
+.user-menu .dropdown-item {
+  color: #cfefff;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 9px 12px;
+}
+
+.user-menu .dropdown-item:hover,
+.user-menu .dropdown-item:focus-visible {
+  background: rgba(0, 0, 0, .55);
+  color: #83e2ff;
+  box-shadow:
+    0 0 12px rgba(0, 231, 255, .20),
+    0 0 16px rgba(123, 92, 255, .16);
+}
+
+/* “Cerrar sesión” destacada */
+.user-menu .dropdown-item.text-danger {
+  color: #ff6b9c !important;
+}
+
+.user-menu .dropdown-item.text-danger:hover {
+  color: #ffd5e4 !important;
+}

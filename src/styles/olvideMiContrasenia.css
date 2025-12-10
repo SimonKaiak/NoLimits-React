@@ -1,0 +1,352 @@
+/* --- Ajustes básicos --- */
+* {
+  margin: 0; /* Reinicia el margen por defecto del navegador */
+  padding: 0; /* Reinicia el padding por defecto del navegador */
+  box-sizing: border-box; /* Asegura que el padding y el border se incluyan en el ancho y alto del elemento */
+  outline: none; /* Elimina el contorno del enfoque (outline) que aparece al hacer click en elementos */
+}
+
+img {
+  max-width: 100%; /* Evita que la imagen exceda el ancho de su contenedor */
+  display: block; /* Mantiene las imágenes como elementos de bloque para mejor control del layout (forma en que los elementos se organizan y distribuyen dentro de la pág.) */
+}
+
+/* --- Estilo del body --- */
+.nl-full-page-layout {
+  position: relative;
+  color: white;
+  font-family: sans-serif;
+
+  /* ESPACIO REAL ENTRE NAV Y FOOTER */
+  padding-bottom: 40px; /* altura footer */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- Nav Superior --- */
+.nl-nav {
+  position: fixed; /* Fija la navegación en la parte superior del viewport (parte visible de la página web en la pantalla del usuario. Es como una ventana) */
+  top: 0; /* Alinea al borde superior */
+  left: 0; /* Alinea al borde izquierdo */
+  width: 100%; /* Ocupa todo el ancho */
+  padding: 0.5rem 2rem; /* Espaciado interno superior/inferior y lateral */
+  z-index: 10; /* Asegura que la navegación esté por encima de otros elementos */
+  display: flex; /* Usa Flexbox para la disposición interna */
+  justify-content: space-between; /* Distribuye el espacio entre los elementos (como el botón y la marca) */
+  align-items: center; /* Centra los elementos verticalmente */
+}
+.nl-nav-inner {
+  display: flex; /* Usa Flexbox para la disposición interna */
+  justify-content: space-between; /* Distribuye el espacio */
+  align-items: center; /* Centra verticalmente */
+  width: 100%; /* Ocupa el 100% del ancho del contenedor */
+}
+
+#brand {
+  color: white; /* Color del texto */
+  font-size: clamp(1.5rem, 4vw, 2rem); /* Tamaño de fuente responsivo */
+  flex-grow: 1; /* Permite que el elemento crezca para ocupar espacio */
+  text-align: center; /* Centra el texto */
+  position: absolute; /* Posicionamiento absoluto para poder centrarlo con left/transform */
+  left: 50%; /* Mueve el punto de inicio al 50% del ancho */
+  transform: translateX(-50%); /* Mueve el elemento hacia la izquierda el 50% de su propio ancho (centrado horizontal) */
+}
+.btn_salir {
+  padding: 10px 22px;
+  border: 2px solid var(--magenta);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--magenta);
+  font-weight: bold;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  z-index: 11;
+}
+
+
+.btn_salir:hover {
+  background: #000; /* Cambia el fondo a negro sólido al pasar el mouse */
+  color: #fff; /* Cambia el color del texto a blanco al pasar el mouse */
+  box-shadow: 0 0 22px rgba(255, 42, 191, .55), 0 0 28px rgba(123, 92, 255, .45), 0 0 34px rgba(0, 231, 255, .40); /* Agrega un efecto de sombra de neón al pasar el mouse usando tonos magenta, violeta y cyan */
+}
+
+.nl-left {
+  z-index: 11; /* Asegura que el contenedor izquierdo esté visible */
+}
+
+/* --- Nav Inferior (Footer) --- */
+.nl-nav1 {
+  position: fixed; /* Fija la navegación en la parte inferior del viewport */
+  bottom: 0; /* Alinea al borde inferior */
+  width: 100%; /* Ocupa todo el ancho */
+  text-align: center; /* Centra el texto */
+  padding: 0.5rem 0; /* Espaciado interno */
+  z-index: 10; /* Asegura que esté por encima de la página pero por debajo de la nav superior */
+}
+
+#sub-brand {
+  font-size: 1rem; /* Tamaño de fuente */
+  color: white; /* Color de texto */
+  letter-spacing: 2px; /* Aumenta el espacio entre caracteres */
+}
+
+/* Vars de color/borde */
+:root {
+  --magenta: #ff4dec;
+  --violet: #7b5cff;
+  --cyan: #00e7ff;
+  --g1: var(--magenta);
+  --g2: var(--violet);
+  --g3: var(--cyan);
+  --pad: 3px;                            /* grosor del anillo del section */
+  --avatar: clamp(170px, 22vw, 240px);   /* tamaño del círculo (responsivo) */
+  --ease-smooth: cubic-bezier(.22,.61,.36,1);
+  /* Colores específicos de hover para el botón (mejora el brillo) */
+  --btn-g1-hover: #00f7ff;
+  --btn-g2-hover: #a020f0;
+  --btn-g3-hover: #ff1493;
+}
+
+/* ===== Caja de iniciar sesión ===== */
+.section-forgot-password {
+  position: relative; /* Establece un contexto de posicionamiento para los elementos */
+  width: 90%; /* Ancho */
+  max-width: 500px; /* Ancho máximo */
+  padding: 1.5rem 2rem; /* Espaciado interno */
+  border-radius: 1.25rem; /* Bordes redondeados */
+  background: rgba(0, 0, 0, 0.55); /* efecto glass oscuro */
+  border: 2px solid rgba(255,255,255,0.15); /* Borde tenue para definir el límite */
+  box-shadow: /* Sombra base de neón que emite un brillo */
+    0 0 25px rgba(123, 92, 255, .35)
+    0 0 45px rgba(255, 42, 191, .25)
+    0 0 65px rgba(24, 227, 255, .20);
+  backdrop-filter: blur(10px); /* Desenfoque de fondo para el efecto 'glass' */
+  -webkit-backdrop-filter: blur(10px); /* Prefijo para compatibilidad con navegadores WebKit */
+  text-align: center; /* Centra el texto dentro de la caja */
+  transition: /* Define transiciones para un efecto suave */
+    box-shadow .60s var(--ease-smooth),
+    background-color .35s var(--ease-smooth),
+    backdrop-filter .35s var(--ease-smooth),
+    -webkit-backdrop-filter .35s var(--ease-smooth);
+    will-change: box-shadow; /* Sugiere al navegador que optimice esta propiedad para rendimiento */
+}
+
+.section-forgot-password:hover {
+  box-shadow: /* Aumenta la intensidad del brillo de neón al pasar el mouse */
+    0 0 25px rgba(123,92,255,.55),
+    0 0 45px rgba(255,42,191,.45), 
+    0 0 65px rgba(24,227,255,.40);
+}
+
+/* Anillo degradado*/
+.section-forgot-password::before {
+  content: ""; /* Contenido vacío (requerido para los elementos) */
+  position: absolute; /* Posicionamiento absoluto cubriendo el 'section' completamente */
+  inset: 0; /* Equivalente a top: 0; right: 0; bottom: 0; left: 0; */
+  padding: var(--pad); /* Crea un espacio interior (padding) para el efecto de borde */
+  border-radius: inherit; /* Hereda los bordes redondeados del padre */
+  pointer-events: none; /* Evita que este elemento interfiera con clicks */
+  z-index: 20; /* Asegura que esté sobre el fondo pero debajo del contenido */
+
+  background: linear-gradient(90deg, var(--g1), var(--g2), var(--g3)); /* Fondo degradado con los colores neón definidos */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); /* Crea una máscara para hacer el borde transparente (Webkit) */
+  -webkit-mask-composite: xor; /* Combina la máscara para lograr el efecto de borde (Webkit) */
+  mask-composite: exclude; /* Combina la máscara para lograr el efecto de borde estándar */
+
+  filter: /* Agrega un pequeño brillo al borde degradado */
+    drop-shadow(0 0 6px rgba(255, 77, 236, .35))
+    drop-shadow(0 0 8px rgba(0, 231, 255, .30));
+  transition: background .60s var(--ease-smooth), filter .60s var(--ease-smooth); /* Transición para el fondo y el filtro de brillo */
+}
+
+.section-forgot-password:hover::before {
+  background: linear-gradient(90deg, var(--g3), var(--g2), var(--g1)); /* Invierte el gradiente al pasar el mouse para un efecto dinámico */
+  filter: /* Aumenta la intensidad del brillo del anillo al pasar el mouse */
+    drop-shadow(0 0 10px rgba(255, 77, 236, .55))
+    drop-shadow(0 0 12px rgba(0, 231, 255, .45));
+}
+
+/* Avatar / imagen circular */
+.image-container {
+  width: var(--avatar); /* Ancho definido por la variable responsiva */
+  height: var(--avatar); /* Altura definida por la variable responsiva */
+  border-radius: 50%; /* Forma circular */
+  background: rgb(6, 7, 70); /* Color de fondo oscuro */
+  object-fit: cover; /* Permite el ajuste de imagen  */
+  border: 4px solid var(--cyan); /* Borde inicial azul cyan */
+  position: relative; /* Establece un posicionamiento para elementos internos */
+  overflow: hidden; /* Oculta cualquier parte de la imagen que exceda el contenedor */
+  cursor: pointer; /* Muestra el cursor de puntero */
+  animation: neon-border 3s linear infinite; /* Aplica la animación de borde de neón */
+  transition: all .5s ease-in-out; /* Transición suave para todos los cambios de estilo */
+  margin: 0 auto 1.5rem auto; /* Centra el contenedor horizontalmente y añade margen inferior */
+}
+
+.image-container:hover {
+  animation: neon-border-reverse 6s linear infinite; /* Aplica animación inversa al pasar el mouse */
+}
+
+.image-container .image {
+  position: absolute; /* Posicionamiento absoluto para cubrir el contenedor */
+  inset: 0; /* Cubre completamente el contenedor (top, right, bottom, left: 0) */
+  width: 100%; /* Ocupa el 100% del ancho */
+  height: 100%; /* Ocupa el 100% de la altura */
+  margin: 0; /* Reinicia el margen */
+  overflow: hidden; /* Oculta el desbordamiento */
+  animation: avatar 5s ease-in-out infinite; /* Aplica la animación del avatar (pequeño movimiento de respiración) */
+  transition: 500ms; /* Transición de 500ms */
+}
+
+.image-container .avatar {
+  display: block; /* Mantiene la imagen como bloque */
+  width: 100%; /* Ocupa el 100% del ancho */
+  height: 100%; /* Ocupa el 100% de la altura */
+  object-fit: cover; /* Ajusta la imagen para cubrir el área sin distorsionar */
+  border-radius: 50%; /* Mantiene la forma circular */
+}
+
+.texto-contrasenia {
+  margin-bottom: clamp(15px, 2vw, 30px); /* Margen inferior responsivo */
+  font-size: clamp(0.9rem, 2.5vw, 1rem); /* Tamaño de fuente responsivo */
+  line-height: 1.4; /* Espaciado entre líneas */
+}
+
+/* Títulos */
+section h1 {
+  text-align: center; /* Centra el texto */
+  font-size: clamp(1.5rem, 4vw, 2rem); /* Tamaño de fuente responsivo */
+  margin-bottom: 1rem; /* Margen inferior */
+  color: #fff; /* Color del texto */
+}
+
+/* Campo del formulario */
+.field {
+  display: flex; /* Usa Flexbox */
+  flex-direction: column; /* Elementos apilados verticalmente */
+  margin-top: clamp(1.5rem, 3vw, 2.5rem); /* Margen superior responsivo */
+  margin-bottom: 1.25rem; /* Margen inferior */
+}
+
+
+.field input {
+  height: 44px; /* Altura fija para el input */
+  appearance: none; /* Elimina la apariencia nativa de los navegadores (Webkit) */
+  -webkit-appearance: none;
+
+  background-color: rgba(10, 12, 24, .55) !important; /* Color de fondo semitransparente oscuro */
+  background-image: none !important; /* Asegura que no haya imagen de fondo */
+  border: 1px solid rgba(255, 255, 255, .22) !important; /* Borde sutil */
+
+  color: white; /* Color de texto blanco */
+  box-shadow: none; /* Sin sombra */
+  outline: none; /* Sin contorno */
+  width: 100%; /* Ocupa todo el ancho disponible */
+
+  padding: .5rem .9rem; /* Espaciado interno */
+  font-size: 1.1rem; /* Tamaño de fuente */
+  border-radius: 10px; /* Bordes redondeados */
+  margin-top: 0; /* Reinicia el margen superior */
+}
+
+/* Placeholder blanco */
+.field input::placeholder {
+  color: #bfc7dd; /* Color blanco para el texto de sugerencia */
+  opacity: .75; /* Transparencia */
+  text-align: center; /* Centra el texto de sugerencia */
+}
+
+/* Botón */
+.nl-forgot-btn {
+  width: 100%; /* Ocupa todo el ancho */
+  padding: 0.9rem; /* Espaciado interno */
+  border: none; /* Sin borde */
+  border-radius: 0.75rem; /* Bordes redondeados */
+  background: linear-gradient(90deg, #00f7ff, #a020f0, #ff1493); /* Fondo degradado con colores neón */
+  color: #ffffff; /* Color de texto blanco */
+  font-weight: bold; /* Texto en negrita */
+  font-size: 1rem; /* Tamaño de fuente */
+  cursor: pointer; /* Muestra el cursor de puntero */
+  transition: transform 0.6s ease-out, box-shadow 0.6s ease-out, filter 0.s ease-out; /* Aplica transiciones para efectos de hover */
+}
+
+.nl-forgot-btn:hover {
+  transform: scale(1.05); /* Escala el botón para un efecto de "levantamiento" */
+  box-shadow:  /* Agrega una sombra intensa de neón */
+    0 0 15px var(--btn-g1-hover),
+    0 0 30px var(--btn-g2-hover),
+    0 0 45px var(--btn-g3-hover);
+  filter: brightness(1.1); /* Aumenta ligeramente el brillo */
+  transition: transform 0.1s ease-in box-shadow 0.4s ease-out, filter 0.4s ease-out; /* Reduce la duración de la transición */
+}
+
+/* Mensajes de error */
+.error {
+  font-size: 0.8rem; /* Tamaño de fuente */
+  color: #91d7ff; /* Color azul claro */
+  margin-top: 0.3rem; /* Margen superior */
+  text-align: center; /* Centra el texto */
+}
+
+.texto-contrasenia{
+    margin-bottom: 20px; /* Ajuste de margen inferior */
+}
+
+/* Fuerza visibilidad del mensaje de error */
+#errorMsg,
+.error-msg{
+  display:block !important; /* Asegura que se muestre como bloque */
+  margin-top:8px !important; /* Margen superior */
+  font-size:0.9rem !important; /* Tamaño de fuente */
+  color:#a0ecff !important; /* Color azul para los mensajes */
+  text-align:center; /* Centra el texto */
+  min-height:1.1em; /* reserva espacio para que no “salte” el layout */
+}
+
+/* Marca el input cuando hay error */
+.input-error{
+  outline:2px solid #67e8ff !important; /* Contorno de 2px de color celeste para indicar error */
+  background: rgba(255, 77, 77, .12) !important; /* Fondo para indicar error */
+}
+
+/* --- Animaciones --- */
+@keyframes neon-border{
+  0%   { border-color:#00f7ff; box-shadow:0 0 10px #00f7ff,0 0 20px #00f7ff,0 0 40px #00f7ff; }
+  33%  { border-color:#a020f0; box-shadow:0 0 10px #a020f0,0 0 20px #a020f0,0 0 40px #a020f0; }
+  66%  { border-color:#ff1493; box-shadow:0 0 10px #ff1493,0 0 20px #ff1493,0 0 40px #ff1493; }
+  100% { border-color:#00f7ff; box-shadow:0 0 10px #00f7ff,0 0 20px #00f7ff,0 0 40px #00f7ff; }
+}
+@keyframes neon-border-reverse{
+  0% { border-color:#00f7ff; box-shadow:0 0 10px #00f7ff,0 0 20px #00f7ff,0 0 40px #00f7ff; }
+  33% { border-color:#ff1493; box-shadow:0 0 10px #ff1493,0 0 20px #ff1493,0 0 40px #ff1493; }
+  66% { border-color:#a020f0; box-shadow:0 10px #a020f0,0 0 20px #a020f0,0 0 40px #a020f0; }
+  100%{ border-color:#00f7ff; box-shadow:0 0 10px #00f7ff,0 0 20px #00f7ff,0 0 40px #00f7ff; }
+}
+@keyframes backflip{
+  0%{ transform:rotateX(0deg); }
+  50%{ transform:rotateX(180deg); }
+  100%{ transform:rotateX(360deg); }
+}
+.backflip{  
+  animation:backflip 1s ease-in-out forwards; /* Aplica la animación backflip una vez y mantiene el estado final */
+}
+
+@keyframes avatar{
+  0%,50%,100%{ transform:rotate(0deg) translateY(0px) scale(1.05); }
+  25%{ transform:rotate(5deg) translateY(5px) scale(1); }
+  75%{ transform:rotate(-5deg) translateY(5px) scale(1); }
+}
+
+/* Accesibilidad: respetar reducción de movimiento */
+@media (prefers-reduced-motion: reduce){
+  /* Deshabilita todas las animaciones, transiciones, filtros y sombras para usuarios sensibles al movimiento */
+  .image-container, .image-container:hover, .image-container .image,
+  .backflip, #brand, button, section, section::before {
+    animation: none !important;
+    transition: none !important;
+    filter: none !important;
+    box-shadow: none !important;
+  }
+}

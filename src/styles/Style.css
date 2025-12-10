@@ -1,0 +1,428 @@
+:root{
+  --magenta:#ff4dec;
+  --violet:#7b5cff;
+  --cyan:#00e7ff;
+  --blue:#021d96f2;
+  --white:#e9efff;
+}
+
+/* ===== NoLimits (brand) unificado ===== */
+#brand{
+  /* tipografía + layout inline */
+  font-family: 'Poppins', sans-serif;
+  display: inline-block;
+  line-height: 1;
+  text-decoration: none;
+  user-select: none;
+
+  /* peso y tamaño responsivo */
+  font-weight: 800;
+  font-size: clamp(1rem, 6vw, 4rem);
+  font-synthesis: none;          /* evita negrita “inventada” */
+
+  /* color base + glow inicial */
+  color: #e4e0e0;
+  -webkit-text-stroke: 0;
+  text-shadow:
+    0 0 12px rgba(0,0,0,.85),
+    0 0 22px rgba(123,92,255,.75),
+    0 0 34px rgba(255,77,236,.65);
+
+  /* pulso suave */
+  animation: nl-pulse 5s ease-in-out infinite;
+
+  /* centrado absoluto (si usas grid/flex en la navbar, puedes quitar estas 3 líneas) */
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+
+  /* transiciones suaves */
+  margin: 0;
+  transition: text-shadow .25s ease, transform .25s ease, filter .25s ease;
+}
+
+/* Hover: más brillo y micro-zoom */
+#brand:hover{
+  filter: brightness(1.12);
+  text-shadow:
+    0 0 5px rgba(255,255,255,.5),
+    0 0 28px rgba(123,92,255,.85),
+    0 0 40px rgba(255,77,236,.75),
+    0 0 30px rgba(0,231,255,.30);
+  transform: translate(-50%, -50%) scale(1.015);
+}
+
+/* Animación de pulso */
+@keyframes nl-pulse{
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.25); }
+}
+
+/* ===== Sub-brand ===== */
+#sub-brand{
+  display:inline-block; line-height:1; text-decoration:none; user-select:none;
+  font-size:clamp(0.8rem,4vw,2rem);
+  background:linear-gradient(90deg,#ff4dec,#00e7ff,#7b5cff);
+  background-size:300% 100%;
+  -webkit-background-clip:text; color:transparent;
+  -webkit-text-stroke:1.5px #a366ff;
+  text-shadow:0 0 2px rgba(111,241,255,.4), 0 0 6px rgba(123,92,255,.25);
+  animation:nl-sheen 8s linear infinite;
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  margin:0; font-weight:500;
+}
+#sub-brand:hover{ -webkit-text-stroke-color:#c28cff; }
+
+@keyframes nl-sheen{ 0%{background-position:-200% 0;} 100%{background-position:200% 0;} }
+
+/* ------------------------------------------------------------------------------------------- */
+/* ===== Fondo ===== */
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: block; /* ← antes era flex, eso achicaba todo */
+  background: none;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(rgba(0,0,0,.65), rgba(0,0,0,.35)),
+    url("../assets/img/fondos/fondo1.webp") no-repeat center center / cover;
+}
+
+/* ------------------------------------------------------------------------------------------- */
+/* ===== Nav superior ===== */
+.nl-nav{
+  position:fixed; top:0; left:0; width:100%; height:110px; z-index:1000;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.nl-nav::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:1.5px; pointer-events:none;
+  background:linear-gradient(90deg,var(--magenta),var(--cyan),var(--violet));
+  background-size:200% 100%; animation:navline-move 8s linear infinite;
+}
+
+
+@keyframes navline-move{ 0%{background-position:0% 0;} 100%{background-position:200% 0;} }
+@media (prefers-reduced-motion:reduce){ .nl-nav::after{ animation:none; } }
+
+.nl-nav-inner{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  /* asegura extremos y centro */
+  height: 100%;
+  padding: 0 20px;
+}
+
+.nl-left,
+.nl-right{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 230px;                /* reserva espacio p/centrar brand */
+}
+
+.nl-right{margin-left:auto; }
+
+.askRight{
+  color: var(--white);
+  opacity: .88;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+/* responsive */
+@media (max-width: 768px){
+  .nl-left, .nl-right { min-width: 0; gap: 8px; }
+  .askRight { display: none; } /* opcional: ocultar texto en móvil */
+}
+/* botón del lobby en el navbar */
+.btnSalirNav {
+  padding: 10px 18px;              /* tamaño intermedio */
+  border-radius: 10px;
+  background: #000;
+  color: #ff4dec;
+  border: 2px double #ff4dec;
+  font-weight: 600;
+  font-size: 16px;                  /* un poco más grande que antes */
+  cursor: pointer;
+
+  transition:
+    box-shadow .25s ease,
+    color .25s ease,
+    transform .25s ease;
+}
+
+.btnSalirNav:hover {
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 22px rgba(255,42,191,.55),
+    0 0 28px rgba(123,92,255,.45),
+    0 0 34px rgba(0,231,255,.40);
+}
+
+/* ------------------------------------------------------------------------------------------- */
+/* ===== Nav inferior ===== */
+.nl-nav1{
+  position:fixed; bottom:0; left:0; width:100%; height:70px; z-index:1000;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  border-top:1px solid rgba(255,255,255,.1);
+  box-shadow:0 -6px 18px rgba(0,0,0,.2);
+}
+.nl-nav1::after{
+  content:""; position:absolute; left:0; right:0; top:0; height:1.5px; pointer-events:none;
+  background:linear-gradient(90deg,var(--violet),var(--cyan),var(--magenta));
+  background-size:200% 100%; animation:navline-move-right 8s linear infinite;
+  box-shadow:0 0 10px rgba(255,77,236,.55), 0 0 14px rgba(0,231,255,.45), 0 0 18px rgba(123,92,255,.45);
+}
+@keyframes navline-move-right{ 0%{background-position:200% 0;} 100%{background-position:0% 0;} }
+.nl-nav1-inner{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:12px 20px; gap:16px; }
+
+/* ------------------------------------------------------------------------------------------- */
+/* ===== Botones ===== */
+button{
+  display:inline-block; padding:10px 16px; font-size:16px; cursor:pointer;
+  border-radius:10px; border:2px solid purple;
+  transition:background-color .25s, color .25s, border-color .25s, box-shadow .25s;
+}
+.btn_in,.btn_reg{ margin-top:0; }
+.btn_in{ background:#000; color:#00e7ff; border:2px double #00e7ff; margin-right:7px; font-weight:500; }
+.btn_in:hover{
+  background:#000; color:#fff;
+  box-shadow:0 0 22px rgba(255,42,191,.55), 0 0 28px rgba(123,92,255,.45), 0 0 34px rgba(0,231,255,.40);
+}
+.btn_reg{ background:#000; color:#ff4dec; border:2px double #ff4dec; font-weight:500; }
+.btn_reg:hover{
+  background:#000; color:#fff;
+  box-shadow:0 0 22px rgba(255,42,191,.55), 
+             0 0 28px rgba(123,92,255,.45), 
+             0 0 34px rgba(0,231,255,.40);
+}
+
+/* ===== Contenedor de página ===== */
+/* ajusta la altura útil; sin padding extra que empuja */
+.main-container{
+  margin-top: var(--nav-top);
+  min-height: calc(100vh - var(--nav-top) - var(--nav-bottom));
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  box-sizing:border-box;
+  padding-bottom: 0; /* <— quita el “empujón” sobre el footer */
+}
+/* ↓ evita scroll vertical global */
+html, body { height:100%; overflow:hidden; }
+
+:root{
+  --nav-top:110px;
+  --nav-bottom:70px;
+}
+/* ------------------------------------------------------------------------------------------- */
+/* ===== Carrusel (glass + borde) ===== */
+.nl-carousel{
+  --h: clamp(320px, 60vh, 640px);
+  --g1:#ff2abf; --g2:#7b5cff; --g3:#18e3ff; --pad:3px;
+  --glow1: rgba(255,42,191,.45); --glow2: rgba(24,227,255,.40);
+  position:relative; isolation:isolate;
+  max-width:1100px; width:100%; border-radius:16px; overflow:hidden; margin:auto; align-self:center; /* centra vertical dentro del grid */
+  background:rgba(10,12,24,.16); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  box-shadow:0 0 14px rgba(255,42,191,.35), 0 0 18px rgba(123,92,255,.30), 0 0 22px rgba(0,231,255,.25);
+  transition:box-shadow .3s ease;
+  transform: translateY(-30px);
+}
+.nl-carousel:hover{ box-shadow:0 0 22px rgba(255,42,191,.55), 0 0 28px rgba(123,92,255,.45), 0 0 34px rgba(0,231,255,.40); }
+
+.nl-carousel::after{
+  content:""; position:absolute; inset:0; z-index:5; pointer-events:none;
+  background:
+    radial-gradient(120% 100% at 50% 120%, rgba(0,231,255,.08) 0%, rgba(0,0,0,0) 60%),
+    linear-gradient(135deg, rgba(8,10,26,.22), rgba(8,10,26,.08));
+}
+.nl-carousel .carousel,
+.nl-carousel .carousel-inner,
+.nl-carousel .carousel-item{ height:var(--h); background:transparent; }
+.nl-carousel .carousel-item{ position:relative; }
+.nl-carousel .carousel-item img{
+  display:block; width:100%; height:100%; object-fit:cover; object-position:center;
+  opacity:.25; filter:saturate(90%) blur(.4px); transform:scale(1.01);
+}
+/* Controles */
+.carousel-control-prev, .carousel-control-next{ z-index:30; background:transparent; box-shadow:none; }
+/* Borde neón */
+.nl-carousel::before{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:10; padding:var(--pad);
+  background:linear-gradient(90deg,var(--g1),var(--g2),var(--g3));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  filter: drop-shadow(0 0 6px var(--glow1)) drop-shadow(0 0 8px var(--glow2));
+  transition:filter .28s ease;
+}
+.nl-carousel:hover::before{
+  filter: drop-shadow(0 0 10px var(--glow1)) drop-shadow(0 0 12px var(--glow2));
+  background: linear-gradient(90deg, var(--g3), var(--g2), var(--g1));
+}
+
+/* ------------------------------------------------------------------------------------------- */
+/* ===== TITULOS de los 3 slides ===== */
+.titulo-carrusel{
+  font-size: clamp(1.6rem, 3vw, 3rem);
+  font-weight: 800;
+  background: linear-gradient(90deg, #ffb7f8, #b9f7ff, #d6c7ff);
+  -webkit-background-clip: text;
+  color: #fff;
+  text-shadow:
+    0 0 10px rgba(0, 0, 0, 0.95),
+    0 0 18px rgba(0,231,255,.85),
+    0 0 26px rgba(123,92,255,.75);
+  margin: 0 0 50px;
+}
+
+/* ===== Texto general (Quienes / Sucursales) ===== */
+.nosotros-texto, .nosotros-texto1{
+  font-size: clamp(1rem, 2.6vw, 1.5rem);
+  color: var(--white);
+  text-shadow: 0 0 6px rgba(0,0,0,.8);
+  max-width: 800px; margin:0 auto; line-height:1.6;
+}
+
+.nl-slide-caption{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  text-align:center; width:min(92%, 900px);
+  z-index:50; pointer-events:none; align-items: center; justify-content: center;
+}
+
+.nosotros-texto{ margin-bottom: 30px; }
+.nosotros-texto1{ margin-bottom: 50px; }
+
+/* ------------------------------------------------------------------------------------------- */
+/* ===== Soporte ===== */
+.soporte-texto{
+  font-size: clamp(1rem, 2.6vw, 1.5rem);
+  color: var(--white);
+  text-shadow: 0 0 6px rgba(0,0,0,.8);
+  max-width:800px; margin:0 auto; line-height:1.6;
+  margin-bottom: 50px;
+}
+.soporte-link{ color: var(--cyan); text-decoration:none; font-weight:700; }
+.soporte-link:hover{ color: var(--violet); text-decoration:underline; }
+
+/* ------------------------------------------------------------------------------------------- */
+/* ===== Inputs ===== */
+input{
+  border:2px solid lightpink; border-radius:10px; padding:5px; width:200px;
+  font:16px Arial, Helvetica, sans-serif; margin-bottom:10px;
+  background:whitesmoke; color:#000;
+}
+input::placeholder{ color:gray; font-style:italic; opacity:.7; }
+input:focus{ border-color:purple; outline:none; box-shadow:0 0 5px rgba(128,0,128,.5); }
+
+/* ===== Responsive ===== */
+@media (max-width:768px){
+  .nl-nav-inner{ padding:10px 12px; }
+  #brand{ font-size:clamp(1.8rem,8vw,3rem); } /* override de tamaño en móviles */
+  .nl-carousel{ --h: 360px; }
+  .nl-slide-caption{ width:92%; }
+}
+
+/* Ruta: src/styles/style.css (tu hoja global de marca) */
+.nl-nav .btn_in:focus,
+.nl-nav .btn_in:focus-visible {
+  outline: none;       /* quita glow celeste */
+  box-shadow: none;    /* evita sombra en foco */
+}
+
+/* Ruta: src/styles/Style.css */
+body.route-register .nl-nav {
+  display: none !important;
+}
+body.route-register .nl-nav::before,
+body.route-register .nl-nav::after {
+  display: none !important;
+}
+
+/* En páginas de auth el navbar NO muestra botones a la derecha */
+.nl-nav.is-auth .nl-right { display: none !important; }
+
+/* (Opcional) matar pseudo-elementos/glow del navbar en auth */
+.nl-nav.is-auth::before,
+.nl-nav.is-auth::after {
+  display: none !important;
+  content: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+/* ===== NAVBAR MUY CLARO SOLO EN /registro ===== */
+.route-register .nl-nav {
+  background: rgba(0, 0, 0, 0.18) !important;   /* más claro */
+  backdrop-filter: blur(8px) brightness(1.05);   /* un poco de brillo */
+  -webkit-backdrop-filter: blur(8px) brightness(1.05);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.route-register .nl-nav::after {
+  opacity: 1; /* la línea neón queda brillante */
+}
+
+/* Brand universal para todos los navbar */
+#brand{
+  color: #ffffff;
+
+  /* glow violeta + cian (sin tinte rosa fuerte) */
+  text-shadow:
+    0 0 12px rgba(0,0,0,.85),
+    0 0 22px rgba(25, 20, 26, 0.699),
+    0 0 34px rgba(255, 0, 221, 0.5);
+  
+  transition: all .28s ease;
+}
+
+/* Hover universal */
+#brand:hover{
+  filter: brightness(1.12);
+  text-shadow:
+    0 0 5px rgba(255,255,255,.5),
+    0 0 28px rgba(123,92,255,.85),
+    0 0 40px rgba(0,231,255,.65);
+}
+
+
+/* Kill-switch: oculta CTAs dentro del CONTENIDO (main) del login, no el navbar */
+.route-login main :is(.ask, .askRight, .login-cta, .cta, [data-legacy-cta]) {
+  display: none !important;
+}
+.route-login main .btn_reg {
+  display: none !important;
+}
+
+/* BOTÓN MANUAL USUARIO */
+.btn_manual {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #000;
+  color: #a366ff;
+  border: 2px solid #a366ff;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+
+.btn_manual:hover {
+  color: #fff;
+  box-shadow:
+    0 0 12px rgba(0,231,255,.7),
+    0 0 20px rgba(255,42,191,.5);
+}

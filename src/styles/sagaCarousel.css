@@ -1,0 +1,280 @@
+/* Ruta: src/styles/sagaCarousel.css */
+
+/* CONTENEDOR DEL CARRUSEL */
+.saga-carousel {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 0 0.4rem; /* antes: 1.5rem 0 2.5rem */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  overflow: hidden;
+}
+
+/* FLECHAS */
+.saga-arrow {
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  color: #0ff;
+  font-size: 1.8rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.saga-arrow:disabled {
+  opacity: 0.2;
+  cursor: default;
+  box-shadow: none;
+}
+
+.saga-arrow:not(:disabled):hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.45);
+}
+
+.saga-arrow-left {
+  margin-right: 0.5rem;
+}
+
+.saga-arrow-right {
+  margin-left: 0.5rem;
+}
+
+/* PISTA DE MOVIMIENTO */
+.saga-carousel-track {
+  display: flex;
+  flex-wrap: nowrap;
+  transition: transform 0.35s ease; /* Animación al mover slides */
+}
+
+/* CADA SLIDE OCUPA SU ESPACIO */
+.saga-slide {
+  min-width: 260px; /* Justo para centrar la card */
+  display: flex;
+  justify-content: center;
+}
+
+/* TARJETA DE CADA SAGA */
+.saga-card {
+  flex: 0 0 230px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 1.25rem;
+  padding: 0.75rem 0.75rem 1rem;
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.507);
+  cursor: pointer;
+  text-align: center;
+  color: #fff;
+  position: relative;
+  transition:
+    transform 0.2s ease,
+    outline 0.2s ease;
+}
+
+/* IMAGEN PRINCIPAL */
+.saga-card-image {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+/* PLACEHOLDER DE IMAGEN */
+.saga-card-placeholder {
+  width: 100%;
+  height: 260px;
+  border-radius: 0.9rem;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #0ff;
+  margin-bottom: 0.5rem;
+}
+
+/* TEXTO DE LA SAGA */
+.saga-card-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* BLOQUE NEGRO DEL TÍTULO */
+.saga-card-info {
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 0.75rem;
+  padding: 0.35rem 0.5rem;
+}
+
+/* HOVER */
+.saga-card:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow:
+    0 0 14px rgba(185, 185, 185, 0.45),  
+    0 0 26px rgba(255, 255, 255, 0.527);    
+}
+
+/* SAGA SELECCIONADA */
+.saga-card.is-active {
+  outline: 2px solid #0ff;
+}
+
+/* ==========================================================
+   Animaciones compartidas para el carrusel de sagas
+   ========================================================== */
+
+/* Flotación suave del bloque (como si estuviera suspendido) */
+@keyframes nlCarouselFloat {
+  0%, 100% { transform: translateY(0); }
+  25%      { transform: translateY(-3px); }
+  50%      { transform: translateY(1px); }
+  75%      { transform: translateY(-2px); }
+}
+
+/* Drift lento del fondo (parallax leve) */
+@keyframes nlCarouselBgDrift {
+  0%   { background-position: 50% 0%; }
+  50%  { background-position: 48% 6%; }
+  100% { background-position: 50% 0%; }
+}
+
+/* Pulso leve del borde neón */
+@keyframes nlBorderGlow {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 8px rgba(0, 231, 255, 0.5))
+      drop-shadow(0 0 14px rgba(153, 29, 255, 0.35))
+      drop-shadow(0 0 18px rgba(255, 37, 208, 0.30));
+    opacity: 1;
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 14px rgba(0, 231, 255, 0.8))
+      drop-shadow(0 0 22px rgba(153, 29, 255, 0.55))
+      drop-shadow(0 0 28px rgba(255, 37, 208, 0.5));
+    opacity: 0.96;
+  }
+}
+
+/* Carrusel fondo – Fusión 1 (igual look que el grande) */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  max-width: var(--carousel-w, 1400px);
+  margin: 0 auto 0.3rem;
+  padding: 1.2rem;
+  border-radius: 1.8rem;
+
+  background:
+    linear-gradient(
+      0deg,
+      rgba(3, 7, 18, 0.96),
+      rgba(9, 23, 48, 0.9)
+    ),
+    radial-gradient(
+      130% 150% at 0% 120%,
+      rgba(0, 231, 255, 0.18),
+      transparent 64%
+    ),
+    radial-gradient(
+      140% 160% at 100% 0%,
+      rgba(255, 37, 208, 0.20),
+      transparent 64%
+    );
+  background-size: 140% 140%;
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.75),
+    0 0 18px rgba(0, 231, 255, 0.55),
+    0 0 30px rgba(153, 29, 255, 0.40),
+    0 0 40px rgba(255, 37, 208, 0.30);
+
+  isolation: isolate;
+  overflow: hidden;
+  will-change: transform, box-shadow, background-position;
+
+  transition:
+    transform 0.45s cubic-bezier(.2,.8,.2,1),
+    box-shadow 0.50s cubic-bezier(.2,.8,.2,1),
+    background 0.55s cubic-bezier(.2,.8,.2,1),
+    background-size 0.55s cubic-bezier(.2,.8,.2,1);
+
+  animation:
+    nlCarouselFloat 18s ease-in-out infinite,
+    nlCarouselBgDrift 26s linear infinite;
+}
+
+/* Hover SUAVE del contenedor (2ª foto) */
+.carousel-container:hover {
+  transform: translateY(-2px) scale(1.007);
+
+  background:
+    linear-gradient(
+      0deg,
+      rgba(2, 6, 18, 0.98),
+      rgba(7, 17, 36, 0.9)
+    ),
+    radial-gradient(
+      130% 150% at 0% 120%,
+      rgba(0, 231, 255, 0.20),
+      transparent 66%
+    ),
+    radial-gradient(
+      140% 160% at 100% 0%,
+      rgba(255, 37, 208, 0.22),
+      transparent 66%
+    );
+  background-size: 148% 148%;
+
+  box-shadow:
+    0 14px 32px rgba(0, 0, 0, 0.9),
+    0 0 44px rgba(0, 231, 255, 0.75),
+    0 0 38px rgba(153, 29, 255, 0.60),
+    0 0 52px rgba(255, 37, 208, 0.38);
+}
+
+/* Aro degradado animado, fino (igual al grande) */
+.carousel-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2.5px;
+  border-radius: inherit;
+  background: var(--grad-cta);
+  background-size: 300% 300%;
+
+  -webkit-mask: linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  pointer-events: none;
+
+  animation:
+    borderFlow 7s linear infinite,
+    nlBorderGlow 5.5s ease-in-out infinite;
+}
+
+/* Cuando alguna card está en hover, hacemos que el borde “respire” más */
+.carousel-container:has(.saga-card:hover)::before {
+  animation:
+    borderFlow 4.5s linear infinite,
+    nlBorderGlow 4.3s ease-in-out infinite;
+}

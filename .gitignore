@@ -1,0 +1,70 @@
+# ===============================
+# ARCHIVOS DE LOG (REGISTROS)
+# ===============================
+# Evita subir archivos de registros que se generan automáticamente
+# durante la ejecución de la aplicación.
+
+logs            
+# Carpeta completa de logs
+*.log           
+# Cualquier archivo con extensión .log
+npm-debug.log*  
+# Logs de error generados por npm
+yarn-debug.log* 
+# Logs de depuración de Yarn
+yarn-error.log* 
+# Logs de errores críticos de Yarn
+pnpm-debug.log* 
+# Logs de depuración de pnpm
+lerna-debug.log*
+# Logs generados por Lerna
+
+
+# ===============================
+# DEPENDENCIAS Y BUILD
+# ===============================
+# Estas carpetas se generan automáticamente al instalar y compilar,
+# y NO deben subirse al repositorio porque son pesadas y se regeneran.
+
+node_modules    
+# Librerías instaladas por npm/yarn
+dist            
+# Archivos finales compilados (build)
+dist-ssr        
+# Build para Server Side Rendering
+*.local         
+# Archivos locales específicos de entorno
+
+
+# ===============================
+# CONFIGURACIÓN DE EDITORES / IDE
+# ===============================
+# Archivos generados por editores que no aportan al proyecto.
+
+.vscode/*               
+# Configuración de VS Code
+!.vscode/extensions.json 
+# PERMITE solo este archivo específico
+.idea                   
+# Configuración de IntelliJ
+.DS_Store               
+# Archivos basura de macOS
+*.suo                   
+# Archivos de Visual Studio
+.ntvs                   
+# Configuración de Node Tools for Visual Studio
+*.njsproj               
+# Proyectos Node de Visual Studio
+*.sln                   
+# Soluciones de Visual Studio
+*.sw?                   
+# Archivos temporales de editores
+
+
+# ===============================
+# CARPETAS QUE NO DEBEN SUBIRSE
+# ===============================
+# Contenido sensible o generado automáticamente
+
+coverage/   
+# Resultados de pruebas de cobertura

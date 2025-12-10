@@ -1,0 +1,81 @@
+.catalogos-title {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: #222;
+  font-weight: 700;
+  text-align: center;
+}
+
+.catalogos-sub {
+  color: #555;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+/* GRID limpio */
+.catalogos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Contenedor del botón Catálogos + submenú (en el sidebar) */
+.menu-item-with-sub {
+  position: relative;
+}
+
+/* Estirar el botón "Catálogos" igual que los otros */
+.admin-sidebar .menu-item-with-sub > button {
+  width: 100%;
+  display: block;
+}
+
+/* SUBMENÚ del botón Catálogos en el sidebar */
+.admin-sidebar .submenu-catalogos {
+  position: absolute;
+  top: -139px;          /* ajústalo a gusto: -100, -130, etc. */
+  left: 100%;
+  margin-left: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  /* Panel oscuro similar al de la izquierda */
+  padding: 12px 10px;
+  background: rgba(5, 0, 20, 0.96); /* fondo oscuro */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  z-index: 999;
+}
+
+/* BOTONES de acciones SOLO para la página de catálogos,
+   ya NO tocamos los del submenú del sidebar */
+.catalogos-grid .btn-action {
+  font-size: 0.9rem;
+  padding: 8px 12px;
+
+  background: #f7f7f7;
+  border: 1px solid #d8d8d8;
+  color: #333;
+
+  border-radius: 8px;
+  cursor: pointer;
+
+  transition: 0.2s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+}
+
+.catalogos-grid .btn-action:hover {
+  background: #ececec;
+  border-color: #c7c7c7;
+  transform: translateY(-2px);
+}
+
+.catalogos-grid .btn-action:active {
+  transform: scale(0.98);
+}
