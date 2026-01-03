@@ -193,6 +193,8 @@ export async function eliminarUsuario(id) {
 // ==========================================================
 // Esta función arma el payload de registro a partir de los campos del formulario
 // y llama internamente a "crearUsuario".
+// Ruta: src/services/usuarios.js
+
 export async function registrarUsuario(desdeFormulario) {
   const telefonoLimpio = (desdeFormulario.telefono || "").replace(/\D/g, "");
   const telefonoNumero = Number(telefonoLimpio.slice(-9));
@@ -200,26 +202,15 @@ export async function registrarUsuario(desdeFormulario) {
   const payload = {
     nombre: (desdeFormulario.nombre || "").trim(),
     apellidos: (desdeFormulario.apellidos || "").trim(),
-    correo: (desdeFormulario.correo || "").trim(),
+    correo: (desdeFormulario.correo || "").trim().toLowerCase(),
     telefono: telefonoNumero,
-    password: (desdeFormulario.contrasena || "").trim(),
+    password: (desdeFormulario.contrasena || "").trim(), // backend espera "password"
     rolId: ROL_CLIENTE_ID,
-
-    direccion: {
-      calle: "Sin información",
-      numero: "0",
-      complemento: null,
-      codigoPostal: "0000000",
-      // Usa IDs reales que existan en tu BD
-      comunaId: 1,
-      regionId: 1,
-    },
   };
 
   console.log("[registrarUsuario] payload:", payload);
   return crearUsuario(payload);
 }
-
 
 // ==========================================================
 // PERFIL (usa /me con sesión backend vía cookie)

@@ -144,8 +144,8 @@ export default function Registro() {
     } else if (contrasena.length < 8) {
       err.contrasena = "* Mínimo 8 caracteres.";
       valido = false;
-    } else if (contrasena.length > 10) {
-      err.contrasena = "* Máximo 10 caracteres.";
+    } else if (contrasena.length > 255) {
+      err.contrasena = "* Máximo 255 caracteres.";
       valido = false;
     }
 
@@ -172,8 +172,6 @@ export default function Registro() {
       navigate("/login");
     } catch (error) {
       console.error(error);
-
-      // Error enviado desde backend (correo ya registrado, etc).
       setErrores((prev) => ({
         ...prev,
         general: error.message || "Error al registrar usuario",
@@ -237,7 +235,7 @@ export default function Registro() {
               value={formData.contrasena}
               onChange={handleChange}
               minLength={8}
-              maxLength={10}
+              maxLength={255}
             />
 
             {errores.contrasena && (
