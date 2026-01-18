@@ -18,9 +18,9 @@
 
   display: flex;              /* FLEX: centrado perfecto */
   justify-content: center;    /* horizontal */
-  align-items: center;        /* vertical */
+  align-items: flex-start;        /* vertical */
 
-  padding: 0 16px;
+  padding: 45px 16px 18px;
   overflow: auto;
 }
 

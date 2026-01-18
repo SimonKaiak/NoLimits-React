@@ -222,8 +222,7 @@ button{
   padding-bottom: 0; /* <— quita el “empujón” sobre el footer */
 }
 /* ↓ evita scroll vertical global */
-html, body { height:100%; overflow:hidden; }
-
+html, body { height: 100%; overflow-x: hidden; overflow-y: auto; }
 :root{
   --nav-top:110px;
   --nav-bottom:70px;
@@ -425,4 +424,328 @@ body.route-register .nl-nav::after {
   box-shadow:
     0 0 12px rgba(0,231,255,.7),
     0 0 20px rgba(255,42,191,.5);
+}
+
+/* Ruta: src/styles/style.css  (al final del archivo) */
+
+/* NAV: layout robusto mobile-first */
+.nl-nav-inner{
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* izq | brand | der */
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+/* extremos */
+.nl-left{ justify-self: start; min-width: 0; }
+.nl-right{ justify-self: end; min-width: 0; margin-left: 0; }
+
+/* Brand: deja de ser absoluto (esto evita que se “coma” a los botones) */
+#brand,
+#sub-brand{
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  justify-self: center;
+  text-align: center;
+  pointer-events: auto; /* por si lo quieres clickeable */
+}
+
+/* Tamaños más seguros en móvil */
+#brand{ font-size: clamp(1.4rem, 7vw, 2.2rem); }
+#sub-brand{ font-size: clamp(0.7rem, 3.5vw, 1.1rem); -webkit-text-stroke: 1px #a366ff; }
+
+/* Botones no deben forzar ancho infinito */
+.nl-left button,
+.nl-right button,
+.btn_manual,
+.btn_in,
+.btn_reg{
+  max-width: 100%;
+  font-size: 14px;
+  padding: 8px 10px;
+  white-space: nowrap;
+}
+
+/* Ruta: src/styles/style.css */
+
+@media (max-width: 420px){
+  .nl-nav{
+    height: auto; /* deja crecer */
+    padding: 8px 0;
+  }
+
+  .nl-nav-inner{
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "brand brand"
+      "left  right";
+    row-gap: 8px;
+  }
+
+  #brand, #sub-brand{
+    grid-area: brand;
+  }
+
+  .nl-left{ grid-area: left; }
+  .nl-right{ grid-area: right; }
+}
+
+/* =========================
+   FIX: #sub-brand usado en NAV + FOOTER
+   Mantiene gradiente y centra footer
+   Ruta: src/styles/style.css
+   ========================= */
+
+/* 1) Footer: centra con 1 solo elemento (sin cambiar tu JSX) */
+.nl-nav1-inner{
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 12px; /* respiración en móvil */
+}
+
+/* 2) Sub-brand en footer: NO absoluto (porque el absoluto era para navbar) */
+.nl-nav1 #sub-brand{
+  position: static !important;
+  transform: none !important;
+  left: auto !important;
+  top: auto !important;
+  margin: 0 !important;
+
+  /* mantiene el gradiente */
+  background: linear-gradient(90deg, var(--magenta), var(--cyan), var(--violet));
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  color: transparent;
+
+  /* responsive */
+  font-size: clamp(0.85rem, 4vw, 1.2rem);
+  text-align: center;
+  white-space: nowrap;
+  -webkit-text-stroke: 1px #a366ff;
+}
+
+/* 3) Sub-brand en navbar: si lo usas ahí, que sea opcional y no estorbe */
+.nl-nav #sub-brand{
+  display: none; /* en mobile-first es mejor ocultarlo para que no choque */
+}
+
+/* 4) Si quieres mostrarlo solo en pantallas grandes */
+@media (min-width: 1024px){
+  .nl-nav #sub-brand{
+    display: inline-block;
+  }
+}
+
+/* 5) Mobile: navbar en 2 filas y botones respirando */
+@media (max-width: 420px){
+  .nl-nav{
+    height: auto;
+    padding: 10px 0 12px;
+  }
+
+  .nl-nav-inner{
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "brand brand"
+      "left  right";
+    row-gap: 10px;
+    column-gap: 10px;
+    padding: 0 10px;
+  }
+
+  #brand{
+    grid-area: brand;
+    justify-self: center;
+    font-size: clamp(1.6rem, 8vw, 2.2rem);
+    line-height: 1.05;
+  }
+
+  .nl-left{ grid-area: left; justify-self: start; }
+  .nl-right{ grid-area: right; justify-self: end; }
+
+  .btn_manual, .btn_in, .btn_reg{
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+}
+
+/* 6) Extra: para 320px (muy chico) apilar */
+@media (max-width: 360px){
+  .nl-nav-inner{
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "brand"
+      "left"
+      "right";
+  }
+
+  .nl-left, .nl-right{
+    justify-self: center;
+  }
+
+  .btn_manual, .btn_in, .btn_reg{
+    width: 100%;
+    max-width: 240px;
+  }
+}
+
+/* =========================
+   BOTONES MOBILE-FIRST (375px)
+   ========================= */
+@media (max-width: 420px){
+
+  /* Contenedor de botones */
+  .nl-left,
+  .nl-right{
+    gap: 10px;
+  }
+
+  /* Botones generales */
+  .btn_manual,
+  .btn_in,
+  .btn_reg{
+    min-height: 44px;               /* tamaño táctil recomendado */
+    padding: 10px 14px;
+    font-size: 13.5px;
+    border-radius: 14px;
+    letter-spacing: .3px;
+    font-weight: 600;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  /* Manual de Usuario → más discreto */
+  .btn_manual{
+    color: #b38cff;
+    border-color: #b38cff;
+    box-shadow:
+      0 0 8px rgba(179,140,255,.35);
+  }
+
+  /* Iniciar Sesión → CTA principal */
+  .btn_in{
+    color: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow:
+      0 0 10px rgba(0,231,255,.45);
+  }
+
+  /* Registrarse → CTA secundario */
+  .btn_reg{
+    color: var(--magenta);
+    border-color: var(--magenta);
+    box-shadow:
+      0 0 10px rgba(255,77,236,.45);
+  }
+
+  /* Feedback táctil (tap) */
+  .btn_manual:active,
+  .btn_in:active,
+  .btn_reg:active{
+    transform: scale(0.96);
+    filter: brightness(1.1);
+  }
+}
+
+/* =========================
+   FIX: Botones NO se pisan en mobile
+   Ruta: src/styles/style.css
+   ========================= */
+
+@media (max-width: 420px){
+
+  /* Asegura que cada lado sea un contenedor flex sano */
+  .nl-left,
+  .nl-right{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;          /* si no caben, bajan ordenados */
+    min-width: 0;
+  }
+
+  /* Evita que los botones “empujen” al layout */
+  .btn_manual,
+  .btn_in,
+  .btn_reg{
+    flex: 0 1 auto;           /* permite encogerse */
+    max-width: 100%;
+    padding: 10px 12px;       /* un pelín menos para que quepan */
+    font-size: 12.8px;        /* bajita para 375 */
+    line-height: 1;
+  }
+
+  /* Si quieres que SIEMPRE queden en 2 filas exactas (1 botón por lado) */
+  .nl-nav-inner{
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "brand brand"
+      "left  right";
+  }
+
+  /* Importantísimo: no permitir que el texto rompa raro */
+  .btn_manual,
+  .btn_in,
+  .btn_reg{
+    white-space: nowrap;
+  }
+}
+
+/* Extra: en pantallas MUY chicas, apila y centra */
+@media (max-width: 360px){
+  .nl-left,
+  .nl-right{
+    justify-content: center;
+  }
+
+  .btn_manual,
+  .btn_in,
+  .btn_reg{
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 420px){
+  .btn_manual{
+    opacity: .85;
+    font-size: 12.5px;
+  }
+}
+
+/* =========================================
+   FIX: devolver hover que agranda el título
+   Ruta: src/styles/style.css (AL FINAL)
+   ========================================= */
+
+/* 1) Mantén el brand estático para que no se descentre,
+      pero deja el transform libre */
+#brand{
+  transform: none !important; /* base */
+  transition: transform .25s ease, filter .25s ease, text-shadow .25s ease;
+  transform-origin: center;   /* crece desde el centro */
+}
+
+/* 2) En hover, aplica el scale con prioridad */
+#brand:hover{
+  transform: scale(1.06) !important;  /* ajusta 1.04–1.08 a gusto */
+  filter: brightness(1.12);
+  text-shadow:
+    0 0 5px rgba(255,255,255,.5),
+    0 0 28px rgba(123,92,255,.85),
+    0 0 40px rgba(255,77,236,.75),
+    0 0 30px rgba(0,231,255,.30);
+}
+
+/* 3) Opcional: que en móvil no se agrande tanto */
+@media (max-width: 420px){
+  #brand:hover{ transform: scale(1.035) !important; }
 }

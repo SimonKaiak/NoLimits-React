@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, Element, scroller } from "react-scroll";
 import { useNavigate } from "react-router-dom";
 import "../styles/principal.css";
 import SagaCarousel from "../components/organisms/SagaCarousel";
-import { obtenerProductosPorSaga, listarProductos } from "../services/productos";
+import { listarProductos } from "../services/productos";
 
 // Carga todo lo que haya bajo /src/assets/img y deja lista la URL para usarla en <img src="...">
 const IMGS = import.meta.glob("../assets/img/**/*", { eager: true, as: "url" });
@@ -35,8 +35,10 @@ const PRODUCT_IMAGES = {
   "marvel's spider-man 2": "videojuegos/spiderman/VGSpiderman2.webp",
   // Spider-Man Accesorios.
   "máscara de spider-man – edición de colección": "accesorios/spiderman/ACCSpiderman1.webp",
-  "control dualsense ps5 – edición spider-man (diseño venom / simbionte)": "accesorios/spiderman/ACCSpiderman2.webp",
-  "audífonos gamer spider-man – edición marvel": "accesorios/spiderman/ACCSpiderman3.webp",
+  "control dualsense ps5 – edición spider-man (diseño venom / simbionte)":
+    "accesorios/spiderman/ACCSpiderman2.webp",
+  "audífonos gamer spider-man – edición marvel":
+    "accesorios/spiderman/ACCSpiderman3.webp",
 
   // Minecraft Peliculas
   "una pelicula de minecraft": "peliculas/minecraft/PMinecraft.webp",
@@ -46,89 +48,59 @@ const PRODUCT_IMAGES = {
   "minecraft: dungeons": "videojuegos/minecraft/VGMinecraftDungeons.webp",
   // Minecraft Accesorios.
   "lámpara abeja minecraft": "accesorios/minecraft/ACCMinecraft1.webp",
-  "audífonos gamer minecraft - edición mojang": "accesorios/minecraft/ACCMinecraft2.webp",
+  "audífonos gamer minecraft - edición mojang":
+    "accesorios/minecraft/ACCMinecraft2.webp",
   "preservativo minecraft": "accesorios/minecraft/ACCMinecraft3.webp",
 };
 
 // Formatea un número como pesos chilenos.
 const clp = (n) => `$${Number(n || 0).toLocaleString("es-CL")}`;
 
-// ====== Storage / Carrito ======
-const STORAGE = { CART: "carrito", TOTAL: "totalCompra" };
+// ====== Storage / Favoritos ======
+const FAV_STORAGE = { FAVS: "nl_favoritos" };
 
-// Hook que encapsula toda la lógica del carrito en el frontend.
-function useCarrito() {
-  const [items, setItems] = useState(() => {
+function useFavoritos() {
+  const [favs, setFavs] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE.CART)) || [];
+      return JSON.parse(localStorage.getItem(FAV_STORAGE.FAVS)) || [];
     } catch {
       return [];
     }
   });
 
-  const total = useMemo(
-    () =>
-      items.reduce(
-        (acc, it) =>
-          acc + (Number(it.precio) || 0) * (Number(it.cantidad) || 1),
-        0
-      ),
-    [items]
-  );
-
-  const unidades = useMemo(
-    () => items.reduce((acc, it) => acc + (Number(it.cantidad) || 1), 0),
-    [items]
-  );
-
   useEffect(() => {
-    localStorage.setItem(STORAGE.CART, JSON.stringify(items));
-    localStorage.setItem(STORAGE.TOTAL, String(total));
-  }, [items, total]);
+    localStorage.setItem(FAV_STORAGE.FAVS, JSON.stringify(favs));
+  }, [favs]);
 
-  const add = (idProducto, nombre, precio) =>
-    setItems((prev) => {
-      const idx = prev.findIndex((p) => p.idProducto === idProducto);
-      if (idx >= 0) {
-        const next = [...prev];
-        next[idx] = {
-          ...next[idx],
-          cantidad: (Number(next[idx].cantidad) || 1) + 1,
-        };
-        return next;
-      }
-      return [
-        ...prev,
-        { idProducto, nombre, precio: Number(precio), cantidad: 1 },
-      ];
+  const toggleFav = (product) => {
+    if (!product?.id) return;
+
+    setFavs((prev) => {
+      const exists = prev.some((p) => p.id === product.id);
+      if (exists) return prev.filter((p) => p.id !== product.id);
+      return [product, ...prev];
     });
+  };
 
-  const inc = (i) =>
-    setItems((prev) =>
-      prev.map((it, idx) =>
-        idx === i
-          ? { ...it, cantidad: (Number(it.cantidad) || 1) + 1 }
-          : it
-      )
-    );
+  const removeFav = (id) => setFavs((prev) => prev.filter((p) => p.id !== id));
 
-  const dec = (i) =>
-    setItems((prev) => {
-      const next = [...prev];
-      const q = (Number(next[i].cantidad) || 1) - 1;
-      if (q <= 0) next.splice(i, 1);
-      else next[i] = { ...next[i], cantidad: q };
-      return next;
-    });
+  const clearFavs = () => setFavs([]);
 
-  const delItem = (i) =>
-    setItems((prev) => prev.filter((_, idx) => idx !== i));
+  const isFav = (id) => favs.some((p) => p.id === id);
 
-  return { items, total, unidades, add, inc, dec, delItem };
+  return { favs, toggleFav, removeFav, clearFavs, isFav };
 }
 
 // ====== Carrusel de productos por sección ======
-function Carousel({ id, productos, sectionKey, onAdd, navH, targetName }) {
+function Carousel({
+  id,
+  productos,
+  sectionKey,
+  navH,
+  targetName,
+  onToggleFav,
+  isFavFn,
+}) {
   const slides = productos || [];
   const [i, setI] = useState(0);
   const [openInfo, setOpenInfo] = useState(false);
@@ -142,6 +114,14 @@ function Carousel({ id, productos, sectionKey, onAdd, navH, targetName }) {
     : 0;
 
   const current = hasSlides ? slides[safeIndex] : null;
+
+  const goToLink = () => {
+    if (!current?.urlCompra) {
+      alert("Este producto no tiene link configurado todavía.");
+      return;
+    }
+    window.open(current.urlCompra, "_blank", "noopener,noreferrer");
+  };
 
   useEffect(() => {
     if (!hasSlides) return;
@@ -188,11 +168,6 @@ function Carousel({ id, productos, sectionKey, onAdd, navH, targetName }) {
     videojuegos: "- Videojuegos -",
     accesorios: "- Accesorios -",
   };
-  const titleId = {
-    peliculas: "peliculas",
-    videojuegos: "videojuegos",
-    accesorios: "accesorios",
-  };
 
   const RELATED = {
     peliculas: ["videojuegos", "accesorios"],
@@ -205,19 +180,19 @@ function Carousel({ id, productos, sectionKey, onAdd, navH, targetName }) {
     setI((prev) => (prev + dir + slides.length) % slides.length);
   };
 
+  // ✅ Offsets limpios (sin + -33 raros)
   const sectionOffsets = {
-    peliculas: -(navH + -33),
+    peliculas: -(navH - 33),
     videojuegos: -(navH - 33),
     accesorios: -(navH - 110),
   };
 
-  const jumpTo = (sectionName) => {
+  // ✅ Jump directo por key ("peliculas" | "videojuegos" | "accesorios")
+  const jumpTo = (key) => {
     const offset =
-      sectionOffsets[sectionName] !== undefined
-        ? sectionOffsets[sectionName]
-        : -navH;
+      sectionOffsets[key] !== undefined ? sectionOffsets[key] : -navH;
 
-    scroller.scrollTo(sectionName, {
+    scroller.scrollTo(key, {
       smooth: true,
       duration: 1,
       offset,
@@ -253,27 +228,27 @@ function Carousel({ id, productos, sectionKey, onAdd, navH, targetName }) {
           -❯
         </button>
 
-        <div
-          className={`nl-cta ${openInfo ? "is-open" : "is-closed"}`}
-          ref={ctaRef}
-        >
+        <div className={`nl-cta ${openInfo ? "is-open" : "is-closed"}`} ref={ctaRef}>
           {!openInfo && current && (
             <>
               <strong className="nl-price">{clp(current.price)}</strong>
               <div className="nl-actions">
-                <button
-                  className="btn btn-info"
-                  onClick={() => setOpenInfo(true)}
-                >
+                <button className="btn btn-info" onClick={() => setOpenInfo(true)}>
                   - Más información -
                 </button>
+
                 <button
-                  className="btn btn-success nl-add"
-                  onClick={() =>
-                    onAdd(current.id, current.name, current.price)
-                  }
+                  className="btn btn-outline-warning"
+                  onClick={() => onToggleFav?.(current)}
+                  title="Guardar / quitar de favoritos"
                 >
-                  - Agregar -
+                  {isFavFn?.(current?.id) ? "⭐ Guardado" : "☆ Favorito"}
+                </button>
+
+                <button className="btn btn-success nl-add" onClick={goToLink}>
+                  {current?.labelCompra
+                    ? `- ${current.labelCompra} -`
+                    : "- Ir al link -"}
                 </button>
               </div>
             </>
@@ -290,22 +265,26 @@ function Carousel({ id, productos, sectionKey, onAdd, navH, targetName }) {
                   justifyContent: "center",
                 }}
               >
-                <button
-                  className="btn btn-info"
-                  onClick={() => setOpenInfo(false)}
-                >
+                <button className="btn btn-info" onClick={() => setOpenInfo(false)}>
                   - Menos información -
                 </button>
+
+                <button
+                  className="btn btn-outline-warning"
+                  onClick={() => onToggleFav?.(current)}
+                  title="Guardar / quitar de favoritos"
+                >
+                  {isFavFn?.(current?.id) ? "⭐ Guardado" : "☆ Favorito"}
+                </button>
+
                 <strong className="nl-price" style={{ margin: 0 }}>
                   {clp(current.price)}
                 </strong>
-                <button
-                  className="btn btn-success nl-add"
-                  onClick={() =>
-                    onAdd(current.id, current.name, current.price)
-                  }
-                >
-                  - Agregar -
+
+                <button className="btn btn-success nl-add" onClick={goToLink}>
+                  {current?.labelCompra
+                    ? `- ${current.labelCompra} -`
+                    : "- Ir al link -"}
                 </button>
               </div>
 
@@ -343,14 +322,12 @@ function Carousel({ id, productos, sectionKey, onAdd, navH, targetName }) {
                     )}
                     {current.generos?.length > 0 && (
                       <p className="m-0">
-                        <strong>Géneros:</strong>{" "}
-                        {current.generos.join(" · ")}
+                        <strong>Géneros:</strong> {current.generos.join(" · ")}
                       </p>
                     )}
                     {current.empresas?.length > 0 && (
                       <p className="m-0">
-                        <strong>Empresas:</strong>{" "}
-                        {current.empresas.join(" · ")}
+                        <strong>Empresas:</strong> {current.empresas.join(" · ")}
                       </p>
                     )}
                     {current.desarrolladores?.length > 0 && (
@@ -375,7 +352,8 @@ function Carousel({ id, productos, sectionKey, onAdd, navH, targetName }) {
                   <button
                     key={key}
                     className="btn btn-outline-info nl-link"
-                    onClick={() => jumpTo(titleId[key])}
+                    // ✅ sin titleId: key ya es "peliculas"/"videojuegos"/"accesorios"
+                    onClick={() => jumpTo(key)}
                   >
                     {pretty[key]}
                   </button>
@@ -394,20 +372,15 @@ export default function Principal() {
   const navigate = useNavigate();
 
   const [selectedSaga, setSelectedSaga] = useState(null);
-
   const [allProducts, setAllProducts] = useState([]);
 
   const [peliculas, setPeliculas] = useState([]);
   const [videojuegos, setVideojuegos] = useState([]);
   const [accesorios, setAccesorios] = useState([]);
 
-  const { items, total, unidades, add, inc, dec, delItem } = useCarrito();
-
-  // PAGINACIÓN DEL CARRITO
-  const [cartPage, setCartPage] = useState(0);
-  const CART_PAGE_SIZE = 5;
-
-  const [cartOpen, setCartOpen] = useState(false);
+  // ✅ Favoritos
+  const { favs, toggleFav, removeFav, clearFavs, isFav } = useFavoritos();
+  const [favsOpen, setFavsOpen] = useState(false);
 
   const [search, setSearch] = useState("");
   const [searchHit, setSearchHit] = useState(null);
@@ -424,34 +397,12 @@ export default function Principal() {
       .catch((err) => console.error("Error cargando productos:", err));
   }, []);
 
-  const totalPages = Math.max(1, Math.ceil(items.length / CART_PAGE_SIZE));
-  const paginatedItems = items.slice(
-    cartPage * CART_PAGE_SIZE,
-    cartPage * CART_PAGE_SIZE + CART_PAGE_SIZE
-  );
-
-  // Si elimino productos y la página queda fuera de rango, ajusto
-  useEffect(() => {
-    const maxPage = Math.max(0, Math.ceil(items.length / CART_PAGE_SIZE) - 1);
-    if (cartPage > maxPage) {
-      setCartPage(maxPage);
-    }
-  }, [items.length, cartPage]);
-
-  const jumpToSection = (name) => {
-    scroller.scrollTo(name, {
-      smooth: true,
-      duration: 600,
-      offset: -navH,
-    });
-  };
-
   useEffect(() => {
     const calc = () => {
       const nav = document.querySelector(
         "nav.navbar.bg-body-tertiary.fixed-top"
       );
-      setNavH(((nav?.offsetHeight) || 120) + 10);
+      setNavH((nav?.offsetHeight || 120) + 10);
     };
 
     calc();
@@ -464,9 +415,10 @@ export default function Principal() {
     return () => document.body.classList.remove("route-principal");
   }, []);
 
+  // Escape cierra favoritos
   useEffect(() => {
     const k = (e) => {
-      if (e.key === "Escape") setCartOpen(false);
+      if (e.key === "Escape") setFavsOpen(false);
     };
     document.addEventListener("keydown", k);
     return () => document.removeEventListener("keydown", k);
@@ -489,45 +441,12 @@ export default function Principal() {
             .toLowerCase()
             .trim();
 
-          const sagaSel = (selectedSaga || "")
-            .toString()
-            .toLowerCase()
-            .trim();
+          const sagaSel = (selectedSaga || "").toString().toLowerCase().trim();
 
           return sagaProd.includes(sagaSel);
         });
-      
-        console.log(
-          "Productos recibidos en Principal para saga:",
-          selectedSaga,
-          data
-        );
 
         if (!Array.isArray(data)) return;
-
-        const mapToSlide = (p) => {
-          const key = p.nombre?.toLowerCase() || "";
-          const localImage = PRODUCT_IMAGES[key] || "logos/NoLimits.webp";
-
-          return {
-            id: p.id,
-            name: p.nombre,
-            price: p.precio,
-            desc: p.descripcion || p.nombre,
-            src: img(localImage),
-            alt: p.nombre,
-
-            // NUEVOS CAMPOS QUE VIENEN DEL BACK
-            tipo: p.tipoProductoNombre || p.tipoProducto || null,
-            clasificacion: p.clasificacionNombre || null,
-            estado: p.estadoNombre || null,
-            saga: p.saga || null,
-            plataformas: Array.isArray(p.plataformas) ? p.plataformas : [],
-            generos: Array.isArray(p.generos) ? p.generos : [],
-            empresas: Array.isArray(p.empresas) ? p.empresas : [],
-            desarrolladores: Array.isArray(p.desarrolladores) ? p.desarrolladores : [],
-          };
-        };
 
         const getTipo = (p) =>
           (p.tipoProductoNombre || p.tipoProducto || p.tipo || "")
@@ -536,9 +455,36 @@ export default function Principal() {
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "");
 
-        const peliculasData = data.filter((p) =>
-          getTipo(p).includes("pelic")
-        );
+        const mapToSlide = (p) => {
+          const key = p.nombre?.toLowerCase() || "";
+          const localImage = PRODUCT_IMAGES[key] || "logos/NoLimits.webp";
+
+          return {
+            // ✅ Si tu back no trae "id", ajusta acá (ej: p.idProducto)
+            id: p.id,
+            name: p.nombre,
+            price: p.precio,
+            desc: p.descripcion || p.nombre,
+            src: img(localImage),
+            alt: p.nombre,
+            urlCompra: p.urlCompra || null,
+            labelCompra: p.labelCompra || null,
+
+            // Campos extra del back
+            tipo: p.tipoProductoNombre || p.tipoProducto || null,
+            clasificacion: p.clasificacionNombre || null,
+            estado: p.estadoNombre || null,
+            saga: p.saga || null,
+            plataformas: Array.isArray(p.plataformas) ? p.plataformas : [],
+            generos: Array.isArray(p.generos) ? p.generos : [],
+            empresas: Array.isArray(p.empresas) ? p.empresas : [],
+            desarrolladores: Array.isArray(p.desarrolladores)
+              ? p.desarrolladores
+              : [],
+          };
+        };
+
+        const peliculasData = data.filter((p) => getTipo(p).includes("pelic"));
 
         // ORDEN PERSONALIZADO PARA VIDEOJUEGOS DE MINECRAFT
         const minecraftOrder = [
@@ -546,11 +492,11 @@ export default function Principal() {
           "minecraft: dungeons",
         ];
 
-        let videojuegosData = data
+        const videojuegosData = data
           .filter((p) => getTipo(p).includes("video"))
           .sort((a, b) => {
-            const aName = a.nombre.toLowerCase();
-            const bName = b.nombre.toLowerCase();
+            const aName = (a.nombre || "").toLowerCase();
+            const bName = (b.nombre || "").toLowerCase();
 
             const aIdx = minecraftOrder.indexOf(aName);
             const bIdx = minecraftOrder.indexOf(bName);
@@ -563,9 +509,7 @@ export default function Principal() {
           });
 
         // Accesorios
-        let accesoriosData = data.filter((p) =>
-          getTipo(p).includes("acces")
-        );
+        let accesoriosData = data.filter((p) => getTipo(p).includes("acces"));
 
         // Orden personalizado SOLO para Minecraft
         const minecraftAccOrder = [
@@ -576,8 +520,8 @@ export default function Principal() {
 
         if ((selectedSaga || "").toLowerCase() === "minecraft") {
           accesoriosData = accesoriosData.sort((a, b) => {
-            const aName = a.nombre.toLowerCase();
-            const bName = b.nombre.toLowerCase();
+            const aName = (a.nombre || "").toLowerCase();
+            const bName = (b.nombre || "").toLowerCase();
 
             const aIdx = minecraftAccOrder.indexOf(aName);
             const bIdx = minecraftAccOrder.indexOf(bName);
@@ -601,8 +545,6 @@ export default function Principal() {
     cargarProductosDeSaga();
   }, [selectedSaga, allProducts]);
 
-  const sagaLabel = selectedSaga || "";
-
   const handleSearch = (e) => {
     e.preventDefault();
     const q = search.trim().toLowerCase();
@@ -613,11 +555,7 @@ export default function Principal() {
       return;
     }
 
-    const secciones = {
-      peliculas,
-      videojuegos,
-      accesorios,
-    };
+    const secciones = { peliculas, videojuegos, accesorios };
 
     let found = null;
     for (const [section, arr] of Object.entries(secciones)) {
@@ -688,15 +626,19 @@ export default function Principal() {
                       Perfil
                     </button>
                   </li>
+
                   <li>
                     <button
                       className="dropdown-item"
-                      onClick={() => navigate("/mis-compras")}
+                      onClick={() => setFavsOpen(true)}
                     >
-                      Mis compras
+                      Favoritos ⭐ ({favs.length})
                     </button>
                   </li>
-                  <li><hr className="dropdown-divider" /></li>
+
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
                   <li>
                     <button
                       className="dropdown-item text-danger"
@@ -730,12 +672,12 @@ export default function Principal() {
                 </button>
               </form>
 
-              {/* Carrito */}
+              {/* Botón Ver Favoritos */}
               <button
-                className="carrito-btn me-2"
-                onClick={() => setCartOpen((v) => !v)}
+                className="btn btn-outline-warning me-2"
+                onClick={() => setFavsOpen(true)}
               >
-                🛒 <span id="contador">{unidades}</span>
+                ⭐ Ver Favoritos ({favs.length})
               </button>
             </div>
           </div>
@@ -776,7 +718,7 @@ export default function Principal() {
                 scroller.scrollTo("peliculas", {
                   smooth: true,
                   duration: 1,
-                  offset: -(navH + -33),
+                  offset: -(navH - 33),
                 })
               }
             >
@@ -840,11 +782,12 @@ export default function Principal() {
               id="peliculas"
               sectionKey="peliculas"
               productos={peliculas}
-              onAdd={add}
               navH={navH}
               targetName={
                 searchHit?.section === "peliculas" ? searchHit.name : null
               }
+              onToggleFav={toggleFav}
+              isFavFn={isFav}
             />
 
             {/* Videojuegos */}
@@ -859,11 +802,12 @@ export default function Principal() {
               id="videojuegos"
               sectionKey="videojuegos"
               productos={videojuegos}
-              onAdd={add}
               navH={navH}
               targetName={
                 searchHit?.section === "videojuegos" ? searchHit.name : null
               }
+              onToggleFav={toggleFav}
+              isFavFn={isFav}
             />
 
             {/* Accesorios */}
@@ -878,112 +822,84 @@ export default function Principal() {
               id="accesorios"
               sectionKey="accesorios"
               productos={accesorios}
-              onAdd={add}
               navH={navH}
               targetName={
                 searchHit?.section === "accesorios" ? searchHit.name : null
               }
+              onToggleFav={toggleFav}
+              isFavFn={isFav}
             />
           </>
         )}
       </main>
 
-      {/* PANEL DEL CARRITO FLOANTE */}
+      {/* PANEL DE FAVORITOS */}
       <div
-        className={`fondo-carrito ${cartOpen ? "is-open" : ""}`}
-        id="modeloCarrito"
+        className={`fondo-carrito ${favsOpen ? "is-open" : ""}`}
+        id="modeloFavoritos"
         onClick={(e) => {
-          if (e.target.id === "modeloCarrito") setCartOpen(false);
+          if (e.target.id === "modeloFavoritos") setFavsOpen(false);
         }}
       >
         <div className="modelo-contenido animar">
-          <h2>Tu Carrito</h2>
+          <h2>Favoritos</h2>
 
-          <ul id="carrito">
-            {paginatedItems.map((it, idx) => {
-              const realIndex = cartPage * CART_PAGE_SIZE + idx;
-              const subtotal = Number(it.precio) * Number(it.cantidad);
-
-              return (
-                <li key={realIndex}>
-                  <div className="carrito-item-main">
-                    <span className="carrito-item-name">{it.nombre}</span>
-                    <div className="carrito-item-meta">
-                      <span className="carrito-item-qty">x{it.cantidad}</span>
-                      <span className="carrito-item-price">
-                        {clp(subtotal)}
-                      </span>
-                    </div>
+          <ul id="favoritos">
+            {favs.map((f) => (
+              <li key={f.id}>
+                <div className="carrito-item-main">
+                  {/* ✅ Estrellita en la lista */}
+                  <span className="carrito-item-name">⭐ {f.name}</span>
+                  <div className="carrito-item-meta">
+                    <span className="carrito-item-price">{clp(f.price)}</span>
                   </div>
+                </div>
 
-                  <div className="carrito-item-actions">
-                    <button
-                      className="btn-cart-qty btn-cart-qty--minus"
-                      onClick={() => dec(realIndex)}
-                    >
-                      -
-                    </button>
-                    <button
-                      className="btn-cart-qty btn-cart-qty--plus"
-                      onClick={() => inc(realIndex)}
-                    >
-                      +
-                    </button>
-                    <button
-                      className="btn-cart-remove"
-                      onClick={() => delItem(realIndex)}
-                    >
-                      ❌
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
+                <div className="carrito-item-actions">
+                  <button
+                    className="btn btn-success"
+                    onClick={() => {
+                      if (!f.urlCompra) {
+                        alert(
+                          "Este producto no tiene link configurado todavía."
+                        );
+                        return;
+                      }
+                      window.open(f.urlCompra, "_blank", "noopener,noreferrer");
+                    }}
+                  >
+                    {f?.labelCompra ? `- ${f.labelCompra} -` : "- Ir al link -"}
+                  </button>
 
-            {items.length === 0 && (
+                  <button
+                    className="btn-cart-remove"
+                    onClick={() => removeFav(f.id)}
+                    title="Quitar de favoritos"
+                  >
+                    ❌
+                  </button>
+                </div>
+              </li>
+            ))}
+
+            {favs.length === 0 && (
               <li>
-                <span className="text-muted">Tu carrito está vacío.</span>
+                <span className="text-muted">No tienes favoritos guardados.</span>
               </li>
             )}
           </ul>
 
-          {/* Paginación del carrito */}
-          {items.length > CART_PAGE_SIZE && (
-            <div className="d-flex justify-content-between align-items-center mb-2">
-              <button
-                type="button"
-                className="btn-cart-qty btn-cart-qty--minus"
-                disabled={cartPage === 0}
-                onClick={() => setCartPage((p) => Math.max(0, p - 1))}
-              >
-                ◀
-              </button>
-              <small>
-                Página {cartPage + 1} de {totalPages}
-              </small>
-              <button
-                type="button"
-                className="btn-cart-qty btn-cart-qty--plus"
-                disabled={cartPage >= totalPages - 1}
-                onClick={() =>
-                  setCartPage((p) => Math.min(totalPages - 1, p + 1))
-                }
-              >
-                ▶
-              </button>
-            </div>
-          )}
+          <div className="d-flex justify-content-between align-items-center mt-2">
+            <button className="btn-cerrar" onClick={() => setFavsOpen(false)}>
+              - Cerrar -
+            </button>
 
-          <h3>
-            Total: <span id="total">{clp(total)}</span>
-          </h3>
-
-          <button className="btn-comprar" onClick={() => navigate("/pago")}>
-            - Finalizar compra -
-          </button>
-          <button className="btn-cerrar" onClick={() => setCartOpen(false)}>
-            - Cerrar -
-          </button>
+            {favs.length > 0 && (
+              <button className="btn btn-outline-danger" onClick={clearFavs}>
+                - Borrar todos -
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
