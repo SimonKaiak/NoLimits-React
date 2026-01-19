@@ -49,7 +49,6 @@ import AdminMetodoEnvioList from "./pages/admin/AdminMetodoEnvioList.jsx";
 // Administrador – Ventas
 import AdminVentasList from "./pages/admin/AdminVentasList.jsx";
 import AdminVentaDetalle from "./pages/admin/AdminVentasList.jsx";
-g
 import AdminUsuarioList from "./pages/admin/AdminUsuarioList.jsx";
 
 export default function App() {
