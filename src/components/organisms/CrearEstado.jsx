@@ -111,8 +111,8 @@ export default function CrearEstado({ modo, estado, onCerrar }) {
 
     const payload = {
       nombre: form.nombre.trim(),
-      descripcion: form.descripcion?.trim() || null,
-      activo: !!form.activo,
+      descripcion: (form.descripcion || "").trim(), 
+      activo: Boolean(form.activo),
     };
 
     try {
