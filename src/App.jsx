@@ -112,8 +112,7 @@ export default function App() {
    */
   const ocultarLayout =
     pathname === "/principal" ||
-    pathname === "/olvide-contrasenia" ||
-    pathname.startsWith("/admin");
+    pathname === "/olvide-contrasenia";
 
   return (
     <>
