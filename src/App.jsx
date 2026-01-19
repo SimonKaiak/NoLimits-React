@@ -49,7 +49,7 @@ import AdminMetodoEnvioList from "./pages/admin/AdminMetodoEnvioList.jsx";
 // Administrador – Ventas
 import AdminVentasList from "./pages/admin/AdminVentasList.jsx";
 import AdminVentaDetalle from "./pages/admin/AdminVentasList.jsx";
-
+g
 import AdminUsuarioList from "./pages/admin/AdminUsuarioList.jsx";
 
 export default function App() {
@@ -101,7 +101,11 @@ export default function App() {
       ? localStorage.getItem("nl_role")
       : null;
 
-  const isAdmin = isLogged && role === "ADMIN";
+  // Normalizamos el rol para evitar fallos por "ROLE_ADMIN", minúsculas o espacios
+  const roleNormalized = (role || "").toUpperCase().trim();
+
+  const isAdmin =
+    isLogged && (roleNormalized === "ADMIN" || roleNormalized === "ROLE_ADMIN");
 
   /**
    * Control para ocultar Navbar y Footer en rutas específicas
@@ -110,7 +114,7 @@ export default function App() {
   const ocultarLayout =
     pathname === "/principal" ||
     pathname === "/olvide-contrasenia" ||
-    pathname.startsWith(false);
+    pathname.startsWith("/admin");
 
   return (
     <>

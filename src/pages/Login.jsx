@@ -81,7 +81,7 @@ export default function Login() {
     return ok;
   };
 
-  /**
+    /**
    * Maneja el envío del formulario.
    * Primero valida.
    * Luego llama al backend.
@@ -113,6 +113,11 @@ export default function Login() {
       localStorage.setItem("nl_user", JSON.stringify(data));
       localStorage.setItem("nl_role", data.rolNombre || data.rol || "");
 
+      // guardar token JWT si viene del backend
+      if (data?.token) {
+        localStorage.setItem("nl_token", data.token);
+      }
+      
       /**
        * Se determina si el usuario es administrador.
        * Esto puede usarse de tres formas:
@@ -120,10 +125,16 @@ export default function Login() {
        *  - rol (por compatibilidad)
        *  - rolId (si el backend solo envía ID)
        */
+      const rolNombre = (data.rolNombre || data.rol || "")
+        .toUpperCase()
+        .trim();
+
+      const rolId = Number(data.rolId);
+
       const esAdmin =
-        data.rolNombre === "ADMIN" ||
-        data.rol === "ADMIN" ||
-        data.rolId === 2;
+        rolNombre === "ROLE_ADMIN" ||
+        rolNombre === "ADMIN" ||
+        rolId === 2;
 
       // Redirige según el perfil
       if (esAdmin) {
