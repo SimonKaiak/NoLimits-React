@@ -1,12 +1,7 @@
 // ======================================================================
 // Servicio: tiposProducto.js
 // Maneja todas las operaciones CRUD relacionadas con "Tipo de Producto".
-// Ejemplos: Películas, Videojuegos, Accesorios, Libros, etc.
-//
-// Todos los métodos usan fetch() y siguen la estructura general del backend.
 // ======================================================================
-
-
 
 // ----------------------------------------------------------------------
 // API_BASE:
@@ -15,35 +10,41 @@ const API_BASE =
   import.meta.env.VITE_API_URL ||
   "https://nolimits-backend-final.onrender.com";
 
-
 // ----------------------------------------------------------------------
 // API_URL:
 // Ruta base para todos los endpoints del recurso "tipo-productos".
 // ----------------------------------------------------------------------
 const API_URL = `${API_BASE}/api/v1/tipo-productos`;
 
+// ----------------------------------------------------------------------
+// Helpers: token + headers
+// ----------------------------------------------------------------------
+function getToken() {
+  return typeof window !== "undefined" ? localStorage.getItem("nl_token") : null;
+}
+
+function authHeaders(extra = {}) {
+  const token = getToken();
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...extra,
+  };
+}
+
 /* ======================================================================
-   LISTAR TIPOS DE PRODUCTO
-   GET  /api/v1/tipo-productos
-   GET  /api/v1/tipo-productos/buscar?nombre={texto}
-
-   Parámetros:
-     - page (actualmente ignorado, backend no pagina)
-     - search -> texto para buscar por nombre
-
-   Lógica:
-      Si viene texto, usamos endpoint /buscar.
-      Si no, traemos todos los tipos de producto.
-
-   Devuelve: lista JSON.
+   LISTAR TIPOS DE PRODUCTO (PAGINADO)
+   GET  /api/v1/tipo-productos/paginado?page=1&size=4&search=
    ====================================================================== */
 export async function listarTiposProducto(page = 1, search = "") {
-
   const url = `${API_URL}/paginado?page=${page}&size=4&search=${encodeURIComponent(
     search
   )}`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    method: "GET",
+    headers: authHeaders(),
+  });
 
   if (!res.ok) {
     const txt = await res.text().catch(() => "");
@@ -51,22 +52,17 @@ export async function listarTiposProducto(page = 1, search = "") {
     throw new Error("Error cargando tipos de productos");
   }
 
-  return await res.json(); // devuelve: { contenido, pagina, totalPaginas, totalElementos }
+  return await res.json();
 }
 
 /* ======================================================================
    CREAR TIPO DE PRODUCTO
    POST  /api/v1/tipo-productos
-
-   payload debe tener el formato:
-     { nombre: "Videojuegos" }
-
-   Si algo falla, lanzamos error con el texto del backend.
    ====================================================================== */
 export async function crearTipoProducto(payload) {
   const res = await fetch(API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify(payload),
   });
 
@@ -82,14 +78,11 @@ export async function crearTipoProducto(payload) {
 /* ======================================================================
    EDITAR (PUT)
    PUT  /api/v1/tipo-productos/{id}
-
-   Reemplaza todos los datos del tipo de producto con el contenido del payload.
-   Es una actualización completa.
    ====================================================================== */
 export async function editarTipoProducto(id, payload) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify(payload),
   });
 
@@ -105,14 +98,11 @@ export async function editarTipoProducto(id, payload) {
 /* ======================================================================
    PATCH (ACTUALIZACIÓN PARCIAL)
    PATCH  /api/v1/tipo-productos/{id}
-
-   Solo actualiza los campos enviados en payloadParcial.
-   Ideal para cambios pequeños como renombrar.
    ====================================================================== */
 export async function patchTipoProducto(id, payloadParcial) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify(payloadParcial),
   });
 
@@ -128,13 +118,11 @@ export async function patchTipoProducto(id, payloadParcial) {
 /* ======================================================================
    ELIMINAR
    DELETE  /api/v1/tipo-productos/{id}
-
-   Elimina el tipo de producto.
-   Devuelve true si fue exitoso.
    ====================================================================== */
 export async function eliminarTipoProducto(id) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
+    headers: authHeaders(),
   });
 
   if (!res.ok) {
@@ -149,12 +137,12 @@ export async function eliminarTipoProducto(id) {
 /* ======================================================================
    OBTENER POR ID
    GET  /api/v1/tipo-productos/{id}
-
-   Permite cargar un tipo de producto específico,
-   por ejemplo para editarlo.
    ====================================================================== */
 export async function obtenerTipoProducto(id) {
-  const res = await fetch(`${API_URL}/${id}`);
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "GET",
+    headers: authHeaders(),
+  });
 
   if (!res.ok) {
     const txt = await res.text().catch(() => "");

@@ -1,29 +1,23 @@
 // Ruta: src/services/productos.js
-// ======================================================================
-// Servicio: productos.js
-// Encargado de manejar todas las operaciones de productos.
-// Incluye:
-//
-// - LISTAR productos
-// - LISTAR productos paginados
-// - CREAR producto
-// - OBTENER producto por ID
-// - EDITAR producto completo (PUT)
-// - ELIMINAR producto
-// - SAGAS (obtener sagas y productos por saga)
-// - CATÁLOGOS (tipos, clasificaciones, estados, plataformas, géneros,
-//              empresas, desarrolladores)
-// ======================================================================
 
-
-// ----------------------------------------------------------------------
-// API_BASE 
-// ----------------------------------------------------------------------
-// Dejamos la base SIN /api y lo agregamos en cada endpoint para
-// que sea consistente con usuarios.js
 const API_BASE =
   import.meta.env.VITE_API_URL ||
   "https://nolimits-backend-final.onrender.com";
+
+// ==========================================================
+// Helpers JWT
+// ==========================================================
+function getToken() {
+  return typeof window !== "undefined" ? localStorage.getItem("nl_token") : null;
+}
+
+function authHeaders(extra = {}) {
+  const token = getToken();
+  return {
+    ...extra,
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
 
 // --- Cache simple en memoria para productos ---------------------------------
 let _productosCache = null;
@@ -45,7 +39,6 @@ function clearProductosCache() {
 // GET /api/v1/productos
 // ======================================================================
 export async function listarProductos({ force = false } = {}) {
-  // 1) Si tengo cache fresco, lo devuelvo al tiro
   if (
     !force &&
     _productosCache &&
@@ -55,7 +48,7 @@ export async function listarProductos({ force = false } = {}) {
   }
 
   const url = `${API_BASE}/api/v1/productos`;
-  const res = await fetch(url);
+  const res = await fetch(url, { headers: authHeaders() });
   const text = await res.text();
 
   if (!res.ok) {
@@ -81,13 +74,10 @@ export async function listarProductos({ force = false } = {}) {
 
 // LISTAR PRODUCTOS PAGINADOS (front: 1-based, back: 1-based)
 export async function listarProductosPaginado(page = 1, size = 3) {
-  // Aseguramos un número mínimo 1
   const safePage = !Number.isFinite(Number(page)) || page < 1 ? 1 : Number(page);
-
-  // OJO: aquí ya NO restamos 1
   const url = `${API_BASE}/api/v1/productos/paginacion?page=${safePage}&size=${size}`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, { headers: authHeaders() });
   const text = await res.text();
 
   if (!res.ok) {
@@ -98,12 +88,7 @@ export async function listarProductosPaginado(page = 1, size = 3) {
   try {
     raw = JSON.parse(text);
   } catch {
-    return {
-      content: [],
-      page: 1,
-      totalPages: 1,
-      totalElements: 0,
-    };
+    return { content: [], page: 1, totalPages: 1, totalElements: 0 };
   }
 
   const content = raw.content || raw.contenido || [];
@@ -125,7 +110,7 @@ export async function crearProducto(data) {
 
   const res = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify(data),
   });
 
@@ -142,7 +127,7 @@ export async function crearProducto(data) {
     result = null;
   }
 
-  clearProductosCache(); // invalidamos cache
+  clearProductosCache();
   return result;
 }
 
@@ -153,7 +138,7 @@ export async function crearProducto(data) {
 export async function obtenerProducto(id) {
   const url = `${API_BASE}/api/v1/productos/${id}`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, { headers: authHeaders() });
   const text = await res.text();
 
   if (!res.ok) {
@@ -163,17 +148,15 @@ export async function obtenerProducto(id) {
   return JSON.parse(text);
 }
 
-
 // ======================================================================
 // EDITAR PRODUCTO (PUT)
-// PUT /api/v1/productos/{id}
 // ======================================================================
 export async function editarProducto(id, data) {
   const url = `${API_BASE}/api/v1/productos/${id}`;
 
   const res = await fetch(url, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify(data),
   });
 
@@ -190,36 +173,38 @@ export async function editarProducto(id, data) {
     result = null;
   }
 
-  clearProductosCache(); // invalidamos cache
+  clearProductosCache();
   return result;
 }
 
 // ======================================================================
 // ELIMINAR PRODUCTO
-// DELETE /api/v1/productos/{id}
 // ======================================================================
 export async function eliminarProducto(id) {
   const url = `${API_BASE}/api/v1/productos/${id}`;
 
   const res = await fetch(url, {
     method: "DELETE",
+    headers: authHeaders(),
   });
 
+  const text = await res.text().catch(() => "");
+
   if (!res.ok) {
-    throw new Error("Error al eliminar producto");
+    throw new Error(text || "Error al eliminar producto");
   }
 
-  clearProductosCache(); // invalidamos cache
+  clearProductosCache();
+  return true;
 }
 
 // ======================================================================
-// OBTENER LISTA DE SAGAS (para el carrusel)
-// /api/v1/productos/sagas/resumen
+// SAGAS
 // ======================================================================
 export async function obtenerSagas() {
   const url = `${API_BASE}/api/v1/productos/sagas/resumen`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, { headers: authHeaders() });
   const text = await res.text();
 
   if (!res.ok) {
@@ -237,7 +222,6 @@ export async function obtenerSagas() {
 
   if (!Array.isArray(data)) return [];
 
-  // Normalizamos a objetos { nombre, portadaSaga }
   return data
     .map((s) => ({
       nombre: typeof s.nombre === "string" ? s.nombre : "",
@@ -246,44 +230,32 @@ export async function obtenerSagas() {
           ? s.portadaSaga
           : null,
     }))
-    .filter((s) => s.nombre); // eliminamos los vacíos
+    .filter((s) => s.nombre);
 }
 
-
-// ======================================================================
-// OBTENER PRODUCTOS POR SAGA (front)
-// ======================================================================
 export async function obtenerProductosPorSaga(nombreSaga) {
   const productos = await listarProductos();
 
   const target =
-    typeof nombreSaga === "string"
-      ? nombreSaga.trim().toLowerCase()
-      : "";
+    typeof nombreSaga === "string" ? nombreSaga.trim().toLowerCase() : "";
 
   return productos.filter((p) => {
     const saga =
-      typeof p.saga === "string"
-        ? p.saga.trim().toLowerCase()
-        : "";
+      typeof p.saga === "string" ? p.saga.trim().toLowerCase() : "";
     return saga === target;
   });
 }
 
-
 // ======================================================================
-// CATÁLOGOS: TIPOS DE PRODUCTO
-// GET /api/v1/tipo-productos
+// CATÁLOGOS
 // ======================================================================
 export async function obtenerTiposProducto() {
   const url = `${API_BASE}/api/v1/tipo-productos`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, { headers: authHeaders() });
   const text = await res.text();
 
-  if (!res.ok) {
-    throw new Error("Status " + res.status + " -> " + text);
-  }
+  if (!res.ok) throw new Error("Status " + res.status + " -> " + text);
 
   try {
     return JSON.parse(text);
@@ -292,19 +264,13 @@ export async function obtenerTiposProducto() {
   }
 }
 
-// ======================================================================
-// CATÁLOGOS: CLASIFICACIONES
-// GET /api/v1/clasificaciones
-// ======================================================================
 export async function obtenerClasificaciones() {
   const url = `${API_BASE}/api/v1/clasificaciones`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, { headers: authHeaders() });
   const text = await res.text();
 
-  if (!res.ok) {
-    throw new Error("Status " + res.status + " -> " + text);
-  }
+  if (!res.ok) throw new Error("Status " + res.status + " -> " + text);
 
   try {
     return JSON.parse(text);
@@ -313,19 +279,13 @@ export async function obtenerClasificaciones() {
   }
 }
 
-// ======================================================================
-// CATÁLOGOS: ESTADOS DE PRODUCTO
-// GET /api/v1/estados
-// ======================================================================
 export async function obtenerEstadosProducto() {
   const url = `${API_BASE}/api/v1/estados`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, { headers: authHeaders() });
   const text = await res.text();
 
-  if (!res.ok) {
-    throw new Error("Status " + res.status + " -> " + text);
-  }
+  if (!res.ok) throw new Error("Status " + res.status + " -> " + text);
 
   try {
     return JSON.parse(text);
@@ -334,12 +294,8 @@ export async function obtenerEstadosProducto() {
   }
 }
 
-// ======================================================================
-// HELPER GENÉRICO PARA CATÁLOGOS PAGINADOS
-// (SIN fallback a endpoints que no existen)
-// ======================================================================
 async function fetchCatalogoPaged(url, label) {
-  const res = await fetch(`${API_BASE}${url}`);
+  const res = await fetch(`${API_BASE}${url}`, { headers: authHeaders() });
   const text = await res.text();
 
   if (!res.ok) {
@@ -355,19 +311,10 @@ async function fetchCatalogoPaged(url, label) {
     return [];
   }
 
-  console.log(`[${label}] respuesta cruda =>`, data);
-
-  if (Array.isArray(data)) {
-    return data;
-  }
-
+  if (Array.isArray(data)) return data;
   return data.content || data.contenido || [];
 }
 
-// ======================================================================
-// CATÁLOGOS: PLATAFORMAS
-// GET /api/v1/plataformas/paginado?page=1&size=100
-// ======================================================================
 export async function obtenerPlataformas() {
   return fetchCatalogoPaged(
     "/api/v1/plataformas/paginado?page=1&size=100",
@@ -375,10 +322,6 @@ export async function obtenerPlataformas() {
   );
 }
 
-// ======================================================================
-// CATÁLOGOS: GÉNEROS
-// GET /api/v1/generos/paginado?page=1&size=100
-// ======================================================================
 export async function obtenerGeneros() {
   return fetchCatalogoPaged(
     "/api/v1/generos/paginado?page=1&size=100",
@@ -386,10 +329,6 @@ export async function obtenerGeneros() {
   );
 }
 
-// ======================================================================
-// CATÁLOGOS: EMPRESAS
-// GET /api/v1/empresas/paginado?page=1&size=100
-// ======================================================================
 export async function obtenerEmpresas() {
   return fetchCatalogoPaged(
     "/api/v1/empresas/paginado?page=1&size=100",
@@ -397,10 +336,6 @@ export async function obtenerEmpresas() {
   );
 }
 
-// ======================================================================
-// CATÁLOGOS: DESARROLLADORES
-// GET /api/v1/desarrolladores/paginado?page=1&size=100
-// ======================================================================
 export async function obtenerDesarrolladores() {
   return fetchCatalogoPaged(
     "/api/v1/desarrolladores/paginado?page=1&size=100",

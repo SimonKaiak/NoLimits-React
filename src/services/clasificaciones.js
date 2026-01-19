@@ -1,164 +1,107 @@
-// services / clasificaciones.js
+// Ruta: src/services/clasificaciones.js
 
-/**
- * Este archivo contiene todas las funciones que permiten comunicarse con el backend
- * para trabajar con el recurso "Clasificaciones".
- *
- * Aquí se realizan peticiones HTTP al servidor usando fetch.
- * Cada función corresponde a una operación clásica:
- * - listar
- * - crear
- * - editar (PUT)
- * - actualizar parcialmente (PATCH)
- * - eliminar
- * - obtener una clasificación por id
- *
- * Todo se hace contra una API REST en /api/v1/clasificaciones
- */
-
-// En esta constante se obtiene la URL base del backend.
 const API_BASE =
   import.meta.env.VITE_API_URL ||
   "https://nolimits-backend-final.onrender.com";
 
-// URL completa para trabajar con clasificaciones.
 const API_URL = `${API_BASE}/api/v1/clasificaciones`;
 
-/* ============================================================
-   LISTAR CLASIFICACIONES
-   GET /api/v1/clasificaciones
-   ============================================================
-   Esta función obtiene todas las clasificaciones desde el backend.
-   Luego, opcionalmente aplica un filtro por nombre en el frontend.
-*/
-export async function listarClasificaciones(page = 1, search = "") {
+// Helpers JWT
+function getToken() {
+  return typeof window !== "undefined" ? localStorage.getItem("nl_token") : null;
+}
+function authHeaders(extra = {}) {
+  const token = getToken();
+  return { ...extra, ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+}
 
-  // Armar la URL correcta según parámetros
+export async function listarClasificaciones(page = 1, search = "") {
   const url = `${API_URL}/paginado?page=${page}&size=4&search=${encodeURIComponent(
     search.trim()
   )}`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, { headers: authHeaders() });
 
   if (!res.ok) {
     const txt = await res.text().catch(() => "");
     console.error("Error cargando clasificaciones:", res.status, txt);
-    throw new Error("Error cargando clasificaciones");
+    throw new Error(`Error cargando clasificaciones (${res.status}) ${txt}`);
   }
 
-  // Ahora el backend SIEMPRE devuelve:
-  // {
-  //   contenido: [...],
-  //   pagina: 1,
-  //   totalPaginas: 3,
-  //   totalElementos: 14
-  // }
   return await res.json();
 }
 
-/* ============================================================
-   CREAR CLASIFICACIÓN
-   POST /api/v1/clasificaciones
-   ============================================================
-   Esta función envía un objeto 'payload' al backend para crear una nueva
-   clasificación. El backend la guarda y devuelve la nueva clasificación creada.
-*/
 export async function crearClasificacion(payload) {
   const res = await fetch(API_URL, {
-    method: "POST",                       // Se envía como POST.
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),        // Enviamos el cuerpo en formato JSON.
+    method: "POST",
+    headers: authHeaders({ "Content-Type": "application/json" }),
+    body: JSON.stringify(payload),
   });
 
-  // Manejo de error básico si el backend responde con estado no exitoso.
   if (!res.ok) {
     const txt = await res.text().catch(() => "");
     console.error("Error al crear clasificación:", res.status, txt);
-    throw new Error("Error al crear clasificación");
+    throw new Error(`Error al crear clasificación (${res.status}) ${txt}`);
   }
 
-  return res.json();                      // Devolvemos la clasificación creada.
+  return res.json();
 }
 
-/* ============================================================
-   EDITAR CLASIFICACIÓN
-   PUT /api/v1/clasificaciones/:id
-   ============================================================
-   PUT reemplaza todos los datos de la clasificación con los del payload.
-*/
 export async function editarClasificacion(id, payload) {
   const res = await fetch(`${API_URL}/${id}`, {
-    method: "PUT",                         // Se usa PUT para sustitución total.
-    headers: { "Content-Type": "application/json" },
+    method: "PUT",
+    headers: authHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
     const txt = await res.text().catch(() => "");
     console.error("Error al editar clasificación:", res.status, txt);
-    throw new Error("Error al editar clasificación");
+    throw new Error(`Error al editar clasificación (${res.status}) ${txt}`);
   }
 
   return res.json();
 }
 
-/* ============================================================
-   ACTUALIZACIÓN PARCIAL
-   PATCH /api/v1/clasificaciones/:id
-   ============================================================
-   PATCH permite modificar solo algunos campos en lugar de todos.
-*/
 export async function patchClasificacion(id, payloadParcial) {
   const res = await fetch(`${API_URL}/${id}`, {
-    method: "PATCH",                        // Modifica parcialmente.
-    headers: { "Content-Type": "application/json" },
+    method: "PATCH",
+    headers: authHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify(payloadParcial),
   });
 
   if (!res.ok) {
     const txt = await res.text().catch(() => "");
     console.error("Error al aplicar patch clasificación:", res.status, txt);
-    throw new Error("Error al aplicar patch");
+    throw new Error(`Error al aplicar patch (${res.status}) ${txt}`);
   }
 
   return res.json();
 }
 
-/* ============================================================
-   ELIMINAR CLASIFICACIÓN
-   DELETE /api/v1/clasificaciones/:id
-   ============================================================
-   Esta función envía una petición para eliminar una clasificación.
-   Si todo va bien, simplemente retorna true.
-*/
 export async function eliminarClasificacion(id) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
+    headers: authHeaders(),
   });
 
   if (!res.ok) {
     const txt = await res.text().catch(() => "");
     console.error("Error al eliminar clasificación:", res.status, txt);
-    throw new Error("Error al eliminar");
+    throw new Error(`Error al eliminar (${res.status}) ${txt}`);
   }
 
   return true;
 }
 
-/* ============================================================
-   OBTENER CLASIFICACIÓN POR ID
-   GET /api/v1/clasificaciones/:id
-   ============================================================
-   Esta función obtiene una sola clasificación usando su ID.
-*/
 export async function obtenerClasificacion(id) {
-  const res = await fetch(`${API_URL}/${id}`);
+  const res = await fetch(`${API_URL}/${id}`, { headers: authHeaders() });
 
   if (!res.ok) {
     const txt = await res.text().catch(() => "");
     console.error("Error al obtener clasificación:", res.status, txt);
-    throw new Error("Error al obtener clasificación");
+    throw new Error(`Error al obtener clasificación (${res.status}) ${txt}`);
   }
 
-  return res.json();                        // Devuelve la clasificación encontrada.
+  return res.json();
 }

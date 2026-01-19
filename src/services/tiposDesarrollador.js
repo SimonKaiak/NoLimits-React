@@ -1,82 +1,62 @@
-// ======================================================================
-// Servicio: tiposDesarrollador.js
-// Maneja todo lo relacionado con "Tipos de Desarrollador".
-// Estos tipos son categorías como:
-//   - Frontend
-//   - Backend
-//   - FullStack
-// etc.
-//
-// Cada función de este archivo se comunica con el backend usando fetch.
-// ======================================================================
+// Ruta: src/services/tiposDesarrollador.js
 
-
-
-// ----------------------------------------------------------------------
-// API_BASE:
-// ----------------------------------------------------------------------
 const API_BASE =
   import.meta.env.VITE_API_URL ||
   "https://nolimits-backend-final.onrender.com";
 
+const API_URL = `${API_BASE}/api/v1/tipos-desarrollador`;
 
-// ----------------------------------------------------------------------
-// API_URL:
-// ----------------------------------------------------------------------
-const API_URL = `${API_BASE}/api/tipos-desarrollador`;
+// ==========================================================
+// Helpers de Auth (JWT)
+// ==========================================================
+function getToken() {
+  return typeof window !== "undefined" ? localStorage.getItem("nl_token") : null;
+}
 
-
+function authHeaders(extra = {}) {
+  const token = getToken();
+  return {
+    ...extra,
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
 
 /* ======================================================================
-   LISTAR TIPOS DE DESARROLLADOR
-   GET /api/tipos-desarrollador
-
-   Esta función trae TODOS los tipos registrados en el backend.
-
-   Parámetros:
-   - pagina: no usado actualmente (el backend no pagina)
-   - busqueda: texto para filtrar por nombre pero en el frontend
-
-   Funcionamiento:
-   1. Pide la lista completa al backend.
-   2. Si no hay búsqueda, devuelve toda la lista.
-   3. Si hay búsqueda, filtra por nombre desde el frontend.
+   LISTAR TIPOS DE DESARROLLADOR (paginado)
+   GET /api/v1/tipos-desarrollador/paginado?page=&size=
    ====================================================================== */
-export async function listarTiposDesarrollador(pagina, busqueda = "") {
-  
-  const endpoint = `${API_BASE}/api/tipos-desarrollador/paginado?page=${pagina}&size=4`;
+export async function listarTiposDesarrollador(pagina = 1, busqueda = "") {
+  const endpoint = `${API_URL}/paginado?page=${pagina}&size=4`;
 
-  const res = await fetch(endpoint);
+  const res = await fetch(endpoint, {
+    headers: authHeaders(),
+  });
 
   if (!res.ok) {
-    console.error("Error listar tipos desarrollador:", res.status);
+    const txt = await res.text().catch(() => "");
+    console.error("Error listar tipos desarrollador:", res.status, txt);
     throw new Error("Error al listar tipos de desarrollador");
   }
 
   const data = await res.json();
 
-  // Filtrar en frontend si hay búsqueda
   if (busqueda.trim().length > 0) {
     const needle = busqueda.toLowerCase();
-    data.contenido = data.contenido.filter((t) =>
+    data.contenido = (data.contenido || []).filter((t) =>
       (t.nombre || "").toLowerCase().includes(needle)
     );
   }
 
-  return data; 
+  return data;
 }
-
-
 
 /* ======================================================================
    OBTENER TIPO POR ID
-   GET /api/tipos-desarrollador/{id}
-
-   Devuelve la información de un tipo de desarrollador específico.
-   Se usa en pantallas como Editar Tipo.
    ====================================================================== */
 export async function obtenerTipoDesarrollador(id) {
-  const res = await fetch(`${API_URL}/${id}`);
+  const res = await fetch(`${API_URL}/${id}`, {
+    headers: authHeaders(),
+  });
 
   if (!res.ok) {
     const txt = await res.text().catch(() => "");
@@ -87,21 +67,13 @@ export async function obtenerTipoDesarrollador(id) {
   return await res.json();
 }
 
-
-
 /* ======================================================================
-   CREAR TIPO DE DESARROLLADOR
-   POST /api/tipos-desarrollador
-
-   data es un objeto con la información a crear, ejemplo:
-     { nombre: "Backend" }
-
-   Si el servidor responde con error, se lanza una excepción.
+   CREAR
    ====================================================================== */
 export async function crearTipoDesarrollador(data) {
   const res = await fetch(API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify(data),
   });
 
@@ -114,19 +86,13 @@ export async function crearTipoDesarrollador(data) {
   return await res.json();
 }
 
-
-
 /* ======================================================================
-   ACTUALIZAR TIPO COMPLETO (PUT)
-   PUT /api/tipos-desarrollador/{id}
-
-   Reemplaza todo el objeto del tipo de desarrollador.
-   data es el nuevo objeto completo.
+   ACTUALIZAR (PUT)
    ====================================================================== */
 export async function actualizarTipoDesarrollador(id, data) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify(data),
   });
 
@@ -139,18 +105,13 @@ export async function actualizarTipoDesarrollador(id, data) {
   return await res.json();
 }
 
-
-
 /* ======================================================================
-   ELIMINAR TIPO
-   DELETE /api/tipos-desarrollador/{id}
-
-   Elimina un tipo de desarrollador por su ID.
-   Si falla, lanza un error.
+   ELIMINAR
    ====================================================================== */
 export async function eliminarTipoDesarrollador(id) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
+    headers: authHeaders(),
   });
 
   if (!res.ok) {
@@ -158,4 +119,6 @@ export async function eliminarTipoDesarrollador(id) {
     console.error("Error eliminar tipo desarrollador:", res.status, txt);
     throw new Error("Error al eliminar tipo de desarrollador");
   }
+
+  return true;
 }
