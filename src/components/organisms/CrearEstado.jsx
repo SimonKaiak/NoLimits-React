@@ -117,6 +117,7 @@ export default function CrearEstado({ modo, estado, onCerrar }) {
 
     try {
       if (modo === "crear") {
+        console.log("PAYLOAD ESTADO =>", payload);
         await crearEstado(payload);
         alert("Estado creado con éxito!");
       } else {
