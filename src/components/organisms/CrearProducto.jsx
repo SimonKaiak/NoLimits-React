@@ -1,4 +1,3 @@
-// Ruta: src/components/organisms/CrearProducto.jsx
 import React, { useEffect, useState } from "react";
 
 // Servicios del recurso Producto (crear / editar)
@@ -35,7 +34,7 @@ export default function CrearProducto({
   modo = "crear",
   productoInicial = null,
   onFinish,
-  onCancel,                  // ✅ nuevo prop para cancelar (solo edición)
+  onCancel, // ✅ nuevo prop para cancelar (solo edición)
 }) {
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [error, setError] = useState("");
@@ -49,6 +48,10 @@ export default function CrearProducto({
   const [generos, setGeneros] = useState([]);
   const [empresas, setEmpresas] = useState([]);
   const [desarrolladores, setDesarrolladores] = useState([]);
+
+  // ✅ Campos nuevos: compra (se guardan en backend como urlCompra / labelCompra)
+  const [urlCompra, setUrlCompra] = useState("");
+  const [labelCompra, setLabelCompra] = useState("");
 
   // Cargar catálogos al iniciar
   useEffect(() => {
@@ -99,9 +102,18 @@ export default function CrearProducto({
         estadoId: productoInicial.estadoId ?? "",
         saga: productoInicial.saga ?? "",
         portadaSaga: productoInicial.portadaSaga ?? "",
+        // si tu backend te devuelve estas listas, acá podrías precargarlas también
       });
+
+      // ✅ IMPORTANTE: precargar al editar
+      setUrlCompra(productoInicial.urlCompra ?? "");
+      setLabelCompra(productoInicial.labelCompra ?? "");
     } else {
       setFormData(INITIAL_FORM);
+
+      // ✅ limpiar al crear
+      setUrlCompra("");
+      setLabelCompra("");
     }
   }, [productoInicial]);
 
@@ -129,12 +141,14 @@ export default function CrearProducto({
       nombre: formData.nombre,
       precio: Number(formData.precio),
       tipoProductoId: Number(formData.tipoProductoId),
-      clasificacionId: formData.clasificacionId
-        ? Number(formData.clasificacionId)
-        : null,
+      clasificacionId: formData.clasificacionId ? Number(formData.clasificacionId) : null,
       estadoId: Number(formData.estadoId),
       saga: formData.saga || null,
       portadaSaga: formData.portadaSaga || null,
+
+      // ✅ NUEVO: link de compra y texto del botón
+      urlCompra: urlCompra.trim() !== "" ? urlCompra.trim() : null,
+      labelCompra: labelCompra.trim() !== "" ? labelCompra.trim() : null,
     };
 
     // Solo mandamos listas si el usuario seleccionó algo
@@ -164,6 +178,10 @@ export default function CrearProducto({
 
       if (modo === "crear") {
         setFormData(INITIAL_FORM);
+
+        // ✅ limpiar también los campos nuevos
+        setUrlCompra("");
+        setLabelCompra("");
       }
 
       if (onFinish) onFinish(result || null);
@@ -325,6 +343,29 @@ export default function CrearProducto({
         value={formData.imagenes}
         onChange={handleChange}
       />
+
+      {/* URL de compra */}
+      <div className="form-group">
+        <label>URL de compra</label>
+        <input
+          type="url"
+          value={urlCompra}
+          onChange={(e) => setUrlCompra(e.target.value)}
+          placeholder="https://store.steampowered.com/app/..."
+        />
+      </div>
+
+      {/* Label de compra */}
+      <div className="form-group">
+        <label>Texto del botón</label>
+        <input
+          type="text"
+          value={labelCompra}
+          onChange={(e) => setLabelCompra(e.target.value)}
+          maxLength={60}
+          placeholder="Comprar en Steam"
+        />
+      </div>
 
       {/* Fila de botones: cancelar izquierda, guardar derecha */}
       <div className="admin-products-actions-row">
