@@ -237,6 +237,7 @@ export default function AdminUsuarioList() {
                       >
                         Eliminar
                       </button>
+                      {/* 
                       <button
                         type="button"
                         className="admin-action-btn admin-btn"
@@ -244,6 +245,7 @@ export default function AdminUsuarioList() {
                       >
                         Ver compras
                       </button>
+                      */}
                     </div>
                   </td>
                 </tr>
