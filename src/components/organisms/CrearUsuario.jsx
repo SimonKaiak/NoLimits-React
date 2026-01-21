@@ -171,69 +171,6 @@ export default function CrearUsuario({
           onChange={handleChange}
           required
         />
-
-        <input
-          type="text"
-          name="calle"
-          placeholder="Calle"
-          value={formData.calle}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="text"
-          name="numero"
-          placeholder="Número"
-          value={formData.numero}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="text"
-          name="complemento"
-          placeholder="Complemento"
-          value={formData.complemento}
-          onChange={handleChange}
-        />
-
-        <input
-          type="text"
-          name="codigoPostal"
-          placeholder="Código postal"
-          value={formData.codigoPostal}
-          onChange={handleChange}
-          required
-        />
-
-        <select
-          name="regionId"
-          value={formData.regionId}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Seleccione región</option>
-          {regiones.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.nombre}
-            </option>
-          ))}
-        </select>
-
-        <select
-          name="comunaId"
-          value={formData.comunaId}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Seleccione comuna</option>
-          {comunasFiltradas.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.nombre}
-            </option>
-          ))}
-        </select>
       </div>
 
       {/* Bloque de botones abajo */}

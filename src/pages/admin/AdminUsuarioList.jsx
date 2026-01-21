@@ -290,7 +290,7 @@ export default function AdminUsuarioList() {
             modo="editar"
             usuarioInicial={usuarioEditando}
             onFinish={handleFinEdicion}
-            onCancel={handleVolver}   // 👈 aquí mandamos Volver al form
+            onCancel={handleVolver}
           />
         </div>
       )}
