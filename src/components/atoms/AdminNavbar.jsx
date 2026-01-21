@@ -84,8 +84,11 @@ export default function AdminNavbar() {
 
           {/* Más botones del menú lateral */}
           <button onClick={() => go("/admin/usuarios")}>- Usuarios -</button>
+          
+          {/* 
           <button onClick={() => go("/admin/ventas")}>- Ventas -</button>
           <button onClick={() => go("/admin/ubicacion")}>Ubicación</button>
+          */}
 
           {/* Botón para salir del panel de administración */}
           <button
