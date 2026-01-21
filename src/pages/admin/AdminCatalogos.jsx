@@ -73,16 +73,6 @@ export default function AdminCatalogos() {
         />
 
         <ButtonAction
-          text="Métodos de Pago"
-          onClick={() => navigate("/admin/metodos-pago")}
-        />
-
-        <ButtonAction
-          text="Métodos de Envío"
-          onClick={() => navigate("/admin/metodos-envio")}
-        />
-
-        <ButtonAction
           text="Tipos de Empresa"
           onClick={() => navigate("/admin/tipos-empresa")}
         />
