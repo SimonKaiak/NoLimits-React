@@ -78,9 +78,6 @@ export default function AdminNavbar() {
                 <button onClick={() => go("/admin/tipos-empresa")}>Tipos de Empresa</button>
                 <button onClick={() => go("/admin/desarrolladores")}>Desarrolladores</button>
                 <button onClick={() => go("/admin/tipos-desarrollador")}>Tipos de Desarrollador</button>
-
-                <button onClick={() => go("/admin/metodos-pago")}>Métodos de Pago</button>
-                <button onClick={() => go("/admin/metodos-envio")}>Métodos de Envío</button>
               </div>
             )}
           </div>
