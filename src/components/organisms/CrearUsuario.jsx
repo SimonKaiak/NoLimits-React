@@ -8,7 +8,7 @@ export default function CrearUsuario({
   modo = "crear",
   usuarioInicial = null,
   onFinish,
-  onCancel,               // 👈 NUEVO
+  onCancel,
 }) {
   const [formData, setFormData] = useState({
     nombre: "",
@@ -73,40 +73,54 @@ export default function CrearUsuario({
   }
 
   async function handleSubmit(e) {
-    e.preventDefault();
-    setError("");
+      e.preventDefault();
+      setError("");
 
-    const payload = {
-      nombre: formData.nombre,
-      apellidos: formData.apellidos,
-      correo: formData.correo,
-      telefono: Number(formData.telefono),
-      rolId: Number(formData.rolId),
-      direccion: {
-        calle: formData.calle,
-        numero: formData.numero,
-        complemento: formData.complemento,
-        codigoPostal: formData.codigoPostal,
-        comunaId: Number(formData.comunaId),
-      },
-    };
+      const payload = {
+        nombre: formData.nombre,
+        apellidos: formData.apellidos,
+        correo: formData.correo,
+        telefono: Number(formData.telefono),
+        rolId: Number(formData.rolId),
+      };
 
-    if (modo === "crear" || formData.password.trim() !== "") {
-      payload.password = formData.password;
-    }
-
-    try {
-      if (modo === "editar" && usuarioInicial?.id) {
-        await editarUsuario(usuarioInicial.id, payload);
-      } else {
-        await crearUsuario(payload);
+      // password solo si corresponde
+      if (modo === "crear" || formData.password.trim() !== "") {
+        payload.password = formData.password;
       }
-      if (onFinish) onFinish();
-    } catch (err) {
-      console.error(err);
-      setError("Error al guardar usuario: " + err.message);
+
+      //  Dirección totalmente opcional: SOLO si viene algo "real"
+      const tieneDireccion =
+        (formData.comunaId && String(formData.comunaId).trim() !== "") ||
+        (formData.calle && formData.calle.trim() !== "") ||
+        (formData.numero && formData.numero.trim() !== "") ||
+        (formData.complemento && formData.complemento.trim() !== "") ||
+        (formData.codigoPostal && formData.codigoPostal.trim() !== "");
+
+      if (tieneDireccion) {
+        const comunaIdNum = formData.comunaId ? Number(formData.comunaId) : null;
+
+        payload.direccion = {
+          calle: formData.calle?.trim() || null,
+          numero: formData.numero?.trim() || null,
+          complemento: formData.complemento?.trim() || null,
+          codigoPostal: formData.codigoPostal?.trim() || null,
+          comunaId: comunaIdNum, // puede ser null si no vino
+        };
+      }
+
+      try {
+        if (modo === "editar" && usuarioInicial?.id) {
+          await editarUsuario(usuarioInicial.id, payload);
+        } else {
+          await crearUsuario(payload);
+        }
+        if (onFinish) onFinish();
+      } catch (err) {
+        console.error(err);
+        setError("Error al guardar usuario: " + err.message);
+      }
     }
-  }
 
   return (
     <form className="admin-form admin-form-vertical" onSubmit={handleSubmit}>
