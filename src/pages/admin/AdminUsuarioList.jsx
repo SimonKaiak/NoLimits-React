@@ -23,8 +23,8 @@ export default function AdminUsuarioList() {
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [loadingLista, setLoadingLista] = useState(false);
 
-  // 👇 NUEVO: controla qué vista se muestra
-  // "listado" | "editar" | "compras"
+  // NUEVO: controla qué vista se muestra
+  // "listado" | "crear" | "editar" | "compras"
   const [vista, setVista] = useState("listado");
 
   async function cargarUsuarios() {
@@ -85,7 +85,7 @@ export default function AdminUsuarioList() {
     }
   }
 
-  // 👇 ahora también cambia la vista a "compras"
+  // ahora también cambia la vista a "compras"
   async function handleVerCompras(usuarioId) {
     setVista("compras");
     setLoadingCompras(true);
@@ -115,7 +115,7 @@ export default function AdminUsuarioList() {
     }
   }
 
-  // 👇 al terminar edición, volvemos al listado
+  // al terminar edición, volvemos al listado
   function handleFinEdicion() {
     setUsuarioEditando(null);
     setVista("listado");
@@ -126,19 +126,33 @@ export default function AdminUsuarioList() {
     }
   }
 
-  // 👇 entrar a modo edición
+  // entrar a modo edición
   function handleEditar(usuario) {
     setUsuarioEditando(usuario);
     setVista("editar");
   }
 
-  // 👇 botón "Volver"
+  // Botón "Crear"
+  // entrar a modo crear.
+  function handleCrear() {
+    setUsuarioEditando(null);
+    setResultadoBusqueda(null);
+    setError("");
+    setBusquedaId("");
+    setVista("crear");
+  }
+
+  // botón "Volver"
   function handleVolver() {
     setVista("listado");
     setUsuarioEditando(null);
+    setResultadoBusqueda(null);
+    setError("");
+    setBusquedaId("");
     setCompras([]);
     setErrorCompras("");
   }
+
 
   useEffect(() => {
     cargarUsuarios();
@@ -152,6 +166,11 @@ export default function AdminUsuarioList() {
       {vista === "listado" && (
         <>
           {loadingLista && <p className="admin-msg">Cargando usuarios...</p>}
+          <div className="admin-form-actions" style={{ marginBottom: "15px" }}>
+            <button type="button" className="admin-btn" onClick={handleCrear}>
+              + Crear usuario
+            </button>
+          </div>
 
           {!loadingLista && usuarios.length > 0 && (
             <table className="admin-table">
@@ -276,6 +295,37 @@ export default function AdminUsuarioList() {
             </button>
           </div>
         </>
+      )}
+
+      {/* ==================== VISTA CREAR ==================== */}
+      {vista === "crear" && (
+        <div style={{ marginTop: "25px" }}>
+          <div className="admin-form-actions" style={{ marginBottom: "15px" }}>
+            <button
+              type="button"
+              className="admin-btn-secondary"
+              onClick={handleVolver}
+            >
+              ← Volver
+            </button>
+          </div>
+          <h3
+            className="admin-title"
+            style={{ fontSize: "22px", marginBottom: "15px" }}
+          >
+            Gestionar usuario
+          </h3>
+
+          <CrearUsuario
+            modo="crear"
+            onFinish={() => {
+              setVista("listado");
+              setPagina(1);
+              cargarUsuarios();
+            }}
+            onCancel={handleVolver}
+          />
+        </div>
       )}
       
       {/* ==================== VISTA EDITAR ==================== */}
