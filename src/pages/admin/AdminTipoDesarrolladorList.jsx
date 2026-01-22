@@ -138,7 +138,7 @@ export default function AdminTipoDesarrolladorList() {
    */
   return (
     <div className="admin-wrapper">
-      <h1 className="admin-title">Gestionar Tipos de Desarrollador</h1>
+      <h1 className="admin-title">Gestionar Tipo de Desarrollador</h1>
 
       {modalData ? (
         // ============================
