@@ -85,7 +85,7 @@ export default function CrearTipoDesarrollador({ modo, tipo, onCerrar }) {
     <div className="admin-modal-backdrop">
       <div className="admin-modal">
         <h2 className="admin-title">
-          {esEditar ? "Editar Tipo de Desarrollador" : "Crear Tipo de Desarrollador"}
+          Gestionar Tipo de Desarrollador
         </h2>
 
         <form className="admin-form" onSubmit={handleSubmit}>
