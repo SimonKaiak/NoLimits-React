@@ -78,7 +78,7 @@ export default function AdminCatalogos() {
         />
 
         <ButtonAction
-          text="Tipos de Desarrollador"
+          text="Tipo de Desarrollador"
           onClick={() => navigate("/admin/tipos-desarrollador")}
         />
 
