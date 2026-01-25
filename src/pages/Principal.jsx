@@ -388,6 +388,19 @@ export default function Principal() {
   // Funcion para scrollear a las secciones.
   const [navH, setNavH] = useState(120);
 
+  const footerRef = useRef(null);
+  const [footerH, setFooterH] = useState(80);
+
+  useEffect(() => {
+    const calcFooter = () => {
+      setFooterH((footerRef.current?.offsetHeight || 80) + 10);
+    };
+
+    calcFooter();
+    window.addEventListener("resize", calcFooter);
+    return () => window.removeEventListener("resize", calcFooter);
+  }, []);
+
   // Precargar productos en segundo plano al entrar a /principal
   useEffect(() => {
     listarProductos()
@@ -838,78 +851,79 @@ export default function Principal() {
         )}
       </main>
 
-      {/* PANEL DE FAVORITOS */}
+      {/* PANEL DE FAVORITOS (FULL ENTRE NAV Y FOOTER) */}
       <div
-        className={`fondo-carrito ${favsOpen ? "is-open" : ""}`}
-        id="modeloFavoritos"
+        className={`favs-overlay ${favsOpen ? "is-open" : ""}`}
+        style={{ top: `${navH}px`, bottom: `${footerH}px` }}
         onClick={(e) => {
-          if (e.target.id === "modeloFavoritos") setFavsOpen(false);
+          if (e.currentTarget === e.target) setFavsOpen(false);
         }}
       >
-        <div className="modelo-contenido animar">
-          <h2>Favoritos</h2>
+        <div className="favs-panel">
+          <div className="favs-header">
+            <h2>Favoritos</h2>
 
-          <ul id="favoritos">
-            {favs.map((f) => (
-              <li key={f.id}>
-                <div className="carrito-item-main">
-                  {/* ✅ Estrellita en la lista */}
-                  <span className="carrito-item-name">⭐ {f.name}</span>
-                  <div className="carrito-item-meta">
-                    <span className="carrito-item-price">{clp(f.price)}</span>
-                  </div>
-                </div>
-
-                <div className="carrito-item-actions">
-                  <button
-                    className="btn btn-success"
-                    onClick={() => {
-                      if (!f.urlCompra) {
-                        alert(
-                          "Este producto no tiene link configurado todavía."
-                        );
-                        return;
-                      }
-                      window.open(f.urlCompra, "_blank", "noopener,noreferrer");
-                    }}
-                  >
-                    {f?.labelCompra ? `- ${f.labelCompra} -` : "- Ir al link -"}
-                  </button>
-
-                  <button
-                    className="btn-cart-remove"
-                    onClick={() => removeFav(f.id)}
-                    title="Quitar de favoritos"
-                  >
-                    ❌
-                  </button>
-                </div>
-              </li>
-            ))}
-
-            {favs.length === 0 && (
-              <li>
-                <span className="text-muted">No tienes favoritos guardados.</span>
-              </li>
-            )}
-          </ul>
-
-          <div className="d-flex justify-content-between align-items-center mt-2">
-            <button className="btn-cerrar" onClick={() => setFavsOpen(false)}>
-              - Cerrar -
-            </button>
-
-            {favs.length > 0 && (
-              <button className="btn btn-outline-danger" onClick={clearFavs}>
-                - Borrar todos -
+            <div className="favs-header-actions">
+              <button className="btn-cerrar" onClick={() => setFavsOpen(false)}>
+                - Cerrar -
               </button>
-            )}
+
+              {favs.length > 0 && (
+                <button className="btn btn-outline-danger" onClick={clearFavs}>
+                  - Borrar todos -
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="favs-body">
+            <ul className="favs-list">
+              {favs.map((f) => (
+                <li key={f.id} className="favs-item">
+                  <div className="carrito-item-main">
+                    <span className="carrito-item-name">⭐ {f.name}</span>
+                    <div className="carrito-item-meta">
+                      <span className="carrito-item-price">{clp(f.price)}</span>
+                    </div>
+                  </div>
+
+                  <div className="carrito-item-actions">
+                    <button
+                      className="btn btn-success"
+                      onClick={() => {
+                        if (!f.urlCompra) {
+                          alert("Este producto no tiene link configurado todavía.");
+                          return;
+                        }
+                        window.open(f.urlCompra, "_blank", "noopener,noreferrer");
+                      }}
+                    >
+                      {f?.labelCompra ? `- ${f.labelCompra} -` : "- Ir al link -"}
+                    </button>
+
+                    <button
+                      className="btn-cart-remove"
+                      onClick={() => removeFav(f.id)}
+                      title="Quitar de favoritos"
+                    >
+                      ❌
+                    </button>
+                  </div>
+                </li>
+              ))}
+
+              {favs.length === 0 && (
+                <li className="favs-empty">
+                  <span className="text-muted">No tienes favoritos guardados.</span>
+                </li>
+              )}
+            </ul>
           </div>
         </div>
       </div>
 
       {/* FOOTER */}
-      <footer>
+      <footer ref={footerRef}>
         <nav className="nl-nav1">
           <div className="nl-nav1-inner">
             <div className="nl-nav1-left">
