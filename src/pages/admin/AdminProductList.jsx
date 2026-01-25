@@ -126,48 +126,48 @@ export default function AdminProductList() {
 
             {resultadoBusqueda && (
               <div className="admin-products-result">
-                <table className="admin-products-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Nombre</th>
-                      <th>Precio</th>
-                      <th>Tipo</th>
-                      <th>Clasificación</th>
-                      <th>Estado</th>
-                      <th>Saga</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
+                <div className="admin-products-table-wrap">
+                  <table className="admin-products-table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
 
-                  <tbody>
-                    <tr>
-                      <td>{resultadoBusqueda.id}</td>
-                      <td>{resultadoBusqueda.nombre}</td>
-                      <td>${resultadoBusqueda.precio}</td>
-                      <td>{resultadoBusqueda.tipoProductoNombre}</td>
-                      <td>{resultadoBusqueda.clasificacionNombre || "-"}</td>
-                      <td>{resultadoBusqueda.estadoNombre}</td>
-                      <td>{resultadoBusqueda.saga || "-"}</td>
-                      <td className="admin-products-actions">
-                        <button
-                          type="button"
-                          className="btn-nl btn-nl-secondary"
-                          onClick={() => setProductoEditando(resultadoBusqueda)}
-                        >
-                          Editar
-                        </button>
-                        <button
-                          type="button"
-                          className="btn-nl btn-nl-danger"
-                          onClick={() => handleEliminar(resultadoBusqueda.id)}
-                        >
-                          Eliminar
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                    <tbody>
+                      <tr>
+                        <td>{resultadoBusqueda.id}</td>
+                        <td>{resultadoBusqueda.nombre}</td>
+                        <td>${resultadoBusqueda.precio}</td>
+                        <td>{resultadoBusqueda.tipoProductoNombre}</td>
+                        <td>{resultadoBusqueda.estadoNombre}</td>
+                        <td>
+                          <div className="admin-products-actions">
+                            <button
+                              type="button"
+                              className="btn-nl btn-nl-secondary"
+                              onClick={() => setProductoEditando(resultadoBusqueda)}
+                            >
+                              Editar
+                            </button>
+                            <button
+                              type="button"
+                              className="btn-nl btn-nl-danger"
+                              onClick={() => handleEliminar(resultadoBusqueda.id)}
+                            >
+                              Eliminar
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>
@@ -176,37 +176,39 @@ export default function AdminProductList() {
           <div className="admin-products-card">
             <h2 className="admin-products-title">Listado de Productos</h2>
             {mensaje && <p className="admin-products-success">{mensaje}</p>}
-
-            <table className="admin-products-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Precio</th>
-                  <th>Tipo</th>
-                  <th>Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {productos.length === 0 && (
+            
+            <div className="admin-products-table-wrap">
+              <table className="admin-products-table">
+                <thead>
                   <tr>
-                    <td colSpan="5" style={{ textAlign: "center" }}>
-                      No hay productos registrados
-                    </td>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
                   </tr>
-                )}
+                </thead>
+                <tbody>
+                  {productos.length === 0 && (
+                    <tr>
+                      <td colSpan="5" style={{ textAlign: "center" }}>
+                        No hay productos registrados
+                      </td>
+                    </tr>
+                  )}
 
-                {productos.map((prod) => (
-                  <tr key={prod.id}>
-                    <td>{prod.id}</td>
-                    <td>{prod.nombre}</td>
-                    <td>${prod.precio}</td>
-                    <td>{prod.tipoProductoNombre}</td>
-                    <td>{prod.estadoNombre}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                  {productos.map((prod) => (
+                    <tr key={prod.id}>
+                      <td>{prod.id}</td>
+                      <td>{prod.nombre}</td>
+                      <td>${prod.precio}</td>
+                      <td>{prod.tipoProductoNombre}</td>
+                      <td>{prod.estadoNombre}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             <div className="paginacion">
               <button

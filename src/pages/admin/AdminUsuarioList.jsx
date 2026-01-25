@@ -173,31 +173,31 @@ export default function AdminUsuarioList() {
           </div>
 
           {!loadingLista && usuarios.length > 0 && (
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre completo</th>
-                  <th>Correo</th>
-                  <th>Teléfono</th>
-                  <th>Rol</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {usuarios.map((u) => (
-                  <tr key={u.id}>
-                    <td>{u.id}</td>
-                    <td>
-                      {u.nombre} {u.apellidos}
-                    </td>
-                    <td>{u.correo}</td>
-                    <td>{u.telefono}</td>
-                    <td>{u.rolNombre ?? u.rol?.nombre}</td>
+            <div className="admin-table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre completo</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Rol</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody>
+                  {usuarios.map((u) => (
+                    <tr key={u.id}>
+                      <td>{u.id}</td>
+                      <td>{u.nombre} {u.apellidos}</td>
+                      <td>{u.correo}</td>
+                      <td>{u.telefono}</td>
+                      <td>{u.rolNombre ?? u.rol?.nombre}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
 
           {/* Buscar por ID */}
@@ -220,56 +220,34 @@ export default function AdminUsuarioList() {
 
           {/* Resultado de la búsqueda */}
           {resultadoBusqueda && (
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre completo</th>
-                  <th>Correo</th>
-                  <th>Teléfono</th>
-                  <th>Rol</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{resultadoBusqueda.id}</td>
-                  <td>
-                    {resultadoBusqueda.nombre} {resultadoBusqueda.apellidos}
-                  </td>
-                  <td>{resultadoBusqueda.correo}</td>
-                  <td>{resultadoBusqueda.telefono}</td>
-                  <td>{resultadoBusqueda.rol?.nombre}</td>
-                  <td>
-                    <div className="admin-actions">
-                      <button
-                        type="button"
-                        className="admin-action-btn admin-action-edit"
-                        onClick={() => handleEditar(resultadoBusqueda)}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        type="button"
-                        className="admin-action-btn admin-action-delete"
-                        onClick={() => handleEliminar(resultadoBusqueda.id)}
-                      >
-                        Eliminar
-                      </button>
-                      {/* 
-                      <button
-                        type="button"
-                        className="admin-action-btn admin-btn"
-                        onClick={() => handleVerCompras(resultadoBusqueda.id)}
-                      >
-                        Ver compras
-                      </button>
-                      */}
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="admin-table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre completo</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{resultadoBusqueda.id}</td>
+                    <td>{resultadoBusqueda.nombre} {resultadoBusqueda.apellidos}</td>
+                    <td>{resultadoBusqueda.correo}</td>
+                    <td>{resultadoBusqueda.telefono}</td>
+                    <td>{resultadoBusqueda.rol?.nombre}</td>
+                    <td>
+                      <div className="admin-actions">
+                        ...
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           )}
 
           {/* PAGINACIÓN */}
@@ -374,31 +352,32 @@ export default function AdminUsuarioList() {
                 Compras realizadas
               </h3>
 
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>ID Venta</th>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>Total</th>
-                    <th>Método de pago</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {compras.map((venta) => (
-                    <tr key={venta.id ?? venta.idVenta}>
-                      <td>{venta.id ?? venta.idVenta}</td>
-                      <td>{venta.fechaCompra}</td>
-                      <td>{venta.horaCompra}</td>
-                      <td>${venta.totalVenta}</td>
-                      <td>
-                        {venta.metodoPagoModel?.nombre ||
-                          venta.metodoPago?.nombre}
-                      </td>
+              <div className="admin-table-wrap">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>ID Venta</th>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>Total</th>
+                      <th>Método de pago</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {compras.map((venta) => (
+                      <tr key={venta.id ?? venta.idVenta}>
+                        <td>{venta.id ?? venta.idVenta}</td>
+                        <td>{venta.fechaCompra}</td>
+                        <td>{venta.horaCompra}</td>
+                        <td>${venta.totalVenta}</td>
+                        <td>
+                          {venta.metodoPagoModel?.nombre || venta.metodoPago?.nombre}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </>
           )}
 

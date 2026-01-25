@@ -262,3 +262,60 @@ button:disabled,
   background: rgba(255, 175, 0, 0.18);
   color: #ffd26e;
 }
+
+.admin-products-table-wrap{
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 1) Wrap scrolleable (ya lo tienes, pero lo dejo completo) */
+.admin-products-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 2) La tabla: que no se aplaste en móvil */
+.admin-products-table {
+  width: max-content;   /* clave: ancho según contenido */
+  min-width: 100%;      /* pero mínimo que ocupe el contenedor */
+  border-collapse: collapse;
+}
+
+/* 3) Evitar saltos de línea raros en celdas */
+.admin-products-table th,
+.admin-products-table td {
+  white-space: nowrap;
+}
+
+/* 4) (Opcional) mejorar “sensación” visual del bloque scrolleable */
+.admin-products-table-wrap {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Indicar que la tabla se puede deslizar */
+.admin-products-table-wrap {
+  position: relative;
+}
+
+/* Gradiente a la derecha indicando scroll */
+.admin-products-table-wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(to left,
+    rgba(5,5,20,0.95),
+    rgba(5,5,20,0)
+  );
+}
+
+.admin-products-table {
+  min-width: 640px;  /* fuerza un ancho real */
+  width: max-content;
+}

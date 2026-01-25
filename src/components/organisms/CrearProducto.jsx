@@ -103,6 +103,9 @@ export default function CrearProducto({
         saga: productoInicial.saga ?? "",
         portadaSaga: productoInicial.portadaSaga ?? "",
         // si tu backend te devuelve estas listas, acá podrías precargarlas también
+
+        // PRECARGAR IMAGENES EN EL INPUT
+        imagenes: (productoInicial.imagenes || []).join(", ")
       });
 
       // ✅ IMPORTANTE: precargar al editar
@@ -165,7 +168,7 @@ export default function CrearProducto({
       payload.desarrolladoresIds = parseIds(formData.desarrolladoresIds);
     }
     if (formData.imagenes.trim() !== "") {
-      payload.imagenes = parseStrings(formData.imagenes);
+      payload.imagenesRutas = parseStrings(formData.imagenes);
     }
 
     try {

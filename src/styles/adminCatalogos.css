@@ -1,5 +1,8 @@
+/* Ruta: src/styles/catalogos.css */
+
+/* ✅ títulos fluidos */
 .catalogos-title {
-  font-size: 1.8rem;
+  font-size: clamp(1.2rem, 4.5vw, 1.8rem);
   margin-bottom: 10px;
   color: #222;
   font-weight: 700;
@@ -10,15 +13,17 @@
   color: #555;
   margin-bottom: 20px;
   text-align: center;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 3.2vw, 1rem);
+  padding: 0 10px; /* ⬅ evita que se pegue a los bordes en móvil */
 }
 
-/* GRID limpio */
+/* ✅ grid más flexible (no revienta en 320–375px) */
 .catalogos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
   gap: 15px;
   margin-top: 20px;
+  padding: 0 8px; /* ⬅ margen interno en móviles */
 }
 
 /* Contenedor del botón Catálogos + submenú (en el sidebar) */
@@ -32,42 +37,58 @@
   display: block;
 }
 
-/* SUBMENÚ del botón Catálogos en el sidebar */
+/* ✅ SUBMENÚ RESPONSIVE: en desktop queda al lado,
+   en móvil cae abajo del botón y ocupa el ancho */
 .admin-sidebar .submenu-catalogos {
   position: absolute;
-  top: -139px;          /* ajústalo a gusto: -100, -130, etc. */
+  top: 0;                 /* ⬅ en desktop lo alineamos al botón */
   left: 100%;
-  margin-left: 20px;
+  margin-left: 16px;
 
   display: flex;
   flex-direction: column;
   gap: 10px;
 
-  /* Panel oscuro similar al de la izquierda */
   padding: 12px 10px;
-  background: rgba(5, 0, 20, 0.96); /* fondo oscuro */
+  background: rgba(5, 0, 20, 0.96);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
 
+  width: min(320px, calc(100vw - 40px)); /* ⬅ ancho seguro */
   max-height: calc(100vh - 120px);
   overflow-y: auto;
   z-index: 999;
 }
 
-/* BOTONES de acciones SOLO para la página de catálogos,
-   ya NO tocamos los del submenú del sidebar */
+/* ✅ MOBILE: el submenú NO debe salir hacia la derecha (como en tu screenshot) */
+@media (max-width: 900px) {
+  .admin-sidebar .submenu-catalogos {
+    position: static;        /* ⬅ se vuelve parte del flujo */
+    width: 100%;
+    margin-left: 0;
+    margin-top: 10px;
+
+    max-height: 45vh;        /* ⬅ para que no tape todo */
+    border: 1px solid rgba(255, 0, 255, 0.25);
+    border-radius: 14px;
+  }
+}
+
+/* ✅ BOTONES de la grilla */
 .catalogos-grid .btn-action {
-  font-size: 0.9rem;
-  padding: 8px 12px;
+  font-size: 0.95rem;
+  padding: 10px 14px;
 
   background: #f7f7f7;
   border: 1px solid #d8d8d8;
   color: #333;
 
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
 
   transition: 0.2s ease-in-out;
   box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+
+  width: 100%; /* ⬅ en grilla se ve más pro y parejo */
 }
 
 .catalogos-grid .btn-action:hover {
@@ -78,4 +99,46 @@
 
 .catalogos-grid .btn-action:active {
   transform: scale(0.98);
+}
+
+/* ✅ micro-ajustes en teléfonos chicos */
+@media (max-width: 420px) {
+  .catalogos-grid {
+    gap: 12px;
+    padding: 0 6px;
+  }
+
+  .catalogos-grid .btn-action {
+    font-size: 0.92rem;
+    padding: 10px 12px;
+  }
+}
+
+/* Wrapper para que la tabla no reviente en móvil */
+.admin-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+}
+
+/* Tabla mantiene estructura pero permite scroll */
+.admin-table {
+  min-width: 720px; /* ⬅ ajusta: 650–900 según columnas reales */
+}
+
+/* Texto y padding más compactos en pantallas chicas */
+@media (max-width: 600px) {
+  .admin-table th,
+  .admin-table td {
+    padding: 10px 8px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .admin-wrapper,
+  .admin-container {
+    width: calc(100% - 20px);
+    margin: 12px auto;
+  }
 }
