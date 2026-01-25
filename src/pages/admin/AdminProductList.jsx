@@ -126,48 +126,63 @@ export default function AdminProductList() {
 
             {resultadoBusqueda && (
               <div className="admin-products-result">
-                <div className="admin-products-table-wrap">
-                  <table className="admin-products-table">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Precio</th>
-                        <th>Tipo</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                      </tr>
-                    </thead>
+                <table className="admin-products-table">
+                  <thead>
+                    <tr>
+                      <th>Imagen</th>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Precio</th>
+                      <th>Tipo</th>
+                      <th>Clasificación</th>
+                      <th>Estado</th>
+                      <th>Saga</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
 
-                    <tbody>
-                      <tr>
-                        <td>{resultadoBusqueda.id}</td>
-                        <td>{resultadoBusqueda.nombre}</td>
-                        <td>${resultadoBusqueda.precio}</td>
-                        <td>{resultadoBusqueda.tipoProductoNombre}</td>
-                        <td>{resultadoBusqueda.estadoNombre}</td>
-                        <td>
-                          <div className="admin-products-actions">
-                            <button
-                              type="button"
-                              className="btn-nl btn-nl-secondary"
-                              onClick={() => setProductoEditando(resultadoBusqueda)}
-                            >
-                              Editar
-                            </button>
-                            <button
-                              type="button"
-                              className="btn-nl btn-nl-danger"
-                              onClick={() => handleEliminar(resultadoBusqueda.id)}
-                            >
-                              Eliminar
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                  <tbody>
+                    <tr>
+                      <td>
+                        {resultadoBusqueda.imagenes?.[0] ? (
+                          <img
+                            src={resultadoBusqueda.imagenes[0]}
+                            alt={resultadoBusqueda.nombre}
+                            style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8 }}
+                            onError={(e) => { e.currentTarget.style.display = "none"; }}
+                          />
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+
+                      <td>{resultadoBusqueda.id}</td>
+                      <td>{resultadoBusqueda.nombre}</td>
+                      <td>${resultadoBusqueda.precio}</td>
+                      <td>{resultadoBusqueda.tipoProductoNombre}</td>
+                      <td>{resultadoBusqueda.clasificacionNombre || "-"}</td>
+                      <td>{resultadoBusqueda.estadoNombre}</td>
+                      <td>{resultadoBusqueda.saga || "-"}</td>
+
+                      <td className="admin-products-actions">
+                        <button
+                          type="button"
+                          className="btn-nl btn-nl-secondary"
+                          onClick={() => setProductoEditando(resultadoBusqueda)}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-nl btn-nl-danger"
+                          onClick={() => handleEliminar(resultadoBusqueda.id)}
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
@@ -176,39 +191,54 @@ export default function AdminProductList() {
           <div className="admin-products-card">
             <h2 className="admin-products-title">Listado de Productos</h2>
             {mensaje && <p className="admin-products-success">{mensaje}</p>}
-            
-            <div className="admin-products-table-wrap">
-              <table className="admin-products-table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Tipo</th>
-                    <th>Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {productos.length === 0 && (
-                    <tr>
-                      <td colSpan="5" style={{ textAlign: "center" }}>
-                        No hay productos registrados
-                      </td>
-                    </tr>
-                  )}
 
-                  {productos.map((prod) => (
-                    <tr key={prod.id}>
-                      <td>{prod.id}</td>
-                      <td>{prod.nombre}</td>
-                      <td>${prod.precio}</td>
-                      <td>{prod.tipoProductoNombre}</td>
-                      <td>{prod.estadoNombre}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <table className="admin-products-table">
+              <thead>
+                <tr>
+                  <th>Imagen</th>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Precio</th>
+                  <th>Tipo</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {productos.length === 0 && (
+                  <tr>
+                    <td colSpan="5" style={{ textAlign: "center" }}>
+                      No hay productos registrados
+                    </td>
+                  </tr>
+                )}
+
+                {productos.map((prod) => {
+                const img = Array.isArray(prod.imagenes) && prod.imagenes.length > 0 ? prod.imagenes[0] : null;
+
+                return (
+                  <tr key={prod.id}>
+                    <td>
+                      {img ? (
+                        <img
+                          src={img}
+                          alt={prod.nombre}
+                          style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8 }}
+                          onError={(e) => { e.currentTarget.style.display = "none"; }}
+                        />
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                    <td>{prod.id}</td>
+                    <td>{prod.nombre}</td>
+                    <td>${prod.precio}</td>
+                    <td>{prod.tipoProductoNombre}</td>
+                    <td>{prod.estadoNombre}</td>
+                  </tr>
+                );
+              })}
+              </tbody>
+            </table>
 
             <div className="paginacion">
               <button

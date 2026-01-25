@@ -60,12 +60,17 @@ export default function SagaCarousel({ onSagaSelect, selectedSagaName }) {
         const crudas = await obtenerSagas();
         console.log("Sagas recibidas desde backend:", crudas);
 
+        const isUrl = (v) => typeof v === "string" && /^https?:\/\//i.test(v);
+
         const sagasConImagen = crudas.map((s) => {
           const key = sagaKey(s.nombre);
           const fallbackPath = SAGA_IMAGES[key] || null;
 
           const finalPath = s.portadaSaga || fallbackPath || null;
-          const finalImg = finalPath ? img(finalPath) : null;
+
+          const finalImg = finalPath 
+            ? (isUrl(finalPath) ? finalPath : img(finalPath))
+            : null;
 
           return {
             nombre: s.nombre,
@@ -137,6 +142,11 @@ export default function SagaCarousel({ onSagaSelect, selectedSagaName }) {
                         src={saga.portadaSaga}
                         alt={saga.nombre}
                         className="saga-card-image"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null; // Evita loop infinito. Esto evita que si el fallback tambien falla, React entre en un ciclo infinito
+                          const fallback = img("logos/NoLimits.webp");
+                          e.currentTarget.src = fallback || "/favicon.ico"; // Imagen respaldo
+                        }}
                       />
                     ) : (
                       <div className="saga-card-placeholder">

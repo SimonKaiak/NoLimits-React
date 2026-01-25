@@ -459,13 +459,18 @@ export default function Principal() {
           const key = p.nombre?.toLowerCase() || "";
           const localImage = PRODUCT_IMAGES[key] || "logos/NoLimits.webp";
 
+          const remoteImg =
+            Array.isArray(p.imagenes) && p.imagenes.length > 0 ? p.imagenes[0] : null;
+
           return {
             // ✅ Si tu back no trae "id", ajusta acá (ej: p.idProducto)
             id: p.id,
             name: p.nombre,
             price: p.precio,
             desc: p.descripcion || p.nombre,
-            src: img(localImage),
+
+            // Prioridad: imagen del backend, si no hay, usa local
+            src: remoteImg || img(localImage),
             alt: p.nombre,
             urlCompra: p.urlCompra || null,
             labelCompra: p.labelCompra || null,
