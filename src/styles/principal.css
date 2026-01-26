@@ -512,6 +512,30 @@ nav.navbar.bg-body-tertiary.fixed-top .btn-categoria:focus-visible{
   color:#18e3ff;
 }
 
+
+/* ✅ Precio como botón (mismo look, pero cyan) */
+.favs-btn--price{
+  border-color: rgba(0,231,255,.65);
+  color: #18e3ff;
+  background: rgba(0,0,0,.55);
+  box-shadow: 0 0 14px rgba(24, 227, 255, .18);
+  cursor: default;          /* se ve botón pero no clickeable */
+  pointer-events: none;     /* evita hover/click */
+}
+
+/* Opcional: que quede del mismo ancho que los otros botones */
+.favs-actions .favs-btn--price{
+  width: 150px;
+  justify-content: center;
+}
+
+@media (max-width: 720px){
+  .favs-attrs{
+    grid-template-columns: 1fr; /* en mobile 1 columna */
+    max-width: 100%;
+  }
+}
+
 /* Botones - / + / eliminar */
 .carrito-item-actions{
   display:inline-flex;
@@ -1700,4 +1724,336 @@ nav.navbar.bg-body-tertiary.fixed-top .user-menu.dropdown-menu[data-bs-popper]{
 
 .user-menu .dropdown-item.text-danger:hover {
   color: #ffd5e4 !important;
+}
+
+/* ===========================
+   Favoritos (overlay + panel)
+   =========================== */
+
+/* Overlay pantalla completa (top/bottom lo controlas con inline style en React) */
+.favs-overlay{
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  display: none;
+
+  background: rgba(0,0,0,.22);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.favs-overlay.is-open{ display:block; }
+
+/* Panel interno: ocupa TODO el overlay */
+.favs-panel{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  background: rgba(2, 20, 27, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  box-shadow:
+    0 0 40px rgba(0,0,0,.55),
+    0 0 80px rgba(0,231,255,.15);
+
+  padding: 20px 28px;
+  overflow-y: auto;
+}
+
+/* Header */
+.favs-header{
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.favs-btn{
+  border: 1.5px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.45);
+  color: #cfefff;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favs-btn--danger{ border-color: rgba(255,77,236,.55); color: #ffb5ea; }
+.favs-btn--primary{ border-color: rgba(0,231,255,.55); color: #bff7ff; }
+
+.favs-empty{
+  color: #cfefff;
+  opacity: .85;
+  padding: 14px 6px;
+}
+
+/* Grid */
+.favs-grid{
+  display: grid;
+  gap: 14px;
+}
+
+/* ===== CARD: 3 columnas (IMG | ATRIBUTOS | BOTONES) ===== */
+.favs-card{
+  min-height: 260px;
+  border: 1px solid rgba(0,231,255,.22);
+  border-radius: 18px;
+
+  background: rgba(0,0,0,.78);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  padding: 16px;
+  display: flex;
+  align-items: stretch;
+}
+
+/* Layout 3 columnas */
+.favs-product{
+  width: 100%;
+  display: grid;
+
+  /* ✅ Más espacio para una imagen “poster” */
+  grid-template-columns: 260px 1fr 170px; /* antes: 190px 1fr 170px */
+  gap: 18px;
+  align-items: center;
+}
+
+/* IZQUIERDA: imagen */
+.favs-image{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* ✅ Imagen estilo “poster” (como tu ejemplo) */
+.favs-image img{
+  width: 240px;           /* más grande */
+  height: 360px;          /* formato poster */
+  max-height: 380px;      /* límite por seguridad */
+  object-fit: cover;
+  object-position: center;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow:
+    0 0 22px rgba(0,231,255,.30),
+    0 0 48px rgba(153,29,255,.22);
+  transform: translateX(225px); 
+}
+
+/* CENTRO: título + chips + desc */
+/* ===== Favoritos: centro con look "Más información" ===== */
+.favs-info{
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;   /* ✅ centrado como "Más info" */
+  text-align: center;
+}
+
+/* Reutiliza el título del producto estilo NL */
+.favs-title{
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #83e2ff;
+  text-shadow:
+    0 0 8px rgba(0,231,255,.6),
+    0 0 16px rgba(153,29,255,.35);
+}
+
+/* ===============================
+   ✅ Chips UNIFORMES para TODO
+   (Categoría, Clasificación, Estado, Saga, Plataformas, Géneros, Empresas, Desarrolladores)
+   =============================== */
+.favs-attrs{
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* izquierda / derecha */
+  gap: 10px 12px;
+  justify-content: center;
+  align-items: start;
+
+  /* para que no se estire infinito */
+  max-width: 760px;
+  margin: 6px auto 2px;
+}
+
+.favs-attr{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; /* centrado dentro del chip */
+  padding: 8px 12px;
+  border-radius: 999px;
+
+  background: rgba(0,0,0,.35);
+  border: 1px solid rgba(0,231,255,.35);
+  box-shadow: 0 0 14px rgba(0,231,255,.10);
+
+  color: #cfefff;
+  font-weight: 800;
+  font-size: .95rem;
+  line-height: 1.1;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ✅ Texto tipo "Más info" (solo descripción opcional) */
+.favs-desc{
+  margin: 0;
+  color: #cfefff;
+  font-weight: 600;
+  line-height: 1.25;
+  opacity: 1;            /* antes .9 */
+}
+
+/* Destaca el label como en tu grid (por si aún usas <strong> en desc) */
+.favs-desc strong{
+  color: #18e3ff;
+}
+
+/* DERECHA: precio arriba + botones */
+.favs-actions{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+}
+
+.favs-price{
+  font-weight: 900;
+  color: #18e3ff;
+  font-size: 1.05rem;
+}
+
+/* Botones del lado derecho parejitos */
+.favs-actions .favs-btn{
+  width: 150px;
+}
+
+/* Responsive */
+@media (max-width: 720px){
+  .favs-card{ min-height: auto; }
+
+  .favs-product{
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .favs-image img{
+    width: 78vw;
+    max-width: 320px;
+    height: auto;        /* en mobile se adapta */
+    max-height: none;
+  }
+
+  .favs-attrs{ justify-content: center; }
+
+  .favs-actions{
+    align-items: center;
+  }
+
+  .favs-actions .favs-btn{
+    width: 100%;
+  }
+}
+
+/* ===============================
+   INFO DEL PRODUCTO (2 columnas)
+   =============================== */
+
+.nl-product-info{
+  text-align: center;
+}
+
+/* Título centrado arriba */
+.nl-product-title{
+  font-size: 1.4rem;
+  font-weight: 900;
+  margin-bottom: 12px;
+  color: #83e2ff;
+  text-shadow:
+    0 0 8px rgba(0,231,255,.6),
+    0 0 16px rgba(153,29,255,.35);
+}
+
+/* Grid 2 columnas */
+.nl-product-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 18px;         /* ✅ más juntos */
+  text-align: left;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* Columnas */
+.nl-product-col{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nl-product-col p{
+  margin: 0;
+  color: #cfefff;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.nl-product-col strong{
+  color: #18e3ff;
+}
+
+/* Mobile: vuelve a 1 columna */
+@media (max-width: 768px){
+  .nl-product-grid{
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+
+/* ===============================
+   ⭐ Botón Favorito (único, sin duplicados)
+   Negro default / Cyan en hover
+   =============================== */
+
+button.btn.nl-fav-btn{
+  background: #000;
+  border: 1px solid #18e3ff;
+  color: #18e3ff;
+  font-weight: 900;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 0 10px rgba(24, 227, 255, .25);
+  transition:
+    background .2s ease,
+    color .2s ease,
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+button.btn.nl-fav-btn:hover{
+  background: rgba(24, 227, 255, 0.95);
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 0 22px rgba(24, 227, 255, .75);
+}
+
+button.btn.nl-fav-btn:focus-visible{
+  background: rgba(24, 227, 255, 0.95);
+  color: #000;
+  outline: none;
+  box-shadow:
+    0 0 0 2px rgba(24, 227, 255, .6),
+    0 0 22px rgba(24, 227, 255, .75);
 }

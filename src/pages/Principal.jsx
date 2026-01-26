@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/principal.css";
 import SagaCarousel from "../components/organisms/SagaCarousel";
 import { listarProductos } from "../services/productos";
+import FavoritosPanel from "../components/organisms/FavoritosPanel";
 
 // Carga todo lo que haya bajo /src/assets/img y deja lista la URL para usarla en <img src="...">
 const IMGS = import.meta.glob("../assets/img/**/*", { eager: true, as: "url" });
@@ -231,24 +232,19 @@ function Carousel({
         <div className={`nl-cta ${openInfo ? "is-open" : "is-closed"}`} ref={ctaRef}>
           {!openInfo && current && (
             <>
-              <strong className="nl-price">{clp(current.price)}</strong>
+              {/* ✅ Ya NO mostramos el precio arriba */}
               <div className="nl-actions">
                 <button className="btn btn-info" onClick={() => setOpenInfo(true)}>
                   - Más información -
                 </button>
 
-                <button
-                  className="btn btn-outline-warning"
-                  onClick={() => onToggleFav?.(current)}
-                  title="Guardar / quitar de favoritos"
-                >
-                  {isFavFn?.(current?.id) ? "⭐ Guardado" : "☆ Favorito"}
-                </button>
+                {/* ✅ El precio ocupa el lugar del favorito */}
+                <strong className="nl-price" style={{ margin: 0 }}>
+                  {clp(current.price)}
+                </strong>
 
                 <button className="btn btn-success nl-add" onClick={goToLink}>
-                  {current?.labelCompra
-                    ? `- ${current.labelCompra} -`
-                    : "- Ir al link -"}
+                  {current?.labelCompra || "Ir al sitio"}
                 </button>
               </div>
             </>
@@ -269,95 +265,81 @@ function Carousel({
                   - Menos información -
                 </button>
 
-                <button
-                  className="btn btn-outline-warning"
-                  onClick={() => onToggleFav?.(current)}
-                  title="Guardar / quitar de favoritos"
-                >
-                  {isFavFn?.(current?.id) ? "⭐ Guardado" : "☆ Favorito"}
-                </button>
-
                 <strong className="nl-price" style={{ margin: 0 }}>
                   {clp(current.price)}
                 </strong>
 
                 <button className="btn btn-success nl-add" onClick={goToLink}>
-                  {current?.labelCompra
-                    ? `- ${current.labelCompra} -`
-                    : "- Ir al link -"}
+                  {current?.labelCompra || "Ir al sitio"}
                 </button>
               </div>
 
               <div className="nl-info mt-2">
-                <div className="card card-body">
-                  <strong>{current.desc}</strong>
+                <div className="card card-body nl-product-info">
 
-                  {/* ATRIBUTOS EXTRA DEL PRODUCTO */}
-                  <div className="mt-2 nl-extra-attrs">
-                    {current.tipo && (
-                      <p className="m-0">
-                        <strong>Categoría:</strong> {current.tipo}
-                      </p>
-                    )}
-                    {current.clasificacion && (
-                      <p className="m-0">
-                        <strong>Clasificación:</strong> {current.clasificacion}
-                      </p>
-                    )}
-                    {current.estado && (
-                      <p className="m-0">
-                        <strong>Estado:</strong> {current.estado}
-                      </p>
-                    )}
-                    {current.saga && (
-                      <p className="m-0">
-                        <strong>Saga:</strong> {current.saga}
-                      </p>
-                    )}
-                    {current.plataformas?.length > 0 && (
-                      <p className="m-0">
-                        <strong>Plataformas:</strong>{" "}
-                        {current.plataformas.join(" · ")}
-                      </p>
-                    )}
-                    {current.generos?.length > 0 && (
-                      <p className="m-0">
-                        <strong>Géneros:</strong> {current.generos.join(" · ")}
-                      </p>
-                    )}
-                    {current.empresas?.length > 0 && (
-                      <p className="m-0">
-                        <strong>Empresas:</strong> {current.empresas.join(" · ")}
-                      </p>
-                    )}
-                    {current.desarrolladores?.length > 0 && (
-                      <p className="m-0">
-                        <strong>Desarrolladores:</strong>{" "}
-                        {current.desarrolladores.join(" · ")}
-                      </p>
-                    )}
+                  {/* TÍTULO */}
+                  <h3 className="nl-product-title">
+                    {current.name}
+                  </h3>
+
+                  {/* GRID DE ATRIBUTOS */}
+                  <div className="nl-product-grid">
+
+                    <div className="nl-product-col">
+                      {current?.id && <p><strong>ID:</strong> #{current.id}</p>}
+                      {current.tipo && <p><strong>Categoría:</strong> {current.tipo}</p>}
+                      {current.clasificacion && <p><strong>Clasificación:</strong> {current.clasificacion}</p>}
+                      {current.estado && <p><strong>Estado:</strong> {current.estado}</p>}
+                      {current.saga && <p><strong>Saga:</strong> {current.saga}</p>}
+                    </div>
+
+                    <div className="nl-product-col">
+                      <p><strong>Precio:</strong> {clp(current.price)}</p>
+
+                      {current.plataformas?.length > 0 && (
+                        <p><strong>Plataformas:</strong> {current.plataformas.join(" · ")}</p>
+                      )}
+                      {current.generos?.length > 0 && (
+                        <p><strong>Géneros:</strong> {current.generos.join(" · ")}</p>
+                      )}
+                      {current.empresas?.length > 0 && (
+                        <p><strong>Empresas:</strong> {current.empresas.join(" · ")}</p>
+                      )}
+                      {current.desarrolladores?.length > 0 && (
+                        <p><strong>Desarrolladores:</strong> {current.desarrolladores.join(" · ")}</p>
+                      )}
+                    </div>
+
                   </div>
                 </div>
               </div>
 
               <div
                 className="nl-related mt-2"
-                style={{
-                  display: "flex",
-                  gap: ".75rem",
-                  justifyContent: "center",
-                }}
+                style={{ display: "flex", gap: ".75rem", justifyContent: "center" }}
               >
-                {related.map((key) => (
-                  <button
-                    key={key}
-                    className="btn btn-outline-info nl-link"
-                    // ✅ sin titleId: key ya es "peliculas"/"videojuegos"/"accesorios"
-                    onClick={() => jumpTo(key)}
-                  >
-                    {pretty[key]}
-                  </button>
-                ))}
+                <button
+                  className="btn btn-outline-info nl-link"
+                  onClick={() => jumpTo(related[0])}
+                >
+                  {pretty[related[0]]}
+                </button>
+
+                {/* ⭐ Favorito al medio (mismo color que el precio por CSS) */}
+                <button
+                  className="btn nl-fav-btn"
+                  onClick={() => onToggleFav?.(current)}
+                  title="Guardar / quitar de favoritos"
+                >
+                  {isFavFn?.(current?.id) ? "⭐ Guardado" : "☆ Favorito"}
+                </button>
+
+                <button
+                  className="btn btn-outline-info nl-link"
+                  onClick={() => jumpTo(related[1])}
+                >
+                  {pretty[related[1]]}
+                </button>
               </div>
             </>
           )}
@@ -387,19 +369,6 @@ export default function Principal() {
 
   // Funcion para scrollear a las secciones.
   const [navH, setNavH] = useState(120);
-
-  const footerRef = useRef(null);
-  const [footerH, setFooterH] = useState(80);
-
-  useEffect(() => {
-    const calcFooter = () => {
-      setFooterH((footerRef.current?.offsetHeight || 80) + 10);
-    };
-
-    calcFooter();
-    window.addEventListener("resize", calcFooter);
-    return () => window.removeEventListener("resize", calcFooter);
-  }, []);
 
   // Precargar productos en segundo plano al entrar a /principal
   useEffect(() => {
@@ -436,6 +405,11 @@ export default function Principal() {
     document.addEventListener("keydown", k);
     return () => document.removeEventListener("keydown", k);
   }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle("favs-open", favsOpen);
+    return () => document.body.classList.remove("favs-open");
+  }, [favsOpen]);
 
   // Cargar productos SOLO cuando haya saga seleccionada
   useEffect(() => {
@@ -480,7 +454,7 @@ export default function Principal() {
             id: p.id,
             name: p.nombre,
             price: p.precio,
-            desc: p.descripcion || p.nombre,
+            desc: (p.descripcion && p.descripcion.trim()) ? p.descripcion : "",
 
             // Prioridad: imagen del backend, si no hay, usa local
             src: remoteImg || img(localImage),
@@ -851,79 +825,24 @@ export default function Principal() {
         )}
       </main>
 
-      {/* PANEL DE FAVORITOS (FULL ENTRE NAV Y FOOTER) */}
-      <div
-        className={`favs-overlay ${favsOpen ? "is-open" : ""}`}
-        style={{ top: `${navH}px`, bottom: `${footerH}px` }}
-        onClick={(e) => {
-          if (e.currentTarget === e.target) setFavsOpen(false);
+      {/* PANEL DE FAVORITOS */}
+      <FavoritosPanel
+        isOpen={favsOpen}
+        topOffsetPx={navH}
+        bottomOffsetPx={100}
+        favoritos={favs}
+        onClose={() => setFavsOpen(false)}
+        onClear={clearFavs}
+        onRemove={removeFav}
+        onGoToProduct={(p) => {
+          // opcional: scrollear a la sección y abrir “más info”
+          // por ahora lo dejamos simple:
+          alert(`Producto: ${p.name}`);
         }}
-      >
-        <div className="favs-panel">
-          <div className="favs-header">
-            <h2>Favoritos</h2>
-
-            <div className="favs-header-actions">
-              <button className="btn-cerrar" onClick={() => setFavsOpen(false)}>
-                - Cerrar -
-              </button>
-
-              {favs.length > 0 && (
-                <button className="btn btn-outline-danger" onClick={clearFavs}>
-                  - Borrar todos -
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="favs-body">
-            <ul className="favs-list">
-              {favs.map((f) => (
-                <li key={f.id} className="favs-item">
-                  <div className="carrito-item-main">
-                    <span className="carrito-item-name">⭐ {f.name}</span>
-                    <div className="carrito-item-meta">
-                      <span className="carrito-item-price">{clp(f.price)}</span>
-                    </div>
-                  </div>
-
-                  <div className="carrito-item-actions">
-                    <button
-                      className="btn btn-success"
-                      onClick={() => {
-                        if (!f.urlCompra) {
-                          alert("Este producto no tiene link configurado todavía.");
-                          return;
-                        }
-                        window.open(f.urlCompra, "_blank", "noopener,noreferrer");
-                      }}
-                    >
-                      {f?.labelCompra ? `- ${f.labelCompra} -` : "- Ir al link -"}
-                    </button>
-
-                    <button
-                      className="btn-cart-remove"
-                      onClick={() => removeFav(f.id)}
-                      title="Quitar de favoritos"
-                    >
-                      ❌
-                    </button>
-                  </div>
-                </li>
-              ))}
-
-              {favs.length === 0 && (
-                <li className="favs-empty">
-                  <span className="text-muted">No tienes favoritos guardados.</span>
-                </li>
-              )}
-            </ul>
-          </div>
-        </div>
-      </div>
+      />
 
       {/* FOOTER */}
-      <footer ref={footerRef}>
+      <footer>
         <nav className="nl-nav1">
           <div className="nl-nav1-inner">
             <div className="nl-nav1-left">
