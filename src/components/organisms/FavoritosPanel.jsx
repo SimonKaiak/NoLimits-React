@@ -66,8 +66,9 @@ const normalizeImgPath = (p = "") =>
 
 // Si te llega una ruta desde backend, resuélvela; si no, usa mapeo por nombre
 const resolveFavSrc = (p) => {
-  // 1) si ya viene un src usable, úsalo (pero si es "", cae al fallback)
-  if (p?.src && String(p.src).trim()) return p.src;
+  // 1) si viene un src, úsalo SOLO si NO es el logo de NoLimits (porque eso quedó guardado en favoritos)
+  const src = String(p?.src || "").trim();
+  if (src && !src.toLowerCase().includes("nolimits")) return src;
 
   // 2) si viene imagen desde backend
   const remoteImg =

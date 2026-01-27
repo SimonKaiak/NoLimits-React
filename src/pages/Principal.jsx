@@ -469,11 +469,14 @@ export default function Principal() {
               ? p.imagenes[0]
               : null;
 
-          const finalSrc = remoteImg
-            ? (isHttp(remoteImg)
-                ? remoteImg
-                : (img(normalizeImgPath(remoteImg)) || img(localImage)))
-            : img(localImage);
+          const imgRel = remoteImg
+            ? (isHttp(remoteImg) ? null : normalizeImgPath(remoteImg))
+            : localImage;
+
+          const imgHttp = remoteImg && isHttp(remoteImg) ? remoteImg : null;
+
+          // src que se muestra ahora
+          const finalSrc = imgHttp ? imgHttp : (img(imgRel) || img(localImage));
 
           return {
             id: p.id,
@@ -481,8 +484,14 @@ export default function Principal() {
             price: p.precio,
             desc: p.descripcion?.trim() || "",
 
+            // lo que muestra el carrusel
             src: finalSrc,
             alt: p.nombre,
+
+            // lo que Favoritos usará para resolver siempre bien
+            imgRel,   // "peliculas/spiderman/PSpiderman1.webp" o "logos/NoLimits.webp"
+            imgHttp,  // URL si viene remoto real
+
             urlCompra: p.urlCompra || null,
             labelCompra: p.labelCompra || null,
 
