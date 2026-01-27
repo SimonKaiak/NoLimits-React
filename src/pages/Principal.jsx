@@ -679,7 +679,7 @@ export default function Principal() {
       {/* HERO PRINCIPAL */}
       <header className="page-hero text-center">
         <p className="page-subtitle">
-          _.- Variedad, estilo y calidad en un solo lugar -._
+          _.- Todo lo que buscas en un solo lugar -._
           <span className="sub-underline"></span>
         </p>
         <div className="hero-logo">
