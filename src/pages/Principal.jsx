@@ -48,8 +48,8 @@ const PRODUCT_IMAGES = {
   "minecraft: java & bedrock": "videojuegos/minecraft/VGMinecraftJyB.webp",
   "minecraft: dungeons": "videojuegos/minecraft/VGMinecraftDungeons.webp",
   // Minecraft Accesorios.
-  "lámpara abeja minecraft": "accesorios/minecraft/ACCMinecraft1.webp",
-  "audífonos gamer minecraft - edición mojang":
+  "lampara abeja minecraft": "accesorios/minecraft/ACCMinecraft1.webp",
+  "audifonos gamer minecraft - edicion mojang":
     "accesorios/minecraft/ACCMinecraft2.webp",
   "preservativo minecraft": "accesorios/minecraft/ACCMinecraft3.webp",
 };
@@ -420,8 +420,24 @@ export default function Principal() {
       return;
     }
 
-    async function cargarProductosDeSaga() {
+    // Normaliza una ruta que venga del backend (ej: "src/assets/img/...")
+    const normalizeImgPath = (p = "") =>
+      p.replace(/^src\/assets\/img\//i, "").replace(/^\/+/, "");
+
+    // Normaliza texto (para keys: sin tildes, lower, trim)
+    const norm = (s = "") =>
+      s
+        .toString()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+
+    const isHttp = (s = "") => /^https?:\/\//i.test(String(s));
+
+    function cargarProductosDeSaga() {
       try {
+        // 1) Filtrar por saga
         const data = allProducts.filter((p) => {
           const sagaProd = (p.sagaNombre || p.saga || "")
             .toString()
@@ -435,6 +451,7 @@ export default function Principal() {
 
         if (!Array.isArray(data)) return;
 
+        // 2) Tipo normalizado
         const getTipo = (p) =>
           (p.tipoProductoNombre || p.tipoProducto || p.tipo || "")
             .toString()
@@ -442,27 +459,33 @@ export default function Principal() {
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "");
 
+        // 3) Mapeo a slide
         const mapToSlide = (p) => {
-          const key = p.nombre?.toLowerCase() || "";
+          const key = norm(p.nombre);
           const localImage = PRODUCT_IMAGES[key] || "logos/NoLimits.webp";
 
           const remoteImg =
-            Array.isArray(p.imagenes) && p.imagenes.length > 0 ? p.imagenes[0] : null;
+            Array.isArray(p.imagenes) && p.imagenes.length > 0
+              ? p.imagenes[0]
+              : null;
+
+          const finalSrc = remoteImg
+            ? (isHttp(remoteImg)
+                ? remoteImg
+                : (img(normalizeImgPath(remoteImg)) || img(localImage)))
+            : img(localImage);
 
           return {
-            // ✅ Si tu back no trae "id", ajusta acá (ej: p.idProducto)
             id: p.id,
             name: p.nombre,
             price: p.precio,
-            desc: (p.descripcion && p.descripcion.trim()) ? p.descripcion : "",
+            desc: p.descripcion?.trim() || "",
 
-            // Prioridad: imagen del backend, si no hay, usa local
-            src: remoteImg || img(localImage),
+            src: finalSrc,
             alt: p.nombre,
             urlCompra: p.urlCompra || null,
             labelCompra: p.labelCompra || null,
 
-            // Campos extra del back
             tipo: p.tipoProductoNombre || p.tipoProducto || null,
             clasificacion: p.clasificacionNombre || null,
             estado: p.estadoNombre || null,
@@ -476,19 +499,17 @@ export default function Principal() {
           };
         };
 
+        // 4) Separar por categoría
         const peliculasData = data.filter((p) => getTipo(p).includes("pelic"));
 
-        // ORDEN PERSONALIZADO PARA VIDEOJUEGOS DE MINECRAFT
-        const minecraftOrder = [
-          "minecraft: java & bedrock",
-          "minecraft: dungeons",
-        ];
+        const minecraftOrder = ["minecraft: java & bedrock", "minecraft: dungeons"];
 
-        const videojuegosData = data
-          .filter((p) => getTipo(p).includes("video"))
-          .sort((a, b) => {
-            const aName = (a.nombre || "").toLowerCase();
-            const bName = (b.nombre || "").toLowerCase();
+        let videojuegosData = data.filter((p) => getTipo(p).includes("video"));
+
+        if ((selectedSaga || "").toLowerCase() === "minecraft") {
+          videojuegosData = videojuegosData.sort((a, b) => {
+            const aName = norm(a.nombre);
+            const bName = norm(b.nombre);
 
             const aIdx = minecraftOrder.indexOf(aName);
             const bIdx = minecraftOrder.indexOf(bName);
@@ -496,24 +517,22 @@ export default function Principal() {
             if (aIdx === -1 && bIdx === -1) return 0;
             if (aIdx === -1) return 1;
             if (bIdx === -1) return -1;
-
             return aIdx - bIdx;
           });
+        }
 
-        // Accesorios
         let accesoriosData = data.filter((p) => getTipo(p).includes("acces"));
 
-        // Orden personalizado SOLO para Minecraft
         const minecraftAccOrder = [
-          "lámpara abeja minecraft",
-          "audífonos gamer minecraft - edición mojang",
+          "lampara abeja minecraft",
+          "audifonos gamer minecraft - edicion mojang",
           "preservativo minecraft",
         ];
 
         if ((selectedSaga || "").toLowerCase() === "minecraft") {
           accesoriosData = accesoriosData.sort((a, b) => {
-            const aName = (a.nombre || "").toLowerCase();
-            const bName = (b.nombre || "").toLowerCase();
+            const aName = norm(a.nombre);
+            const bName = norm(b.nombre);
 
             const aIdx = minecraftAccOrder.indexOf(aName);
             const bIdx = minecraftAccOrder.indexOf(bName);
@@ -521,11 +540,11 @@ export default function Principal() {
             if (aIdx === -1 && bIdx === -1) return 0;
             if (aIdx === -1) return 1;
             if (bIdx === -1) return -1;
-
             return aIdx - bIdx;
           });
         }
 
+        // 5) Set state
         setPeliculas(peliculasData.map(mapToSlide));
         setVideojuegos(videojuegosData.map(mapToSlide));
         setAccesorios(accesoriosData.map(mapToSlide));
