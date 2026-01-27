@@ -14,6 +14,7 @@ html { background: #000; }
 :root{
   /* Dimensiones / layout */
   --nav-h: 120px;
+  --brand-x: clamp(-20px, 3vw, 120px);
   --frame-r: 28px;
   --frame-b: 3px;
   --cta-btn-h: 42px;
@@ -41,6 +42,9 @@ html { background: #000; }
 
   /* Borde unificado para pills del nav */
   --pill-border: rgba(255,255,255,.28);
+
+  /* Favs*/
+  --favs-poster-shift-x: 150px; /* 0–200px aprox */
 }
 
 html.route-principal{
@@ -80,8 +84,6 @@ body.route-principal::before{
   background: linear-gradient(rgba(19, 4, 238, 0.12), rgba(0, 0, 0, 0.55));
 }
 
-
-
 /* Fix de compatibilidad (typo) */
 .align-item-center{ align-items: center; }
 
@@ -105,7 +107,7 @@ nav.navbar.bg-body-tertiary.fixed-top{
   -webkit-backdrop-filter: blur(6px);
   border-bottom: 1px solid rgba(255,255,255,.10);
   box-shadow: 0 6px 18px rgba(0,0,0,.20);
-  isolation: isolate;
+  isolation: isolate;  
 }
 
 /* Línea inferior animada (subrayado del nav) */
@@ -136,6 +138,10 @@ nav.navbar.bg-body-tertiary.fixed-top::before{
                     rgba(0,0,0,1) 35%, rgba(0,0,0,.4) 75%, rgba(0,0,0,0) 100%);
           mask-image: linear-gradient(to bottom,
                     rgba(0,0,0,1) 35%, rgba(0,0,0,.4) 75%, rgba(0,0,0,0) 100%);
+}
+
+nav.navbar.bg-body-tertiary.fixed-top .container-fluid{
+  position: relative;   /* <-- CLAVE */
 }
 
 /* Texto y enlaces del navbar (glow + legibilidad) */
@@ -200,7 +206,7 @@ nav.navbar.bg-body-tertiary.fixed-top .navbar-toggler-icon{ filter: invert(1) co
   position: absolute;
   left: 50%;
   top: 45%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) translateX(var(--brand-x));
   margin: 0;
   line-height: 1;
   font-weight: 800;
@@ -215,7 +221,7 @@ nav.navbar.bg-body-tertiary.fixed-top .navbar-toggler-icon{ filter: invert(1) co
 }
 #brand:hover{
   filter: brightness(1.12);
-  transform: translate(-50%, -50%) scale(1.015);
+  transform: translate(-50%, -50%) translateX(var(--brand-x)) scale(1.015);
   text-shadow:
     0 0 5px rgba(255,255,255,.5),
     0 0 28px rgba(123,92,255,.85),
@@ -442,7 +448,7 @@ nav.navbar.bg-body-tertiary.fixed-top .btn-categoria:focus-visible{
   right: 0;
   width: 100%;
   max-width: 320px;
-  max-height: calc(100vh - var(--nav-h) - 100px); /* deja aire para el footer */
+  max-height: calc(100vh - var(--nav-h) - 130px); /* deja aire para el footer */
   overflow-y: auto;
   overflow-x: hidden;
   padding: 22px 18px 16px;
@@ -979,7 +985,7 @@ nav.navbar.bg-body-tertiary.fixed-top .btn-categoria:focus-visible{
   bottom:0;
   left:0;
   width:100%;
-  height:100px;
+  height:130px;
   z-index:1000;
   background:rgba(0,0,0,.6);
   backdrop-filter:blur(6px);
@@ -1735,7 +1741,7 @@ nav.navbar.bg-body-tertiary.fixed-top .user-menu.dropdown-menu[data-bs-popper]{
   position: fixed;
   left: 0;
   right: 0;
-  z-index: 2000;
+  z-index: 999;
   display: none;
 
   background: rgba(0,0,0,.22);
@@ -1744,12 +1750,13 @@ nav.navbar.bg-body-tertiary.fixed-top .user-menu.dropdown-menu[data-bs-popper]{
 }
 .favs-overlay.is-open{ display:block; }
 
-/* Panel interno: ocupa TODO el overlay */
+/* PANEL interno: ocupa TODO el overlay */
 .favs-panel{
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  top: -9px;
 
   background: rgba(2, 20, 27, 0.55);
   backdrop-filter: blur(8px);
@@ -1761,6 +1768,11 @@ nav.navbar.bg-body-tertiary.fixed-top .user-menu.dropdown-menu[data-bs-popper]{
 
   padding: 20px 28px;
   overflow-y: auto;
+}
+
+body.favs-open{
+  overflow: hidden;
+  touch-action: none; /* bloquea scroll en mobile */
 }
 
 /* Header */
@@ -1796,12 +1808,12 @@ nav.navbar.bg-body-tertiary.fixed-top .user-menu.dropdown-menu[data-bs-popper]{
 /* Grid */
 .favs-grid{
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 /* ===== CARD: 3 columnas (IMG | ATRIBUTOS | BOTONES) ===== */
 .favs-card{
-  min-height: 260px;
+  min-height: 0;
   border: 1px solid rgba(0,231,255,.22);
   border-radius: 18px;
 
@@ -1809,7 +1821,7 @@ nav.navbar.bg-body-tertiary.fixed-top .user-menu.dropdown-menu[data-bs-popper]{
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 
-  padding: 16px;
+  padding: 12px;
   display: flex;
   align-items: stretch;
 }
@@ -1832,21 +1844,6 @@ nav.navbar.bg-body-tertiary.fixed-top .user-menu.dropdown-menu[data-bs-popper]{
   justify-content:center;
 }
 
-/* ✅ Imagen estilo “poster” (como tu ejemplo) */
-.favs-image img{
-  width: 240px;           /* más grande */
-  height: 360px;          /* formato poster */
-  max-height: 380px;      /* límite por seguridad */
-  object-fit: cover;
-  object-position: center;
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.18);
-  box-shadow:
-    0 0 22px rgba(0,231,255,.30),
-    0 0 48px rgba(153,29,255,.22);
-  transform: translateX(225px); 
-}
-
 /* CENTRO: título + chips + desc */
 /* ===== Favoritos: centro con look "Más información" ===== */
 .favs-info{
@@ -1861,6 +1858,7 @@ nav.navbar.bg-body-tertiary.fixed-top .user-menu.dropdown-menu[data-bs-popper]{
 /* Reutiliza el título del producto estilo NL */
 .favs-title{
   margin: 0;
+  margin-bottom: 40px;
   font-size: 1.4rem;
   font-weight: 900;
   color: #83e2ff;
@@ -1947,13 +1945,6 @@ nav.navbar.bg-body-tertiary.fixed-top .user-menu.dropdown-menu[data-bs-popper]{
   .favs-product{
     grid-template-columns: 1fr;
     text-align: center;
-  }
-
-  .favs-image img{
-    width: 78vw;
-    max-width: 320px;
-    height: auto;        /* en mobile se adapta */
-    max-height: none;
   }
 
   .favs-attrs{ justify-content: center; }
@@ -2056,4 +2047,119 @@ button.btn.nl-fav-btn:focus-visible{
   box-shadow:
     0 0 0 2px rgba(24, 227, 255, .6),
     0 0 22px rgba(24, 227, 255, .75);
+}
+
+/* ===============================
+   FAVORITOS COMPACTO (desktop)
+   - chips 4 columnas (2 filas para 8 atributos)
+   - menos alto de tarjeta
+   =============================== */
+
+/* 1) Card más apretada */
+.favs-card{
+  padding: 16px;          /* antes 12px */
+  border-radius: 16px;    /* antes 18px */
+}
+
+/* 2) Grid principal más compacto */
+.favs-product{
+  grid-template-columns: 210px 1fr 150px; /* antes 260px 1fr 170px */
+  gap: 12px;                               /* antes 18px */
+  align-items: center;
+}
+
+/* Imagen Favoritos (desktop) */
+.favs-image img{
+  width: 200px;
+  height: 300px;
+  max-height: 300px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow:
+    0 0 22px rgba(0,231,255,.30),
+    0 0 48px rgba(153,29,255,.22);
+
+  /* NO usar margin-left:300px */
+  margin-left: 0;
+
+  /* si quieres moverla a la derecha, usa esto */
+  transform: translateX(var(--favs-poster-shift-x));
+}
+
+/* 4) Título un pelín más chico */
+.favs-title{
+  font-size: 1.15rem; /* antes 1.4rem */
+}
+
+/* 5) Atributos: 4 columnas = 8 chips en 2 filas */
+.favs-attrs{
+  grid-template-columns: repeat(4, minmax(0, 1fr)); /* <-- clave */
+  gap: 8px 10px;           /* antes 10px 12px */
+  max-width: 900px;        /* deja que use más ancho para bajar altura */
+  margin: 4px auto 0;
+}
+
+/* 6) Chips más compactos (menos alto) */
+.favs-attr{
+  padding: 6px 10px;     /* antes 8px 12px */
+  font-size: .85rem;     /* antes .95rem */
+  font-weight: 800;
+  line-height: 1.05;
+  white-space: nowrap;   /* sigue truncando */
+}
+
+/* 7) Botones un poco más chicos */
+.favs-actions{
+  gap: 8px; /* antes 10px */
+}
+.favs-actions .favs-btn{
+  width: 140px;          /* antes 150px */
+  padding: 9px 10px;     /* reduce alto */
+}
+
+/* ===============================
+   Breakpoints: 2 cols en tablet, 1 col en mobile
+   =============================== */
+@media (max-width: 1100px){
+  .favs-attrs{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px){
+  .favs-product{
+    grid-template-columns: 1fr;
+  }
+  .favs-image img{
+    width: 78vw;
+    max-width: 320px;
+    height: auto;
+    max-height: none;
+    margin-left: 0;
+    transform: none;
+  }
+  .favs-attrs{
+    grid-template-columns: 1fr; /* mobile 1 columna */
+    max-width: 100%;
+  }
+  .favs-actions{
+    align-items: center;
+  }
+  .favs-actions .favs-btn{
+    width: 100%;
+  }
+}
+
+/* Desktop: mover SOLO el poster sin cambiar el layout */
+@media (min-width: 721px){
+  .favs-image{
+    justify-content: center; /* mantenemos look bonito */
+  }
+
+  .favs-image img{
+    transform: translateX(var(--favs-poster-shift-x));
+    margin-left: 0 !important;
+  }
 }

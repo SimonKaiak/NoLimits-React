@@ -91,7 +91,6 @@ export default function FavoritosPanel({
   bottomOffsetPx = 100,
   favoritos = [],
   onClose,
-  onClear,
   onRemove,
 }) {
   const goToVendor = (p) => {
@@ -120,14 +119,7 @@ export default function FavoritosPanel({
       onClick={onClose}
     >
       <div className="favs-panel" onClick={(e) => e.stopPropagation()}>
-        <div className="favs-header">
-          <button className="favs-btn" onClick={onClose}>
-            - Cerrar -
-          </button>
-          <button className="favs-btn favs-btn--danger" onClick={onClear}>
-            - Borrar todos -
-          </button>
-        </div>
+        {/* sin header: se cierra con Dejar de ver / ESC / clic afuera */}
 
         {favoritos.length === 0 ? (
           <div className="favs-empty">No tienes favoritos todavía.</div>

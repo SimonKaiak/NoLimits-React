@@ -650,7 +650,7 @@ export default function Principal() {
                   <li>
                     <button
                       className="dropdown-item"
-                      onClick={() => setFavsOpen(true)}
+                      onClick={() => setFavsOpen((v) => !v)}
                     >
                       Favoritos ⭐ ({favs.length})
                     </button>
@@ -692,12 +692,12 @@ export default function Principal() {
                 </button>
               </form>
 
-              {/* Botón Ver Favoritos */}
+              {/* Botón Ver Favoritos (toggle) */}
               <button
                 className="btn btn-outline-warning me-2"
-                onClick={() => setFavsOpen(true)}
+                onClick={() => setFavsOpen((v) => !v)}
               >
-                ⭐ Ver Favoritos ({favs.length})
+                ⭐ {favsOpen ? "Dejar de ver" : "Ver Favoritos"} ({favs.length})
               </button>
             </div>
           </div>
@@ -857,7 +857,7 @@ export default function Principal() {
       <FavoritosPanel
         isOpen={favsOpen}
         topOffsetPx={navH}
-        bottomOffsetPx={100}
+        bottomOffsetPx={60}
         favoritos={favs}
         onClose={() => setFavsOpen(false)}
         onClear={clearFavs}

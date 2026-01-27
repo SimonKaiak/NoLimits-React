@@ -141,19 +141,14 @@ export default function NavbarNL() {
         <h1 id="brand">°-._ NoLimits _.-°</h1>
 
 
-        
-        {/* DERECHA DEL NAV                                     */}
-        
+        {/* DERECHA DEL NAV */}
         <div className="nl-right">
 
           {/* Vista Login → mostrar botón para ir a Registro */}
           {isLogin && (
             <>
               <span className="askRight">¿No tienes una cuenta?</span>
-              <button
-                className="btn_reg"
-                onClick={() => navigate("/registro")}
-              >
+              <button className="btn_reg" onClick={() => navigate("/registro")}>
                 - Regístrate -
               </button>
             </>
@@ -163,42 +158,42 @@ export default function NavbarNL() {
           {isRegistro && (
             <>
               <span className="askRight">¿Ya tienes una cuenta?</span>
-              <button
-                className="btn_in"
-                onClick={() => navigate("/login")}
-              >
+              <button className="btn_in" onClick={() => navigate("/login")}>
                 - Iniciar Sesión -
               </button>
             </>
           )}
 
-          {/* Vistas normales (Home y otras), pero NO auth y NO admin */}
+          {/* Vistas normales (NO auth y NO admin y NO hideRightSide) */}
           {!isAuthRoute && !hideRightSide && (
             <>
-              {/* Si está logueado mostrar Catálogo (excepto en "/") */}
-              {isLogged && location.pathname !== "/" && (
-                <button
-                  className="btn_in"
-                  onClick={() => navigate("/principal")}
-                >
-                  - Catálogo -
-                </button>
+              {/* Si está logueado */}
+              {isLogged ? (
+                <>
+                  {/* Catálogo solo si NO estás ya en principal */}
+                  {location.pathname !== "/principal" && (
+                    <button className="btn_in" onClick={() => navigate("/principal")}>
+                      - Catálogo -
+                    </button>
+                  )}
+
+                  {/* Opcional: botones útiles cuando hay sesión */}
+                  <button className="btn_in" onClick={() => navigate("/perfil")}>
+                    - Perfil -
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Si NO está logueado, mostrar auth */}
+                  <button className="btn_in" onClick={() => navigate("/login")}>
+                    - Iniciar Sesión -
+                  </button>
+
+                  <button className="btn_reg" onClick={() => navigate("/registro")}>
+                    - Registrarse -
+                  </button>
+                </>
               )}
-
-              {/* Botones de login y registro */}
-              <button
-                className="btn_in"
-                onClick={() => navigate("/login")}
-              >
-                - Iniciar Sesión -
-              </button>
-
-              <button
-                className="btn_reg"
-                onClick={() => navigate("/registro")}
-              >
-                - Registrarse -
-              </button>
             </>
           )}
         </div>
