@@ -3,62 +3,23 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 /**
  * Componente NavbarNL
- *
  * Barra de navegación principal de la aplicación.
- * Contiene lógica para:
- *  - Mostrar u ocultar botones según la ruta actual
- *  - Detectar si el usuario está en login o registro
- *  - Detectar si está en rutas del administrador
- *  - Mostrar un botón "Volver"
- *  - Mostrar botones de autenticación o catálogo
- *
- * Este componente depende de la ruta actual (useLocation)
- * y de la navegación interna (useNavigate).
  */
 export default function NavbarNL() {
-
   const navigate = useNavigate();
   const location = useLocation();
 
-  
-  /* DETECCIÓN DE RUTAS DE AUTENTICACIÓN                    */
-  
-
+  // AUTH
   const isLogin = location.pathname === "/login";
   const isRegistro = location.pathname === "/registro";
-
-  /**
-   * isAuthRoute:
-   * Indica si estamos en una pantalla de login o registro.
-   * En estas vistas la barra usa un diseño distinto.
-   */
   const isAuthRoute = isLogin || isRegistro;
 
-  
-  /* DETECCIÓN DE RUTAS ADMIN                               */
-  
-
-  /** isAdminRoute:
-   * Si la ruta comienza con "/admin", entonces estamos en el panel admin.
-   */
+  // ADMIN
   const isAdminRoute = location.pathname.startsWith("/admin");
-
-  /**
-   * isAdminHome:
-   * Ruta principal del admin: "/admin"
-   * Esta ruta NO debe mostrar botón "Volver".
-   */
   const isAdminHome = location.pathname === "/admin";
-
-  /** adminUsesBack:
-   * Cualquier ruta admin que NO sea "/admin" debe mostrar "Volver".
-   */
   const adminUsesBack = isAdminRoute && !isAdminHome;
 
-  
-  /* RUTAS QUE DEBEN MOSTRAR BOTÓN "Volver"                  */
- 
-
+  // BOTÓN VOLVER
   const hasBackButton =
     location.pathname === "/olvide-contrasenia" ||
     location.pathname === "/pago" ||
@@ -67,43 +28,25 @@ export default function NavbarNL() {
     location.pathname === "/mis-compras" ||
     adminUsesBack;
 
-  
-  /* RUTAS QUE OCULTAN BOTONES A LA DERECHA                 */
-  
-
+  // OCULTAR DERECHA
   const hideRightSide =
     hasBackButton ||
     location.pathname === "/comprobante" ||
     isAdminRoute;
 
-  
-  /* ESTADO DE SESIÓN                                        */
-  
-
-  /**
-   * isLogged:
-   * Comprueba si localStorage indica que el usuario inició sesión.
-   * nl_auth = "1" significa sesión activa.
-   */
+  // SESIÓN
   const isLogged =
     typeof window !== "undefined" &&
     localStorage.getItem("nl_auth") === "1";
 
-  
-  /* RENDER DEL NAVBAR                                      */
   const publicPages = ["/", "/soporte"];
   const isPublicPage = publicPages.includes(location.pathname);
-  
+
   return (
     <nav className={`nl-nav ${isAuthRoute ? "nl-auth-mode" : ""}`}>
       <div className="nl-nav-inner">
-
-        
-        {/* IZQUIERDA DEL NAV                                   */}
-        
+        {/* IZQUIERDA */}
         <div className="nl-left">
-
-          {/* Botón: Manual de usuario (solo en la ruta "/") */}
           {location.pathname === "/" && (
             <a
               href="/manual/ManualUsuario_NoLimits.pdf"
@@ -114,38 +57,25 @@ export default function NavbarNL() {
             </a>
           )}
 
-          {/* Botón Salir (solo en login/registro) */}
           {isAuthRoute && (
-            <button
-              className="btnSalirNav"
-              onClick={() => navigate("/")}
-            >
+            <button className="btnSalirNav" onClick={() => navigate("/")}>
               - Salir al Lobby -
             </button>
           )}
 
-          {/* Botón Volver (en rutas que lo requieran) */}
           {hasBackButton && (
-            <button
-              className="btn_salir"
-              onClick={() => navigate(-1)}
-            >
+            <button className="btn_salir" onClick={() => navigate(-1)}>
               - Volver -
             </button>
           )}
         </div>
 
-
-        
-        {/* CENTRO DEL NAV: BRAND                              */}
-       
+        {/* CENTRO */}
         <h1 id="brand">°-._ NoLimits _.-°</h1>
 
-
-        {/* DERECHA DEL NAV */}
-        <div className="nl-right">
-
-          {/* Vista Login → mostrar botón para ir a Registro */}
+        {/* DERECHA */}
+        <div className={`nl-right ${hideRightSide ? "is-hidden" : ""}`}>
+          {/* Login -> Registro */}
           {isLogin && (
             <>
               <span className="askRight">¿No tienes una cuenta?</span>
@@ -155,7 +85,7 @@ export default function NavbarNL() {
             </>
           )}
 
-          {/* Vista Registro → mostrar botón para ir a Login */}
+          {/* Registro -> Login */}
           {isRegistro && (
             <>
               <span className="askRight">¿Ya tienes una cuenta?</span>
@@ -165,16 +95,14 @@ export default function NavbarNL() {
             </>
           )}
 
-          {/* Vistas normales (NO auth y NO admin y NO hideRightSide) */}
+          {/* Normal */}
           {!isAuthRoute && !hideRightSide && (
             <>
-              {/* Si estamos en páginas públicas → forzar login/registro */}
               {isPublicPage ? (
                 <>
                   <button className="btn_in" onClick={() => navigate("/login")}>
                     - Iniciar Sesión -
                   </button>
-
                   <button className="btn_reg" onClick={() => navigate("/registro")}>
                     - Registrarse -
                   </button>
@@ -208,7 +136,6 @@ export default function NavbarNL() {
                   <button className="btn_in" onClick={() => navigate("/login")}>
                     - Iniciar Sesión -
                   </button>
-
                   <button className="btn_reg" onClick={() => navigate("/registro")}>
                     - Registrarse -
                   </button>
