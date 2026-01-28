@@ -23,10 +23,10 @@ const INITIAL_FORM = {
   saga: "",
   portadaSaga: "",
   // campos para listas (se guardan como texto "1,2,3")
-  plataformasIds: "",
-  generosIds: "",
-  empresasIds: "",
-  desarrolladoresIds: "",
+  plataformasIds: [],
+  generosIds: [],
+  empresasIds: [],
+  desarrolladoresIds: [],
   imagenes: "",
 };
 
@@ -90,45 +90,68 @@ export default function CrearProducto({
     cargar();
   }, []);
 
-  // Cargar datos si se edita
+  // Cargar datos si se edita (esperando catálogos para mapear nombres -> ids)
   useEffect(() => {
-    if (productoInicial) {
-      setFormData({
-        ...INITIAL_FORM,
-        nombre: productoInicial.nombre ?? "",
-        precio: productoInicial.precio ?? "",
-        tipoProductoId: productoInicial.tipoProductoId ?? "",
-        clasificacionId: productoInicial.clasificacionId ?? "",
-        estadoId: productoInicial.estadoId ?? "",
-        saga: productoInicial.saga ?? "",
-        portadaSaga: productoInicial.portadaSaga ?? "",
-        // si tu backend te devuelve estas listas, acá podrías precargarlas también
-
-        // PRECARGAR IMAGENES EN EL INPUT
-        imagenes: (productoInicial.imagenes || []).join(", ")
-      });
-
-      // ✅ IMPORTANTE: precargar al editar
-      setUrlCompra(productoInicial.urlCompra ?? "");
-      setLabelCompra(productoInicial.labelCompra ?? "");
-    } else {
+    // Si no hay producto, resetea (modo crear)
+    if (!productoInicial) {
       setFormData(INITIAL_FORM);
-
-      // ✅ limpiar al crear
       setUrlCompra("");
       setLabelCompra("");
+      return;
     }
-  }, [productoInicial]);
+
+    // Esperar a que estén listos los catálogos necesarios
+    const catalogsReady =
+      plataformas.length > 0 &&
+      generos.length > 0 &&
+      empresas.length > 0 &&
+      desarrolladores.length > 0;
+
+    if (!catalogsReady) return;
+
+    setFormData({
+      ...INITIAL_FORM,
+      nombre: productoInicial.nombre ?? "",
+      precio: productoInicial.precio ?? "",
+      tipoProductoId: productoInicial.tipoProductoId ?? "",
+      clasificacionId: productoInicial.clasificacionId ?? "",
+      estadoId: productoInicial.estadoId ?? "",
+      saga: productoInicial.saga ?? "",
+      portadaSaga: productoInicial.portadaSaga ?? "",
+      imagenes: (productoInicial.imagenes || []).join(", "),
+
+      // ✅ acá el mapeo nombre -> id
+      plataformasIds: mapNamesToIds(productoInicial.plataformas ?? [], plataformas),
+      generosIds: mapNamesToIds(productoInicial.generos ?? [], generos),
+      empresasIds: mapNamesToIds(productoInicial.empresas ?? [], empresas),
+      desarrolladoresIds: mapNamesToIds(productoInicial.desarrolladores ?? [], desarrolladores),
+    });
+
+    setUrlCompra(productoInicial.urlCompra ?? "");
+    setLabelCompra(productoInicial.labelCompra ?? "");
+  }, [productoInicial, plataformas, generos, empresas, desarrolladores]);
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  const parseIds = (value) =>
-    value
-      .split(",")
-      .map((v) => Number(v.trim()))
+  function handleMultiSelectChange(e) {
+    const { name, options } = e.target;
+
+    const selected = Array.from(options)
+      .filter((opt) => opt.selected)
+      .map((opt) => Number(opt.value))
       .filter((n) => !Number.isNaN(n));
+
+    setFormData((prev) => ({ ...prev, [name]: selected }));
+  }
+
+  function mapNamesToIds(names = [], catalog = []) {
+    const set = new Set(names.map(n => String(n).trim().toLowerCase()));
+    return catalog
+      .filter(item => set.has(String(item.nombre).trim().toLowerCase()))
+      .map(item => item.id);
+  }
 
   const parseStrings = (value) =>
     value
@@ -155,17 +178,17 @@ export default function CrearProducto({
     };
 
     // Solo mandamos listas si el usuario seleccionó algo
-    if (formData.plataformasIds.trim() !== "") {
-      payload.plataformasIds = parseIds(formData.plataformasIds);
+    if (formData.plataformasIds.length > 0) {
+      payload.plataformasIds = formData.plataformasIds;
     }
-    if (formData.generosIds.trim() !== "") {
-      payload.generosIds = parseIds(formData.generosIds);
+    if (formData.generosIds.length > 0) {
+      payload.generosIds = formData.generosIds;
     }
-    if (formData.empresasIds.trim() !== "") {
-      payload.empresasIds = parseIds(formData.empresasIds);
+    if (formData.empresasIds.length > 0) {
+      payload.empresasIds = formData.empresasIds;
     }
-    if (formData.desarrolladoresIds.trim() !== "") {
-      payload.desarrolladoresIds = parseIds(formData.desarrolladoresIds);
+    if (formData.desarrolladoresIds.length > 0) {
+      payload.desarrolladoresIds = formData.desarrolladoresIds;
     }
     if (formData.imagenes.trim() !== "") {
       payload.imagenesRutas = parseStrings(formData.imagenes);
@@ -286,9 +309,10 @@ export default function CrearProducto({
       <select
         name="plataformasIds"
         value={formData.plataformasIds}
-        onChange={handleChange}
+        onChange={handleMultiSelectChange}
+        multiple
+        size={5}
       >
-        <option value="">Sin plataforma</option>
         {plataformas.map((p) => (
           <option key={p.id} value={p.id}>
             {p.nombre}
@@ -300,9 +324,10 @@ export default function CrearProducto({
       <select
         name="generosIds"
         value={formData.generosIds}
-        onChange={handleChange}
+        onChange={handleMultiSelectChange}
+        multiple
+        size={5}
       >
-        <option value="">Sin género</option>
         {generos.map((g) => (
           <option key={g.id} value={g.id}>
             {g.nombre}
@@ -314,9 +339,10 @@ export default function CrearProducto({
       <select
         name="empresasIds"
         value={formData.empresasIds}
-        onChange={handleChange}
+        onChange={handleMultiSelectChange}
+        multiple
+        size={5}
       >
-        <option value="">Sin empresa</option>
         {empresas.map((emp) => (
           <option key={emp.id} value={emp.id}>
             {emp.nombre}
@@ -328,9 +354,10 @@ export default function CrearProducto({
       <select
         name="desarrolladoresIds"
         value={formData.desarrolladoresIds}
-        onChange={handleChange}
+        onChange={handleMultiSelectChange}
+        multiple
+        size={5}
       >
-        <option value="">Sin desarrollador</option>
         {desarrolladores.map((d) => (
           <option key={d.id} value={d.id}>
             {d.nombre}
