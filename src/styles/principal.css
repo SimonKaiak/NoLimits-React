@@ -204,7 +204,7 @@ nav.navbar.bg-body-tertiary.fixed-top .navbar-toggler-icon{ filter: invert(1) co
 #brand{
   font-family: 'Poppins', sans-serif;
   position: absolute;
-  left: 50%;
+  left: 47%;
   top: 45%;
   transform: translate(-50%, -50%) translateX(var(--brand-x));
   margin: 0;
@@ -2048,6 +2048,7 @@ button.btn.nl-fav-btn:focus-visible{
     0 0 0 2px rgba(24, 227, 255, .6),
     0 0 22px rgba(24, 227, 255, .75);
 }
+/* Ruta: src/styles/principal.css */
 
 /* ===============================
    FAVORITOS COMPACTO (desktop)
@@ -2057,18 +2058,18 @@ button.btn.nl-fav-btn:focus-visible{
 
 /* 1) Card más apretada */
 .favs-card{
-  padding: 16px;          /* antes 12px */
-  border-radius: 16px;    /* antes 18px */
+  padding: 16px;
+  border-radius: 16px;
 }
 
 /* 2) Grid principal más compacto */
 .favs-product{
-  grid-template-columns: 210px 1fr 150px; /* antes 260px 1fr 170px */
-  gap: 12px;                               /* antes 18px */
+  grid-template-columns: 210px 1fr 150px;
+  gap: 12px;
   align-items: center;
 }
 
-/* Imagen Favoritos (desktop) */
+/* 3) Imagen Favoritos (desktop) */
 .favs-image img{
   width: 200px;
   height: 300px;
@@ -2081,57 +2082,49 @@ button.btn.nl-fav-btn:focus-visible{
     0 0 22px rgba(0,231,255,.30),
     0 0 48px rgba(153,29,255,.22);
 
-  /* NO usar margin-left:300px */
   margin-left: 0;
-
-  /* si quieres moverla a la derecha, usa esto */
   transform: translateX(var(--favs-poster-shift-x));
 }
 
 /* 4) Título un pelín más chico */
 .favs-title{
-  font-size: 1.15rem; /* antes 1.4rem */
+  font-size: 1.15rem;
 }
 
 /* 5) Atributos: 4 columnas = 8 chips en 2 filas */
 .favs-attrs{
-  grid-template-columns: repeat(4, minmax(0, 1fr)); /* <-- clave */
-  gap: 8px 10px;           /* antes 10px 12px */
-  max-width: 900px;        /* deja que use más ancho para bajar altura */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px 10px;
+  max-width: 900px;
   margin: 4px auto 0;
 }
 
-/* 6) Chips más compactos (menos alto) */
+/* 6) Chips más compactos */
 .favs-attr{
-  padding: 6px 10px;     /* antes 8px 12px */
-  font-size: .85rem;     /* antes .95rem */
+  padding: 6px 10px;
+  font-size: .85rem;
   font-weight: 800;
   line-height: 1.05;
-  white-space: nowrap;   /* sigue truncando */
+  white-space: nowrap;
 }
 
 /* 7) Botones un poco más chicos */
-.favs-actions{
-  gap: 8px; /* antes 10px */
-}
+.favs-actions{ gap: 8px; }
 .favs-actions .favs-btn{
-  width: 140px;          /* antes 150px */
-  padding: 9px 10px;     /* reduce alto */
+  width: 140px;
+  padding: 9px 10px;
 }
 
 /* ===============================
    Breakpoints: 2 cols en tablet, 1 col en mobile
    =============================== */
 @media (max-width: 1100px){
-  .favs-attrs{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  .favs-attrs{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 720px){
-  .favs-product{
-    grid-template-columns: 1fr;
-  }
+  .favs-product{ grid-template-columns: 1fr; }
+
   .favs-image img{
     width: 78vw;
     max-width: 320px;
@@ -2140,26 +2133,135 @@ button.btn.nl-fav-btn:focus-visible{
     margin-left: 0;
     transform: none;
   }
+
   .favs-attrs{
-    grid-template-columns: 1fr; /* mobile 1 columna */
+    grid-template-columns: 1fr;
     max-width: 100%;
   }
-  .favs-actions{
-    align-items: center;
-  }
-  .favs-actions .favs-btn{
-    width: 100%;
-  }
+
+  .favs-actions{ align-items: center; }
+  .favs-actions .favs-btn{ width: 100%; }
 }
 
-/* Desktop: mover SOLO el poster sin cambiar el layout */
+/* Desktop: mover SOLO el poster sin cambiar layout */
 @media (min-width: 721px){
-  .favs-image{
-    justify-content: center; /* mantenemos look bonito */
-  }
-
+  .favs-image{ justify-content: center; }
   .favs-image img{
     transform: translateX(var(--favs-poster-shift-x));
     margin-left: 0 !important;
   }
 }
+
+/* =========================================
+   OCULTAR/ANIMAR BOTONES CUANDO FAVORITOS ESTÁ ABIERTO
+   (REEMPLAZA los display:none por transiciones)
+   Ruta: src/styles/principal.css (AL FINAL)
+   ========================================= */
+
+/* --- NAVBAR (arriba): estado normal --- */
+nav.navbar .navbar-toggler,
+nav.navbar .user-menu-wrapper,
+nav.navbar .search-box{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition: opacity .25s ease, transform .25s ease;
+  will-change: opacity, transform;
+}
+
+/* --- NAVBAR (arriba): al abrir Favoritos → se van hacia ARRIBA --- */
+body.favs-open nav.navbar .navbar-toggler,
+body.favs-open nav.navbar .user-menu-wrapper,
+body.favs-open nav.navbar .search-box{
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+}
+
+/* (Opcional) Si el dropdown del usuario está visible, lo ocultamos también */
+body.favs-open nav.navbar .user-menu.dropdown-menu{
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+/* --- FOOTER (abajo): estado normal --- */
+.nl-nav1-left,
+.nl-nav1-right,
+.nl-nav1-center{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition: opacity .25s ease, transform .25s ease;
+  will-change: opacity, transform;
+}
+
+/* --- FOOTER (abajo): estado normal --- */
+.nl-nav1-left,
+.nl-nav1-right,
+.nl-nav1-center{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition: opacity .25s ease, transform .25s ease;
+  will-change: opacity, transform;
+}
+
+/* --- FOOTER: al abrir Favoritos --- */
+/* 1) Ocultamos el lado izquierdo completo */
+body.favs-open .nl-nav1-left{
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+}
+
+/* 2) En el lado derecho, ocultamos SOLO los links/botones, NO el copyright */
+body.favs-open .nl-nav1-right .nl-nav1-item{
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+/* 3) Aseguramos que el copyright SIEMPRE se vea */
+body.favs-open .nl-nav1-right .footer-copy{
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+}
+
+/* (Opcional) Ocultar también cosas de la sección Sagas (sin display none) */
+.sagas-section .sagas-title,
+.saga-category-buttons{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+body.favs-open .sagas-section .sagas-title{
+  opacity: 0;
+  transform: translateY(-12px); /* hacia arriba */
+  pointer-events: none;
+}
+
+body.favs-open .saga-category-buttons{
+  opacity: 0;
+  transform: translateY(12px);  /* hacia abajo */
+  pointer-events: none;
+}
+
+/* Accesibilidad */
+@media (prefers-reduced-motion: reduce){
+  nav.navbar .navbar-toggler,
+  nav.navbar .user-menu-wrapper,
+  nav.navbar .search-box,
+  .nl-nav1-left, .nl-nav1-right, .nl-nav1-center,
+  .sagas-section .sagas-title,
+  .saga-category-buttons{
+    transition: none !important;
+    transform: none !important;
+  }
+}
+

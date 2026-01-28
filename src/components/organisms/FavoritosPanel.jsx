@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // Carga todo lo que haya bajo /src/assets/img y deja lista la URL para usarla en <img src="...">
 const IMGS = import.meta.glob("../../assets/img/**/*", { eager: true, as: "url" });
@@ -111,6 +111,15 @@ export default function FavoritosPanel({
       </span>
     );
   };
+
+  useEffect(() => {
+    document.body.classList.toggle("favs-open", isOpen);
+    document.documentElement.classList.toggle("favs-open", isOpen); // opcional pero útil
+    return () => {
+      document.body.classList.remove("favs-open");
+      document.documentElement.classList.remove("favs-open");
+    };
+  }, [isOpen]);
 
   return (
     <div

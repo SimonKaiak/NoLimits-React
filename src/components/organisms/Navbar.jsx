@@ -91,8 +91,9 @@ export default function NavbarNL() {
 
   
   /* RENDER DEL NAVBAR                                      */
- 
-
+  const publicPages = ["/", "/soporte"];
+  const isPublicPage = publicPages.includes(location.pathname);
+  
   return (
     <nav className={`nl-nav ${isAuthRoute ? "nl-auth-mode" : ""}`}>
       <div className="nl-nav-inner">
@@ -167,24 +168,43 @@ export default function NavbarNL() {
           {/* Vistas normales (NO auth y NO admin y NO hideRightSide) */}
           {!isAuthRoute && !hideRightSide && (
             <>
-              {/* Si está logueado */}
-              {isLogged ? (
+              {/* Si estamos en páginas públicas → forzar login/registro */}
+              {isPublicPage ? (
                 <>
-                  {/* Catálogo solo si NO estás ya en principal */}
+                  <button className="btn_in" onClick={() => navigate("/login")}>
+                    - Iniciar Sesión -
+                  </button>
+
+                  <button className="btn_reg" onClick={() => navigate("/registro")}>
+                    - Registrarse -
+                  </button>
+                </>
+              ) : isLogged ? (
+                <>
                   {location.pathname !== "/principal" && (
                     <button className="btn_in" onClick={() => navigate("/principal")}>
                       - Catálogo -
                     </button>
                   )}
 
-                  {/* Opcional: botones útiles cuando hay sesión */}
                   <button className="btn_in" onClick={() => navigate("/perfil")}>
                     - Perfil -
+                  </button>
+
+                  <button
+                    className="btn_salir"
+                    onClick={() => {
+                      localStorage.removeItem("nl_auth");
+                      localStorage.removeItem("token");
+                      localStorage.removeItem("usuario");
+                      navigate("/");
+                    }}
+                  >
+                    - Cerrar sesión -
                   </button>
                 </>
               ) : (
                 <>
-                  {/* Si NO está logueado, mostrar auth */}
                   <button className="btn_in" onClick={() => navigate("/login")}>
                     - Iniciar Sesión -
                   </button>

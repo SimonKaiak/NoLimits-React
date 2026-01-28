@@ -6,41 +6,7 @@
   --white:#e9efff;
 }
 
-/* ===== NoLimits (brand) unificado ===== */
-#brand{
-  /* tipografía + layout inline */
-  font-family: 'Poppins', sans-serif;
-  display: inline-block;
-  line-height: 1;
-  text-decoration: none;
-  user-select: none;
 
-  /* peso y tamaño responsivo */
-  font-weight: 800;
-  font-size: clamp(1rem, 6vw, 4rem);
-  font-synthesis: none;          /* evita negrita “inventada” */
-
-  /* color base + glow inicial */
-  color: #e4e0e0;
-  -webkit-text-stroke: 0;
-  text-shadow:
-    0 0 12px rgba(0,0,0,.85),
-    0 0 22px rgba(123,92,255,.75),
-    0 0 34px rgba(255,77,236,.65);
-
-  /* pulso suave */
-  animation: nl-pulse 5s ease-in-out infinite;
-
-  /* centrado absoluto (si usas grid/flex en la navbar, puedes quitar estas 3 líneas) */
-  position: absolute;
-  left: 50%;
-  top: 45%;
-  transform: translate(-50%, -50%);
-
-  /* transiciones suaves */
-  margin: 0;
-  transition: text-shadow .25s ease, transform .25s ease, filter .25s ease;
-}
 
 /* Hover: más brillo y micro-zoom */
 #brand:hover{
@@ -50,7 +16,6 @@
     0 0 28px rgba(123,92,255,.85),
     0 0 40px rgba(255,77,236,.75),
     0 0 30px rgba(0,231,255,.30);
-  transform: translate(-50%, -50%) scale(1.015);
 }
 
 /* Animación de pulso */
@@ -375,29 +340,6 @@ body.route-register .nl-nav::after {
   opacity: 1; /* la línea neón queda brillante */
 }
 
-/* Brand universal para todos los navbar */
-#brand{
-  color: #ffffff;
-
-  /* glow violeta + cian (sin tinte rosa fuerte) */
-  text-shadow:
-    0 0 12px rgba(0,0,0,.85),
-    0 0 22px rgba(25, 20, 26, 0.699),
-    0 0 34px rgba(255, 0, 221, 0.5);
-  
-  transition: all .28s ease;
-}
-
-/* Hover universal */
-#brand:hover{
-  filter: brightness(1.12);
-  text-shadow:
-    0 0 5px rgba(255,255,255,.5),
-    0 0 28px rgba(123,92,255,.85),
-    0 0 40px rgba(0,231,255,.65);
-}
-
-
 /* Kill-switch: oculta CTAs dentro del CONTENIDO (main) del login, no el navbar */
 .route-login main :is(.ask, .askRight, .login-cta, .cta, [data-legacy-cta]) {
   display: none !important;
@@ -441,21 +383,9 @@ body.route-register .nl-nav::after {
 .nl-left{ justify-self: start; min-width: 0; }
 .nl-right{ justify-self: end; min-width: 0; margin-left: 0; }
 
-/* Brand: deja de ser absoluto (esto evita que se “coma” a los botones) */
-#brand,
-#sub-brand{
-  position: static !important;
-  left: auto !important;
-  top: auto !important;
-  transform: none !important;
-  margin: 0 !important;
-  justify-self: center;
-  text-align: center;
-  pointer-events: auto; /* por si lo quieres clickeable */
-}
 
-/* Tamaños más seguros en móvil */
 #brand{ font-size: clamp(1.4rem, 7vw, 2.2rem); }
+
 #sub-brand{ font-size: clamp(0.7rem, 3.5vw, 1.1rem); -webkit-text-stroke: 1px #a366ff; }
 
 /* Botones no deben forzar ancho infinito */
@@ -559,12 +489,7 @@ body.route-register .nl-nav::after {
     padding: 0 10px;
   }
 
-  #brand{
-    grid-area: brand;
-    justify-self: center;
-    font-size: clamp(1.6rem, 8vw, 2.2rem);
-    line-height: 1.05;
-  }
+
 
   .nl-left{ grid-area: left; justify-self: start; }
   .nl-right{ grid-area: right; justify-self: end; }
@@ -721,31 +646,15 @@ body.route-register .nl-nav::after {
   }
 }
 
-/* =========================================
-   FIX: devolver hover que agranda el título
-   Ruta: src/styles/style.css (AL FINAL)
-   ========================================= */
-
-/* 1) Mantén el brand estático para que no se descentre,
-      pero deja el transform libre */
-#brand{
-  transform: none !important; /* base */
-  transition: transform .25s ease, filter .25s ease, text-shadow .25s ease;
-  transform-origin: center;   /* crece desde el centro */
+/* Cuando Favoritos está abierto, ocultar botón "Sagas destacadas" del footer */
+body.favs-open .nl-nav1-left{
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity .25s ease, transform .25s ease;
 }
 
-/* 2) En hover, aplica el scale con prioridad */
-#brand:hover{
-  transform: scale(1.06) !important;  /* ajusta 1.04–1.08 a gusto */
-  filter: brightness(1.12);
-  text-shadow:
-    0 0 5px rgba(255,255,255,.5),
-    0 0 28px rgba(123,92,255,.85),
-    0 0 40px rgba(255,77,236,.75),
-    0 0 30px rgba(0,231,255,.30);
-}
-
-/* 3) Opcional: que en móvil no se agrande tanto */
-@media (max-width: 420px){
-  #brand:hover{ transform: scale(1.035) !important; }
+/* Estado normal */
+.nl-nav1-left{
+  transition: opacity .25s ease, transform .25s ease;
 }

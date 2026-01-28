@@ -406,11 +406,6 @@ export default function Principal() {
     return () => document.removeEventListener("keydown", k);
   }, []);
 
-  useEffect(() => {
-    document.body.classList.toggle("favs-open", favsOpen);
-    return () => document.body.classList.remove("favs-open");
-  }, [favsOpen]);
-
   // Cargar productos SOLO cuando haya saga seleccionada
   useEffect(() => {
     if (!selectedSaga) {
@@ -902,3 +897,4 @@ export default function Principal() {
     </div>
   );
 }
+
