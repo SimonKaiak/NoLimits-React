@@ -129,6 +129,13 @@ html, body{
 
 #brand{ justify-self:center; }
 
+/* Centro: brand y sub-brand apilados en el medio */
+.nl-nav-inner #brand,
+.nl-nav-inner #sub-brand{
+  justify-self:center;
+  text-align:center;
+}
+
 /* IZQ y DER (NO duplicar estas reglas más abajo) */
 .nl-left{
   justify-self:start;
