@@ -22,7 +22,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "../styles/login.module.css";
-import avatarImg from "../assets/img/fondos/ticket.webp";
+import avatarImg from "../assets/img/logos/NoLimits.webp";
 
 // Servicio que llama al backend para iniciar sesión
 import { login } from "../services/usuarios";

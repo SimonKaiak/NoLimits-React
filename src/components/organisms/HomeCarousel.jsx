@@ -26,9 +26,9 @@ export default function HomeCarousel() {
                 - indicators={false} → oculta puntos inferiores
             */}
             <Carousel
-                interval={4000}
+                interval={6000}
                 pause={false}
-                controls={false}
+                controls={true}
                 indicators={false}
             >
 
@@ -51,9 +51,7 @@ export default function HomeCarousel() {
 
                             <p className="nosotros-texto">
                                 <strong>
-                                    Somos NoLimits, una plataforma All in One
-                                    diseñada para ofrecerte entretenimiento sin límites:
-                                    películas, videojuegos, accesorios y mucho más.
+                                    NoLimits es una plataforma All-in-One diseñada para centralizar todo tu entretenimiento en un solo lugar: películas, videojuegos y accesorios.
                                 </strong>
                             </p>
                         </div>
@@ -75,12 +73,12 @@ export default function HomeCarousel() {
 
                     <div className="nl-slide-caption">
                         <div>
-                            <h2 className="titulo-carrusel">Sucursales</h2>
+                            <h2 className="titulo-carrusel">¿Por qué NoLimits?</h2>
 
                             <p className="nosotros-texto1">
                                 <strong>
-                                    Actualmente no contamos con sucursales físicas.<br />
-                                    Próximamente abriremos las primeras para estar más cerca de ti.
+                                    Porque ya no necesitas visitar múltiples sitios.
+                                    En NoLimits encuentras todo tu entretenimiento organizado en un solo lugar.
                                 </strong>
                             </p>
                         </div>
@@ -107,7 +105,7 @@ export default function HomeCarousel() {
                             <p className="soporte-texto">
                                 <strong>¿Tienes dudas o problemas?</strong><br />
                                 <strong>Escríbenos al correo: </strong>
-                                <strong>NoLimitsCorp@gmail.com</strong>
+                                <strong>NoLimits@gmail.com</strong>
                             </p>
                         </div>
                     </div>

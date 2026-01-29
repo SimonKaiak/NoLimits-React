@@ -14,7 +14,9 @@ html { background: #000; }
 :root{
   /* Dimensiones / layout */
   --nav-h: 120px;
+  --footer-h: 130px;
   --brand-x: clamp(-20px, 3vw, 120px);
+  --subbrand-shift-x: 70px;
   --frame-r: 28px;
   --frame-b: 3px;
   --cta-btn-h: 42px;
@@ -74,6 +76,7 @@ body.route-principal{
   min-height: 100vh; /* altura mínima, no fija */
   height: auto;      /* deja que crezca según el contenido */
   padding-top: calc(var(--nav-h) - 40px);
+  padding-bottom: var(--footer-h);
 }
 body.route-principal::before{
   content: "";
@@ -626,7 +629,7 @@ nav.navbar.bg-body-tertiary.fixed-top .btn-categoria:focus-visible{
   text-align:center; color:#ff1493; font-size:30px; margin:0;
 }
 .productos-container{
-  padding:100px 16px; display:flex; flex-direction:column; align-items:center; gap:2rem;
+  padding:100px 16px 0; display:flex; flex-direction:column; align-items:center; gap:2rem;
   position:relative; z-index:1;
 }
 .producto{
@@ -1224,6 +1227,7 @@ html{ scroll-behavior:smooth; }
   animation: tron-flicker 3s infinite ease-in-out;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   margin-bottom: 130px;
+  margin-top: -15px;
 }
 
 .hero-logo-img:hover {
@@ -2347,7 +2351,7 @@ nav.navbar.bg-body-tertiary.fixed-top .btn:focus-visible{
    =============================== */
 
 :root{
-  --footer-right-shift: 420px; /* ajusta 10–40px a gusto */
+  --footer-right-shift: 500px; /* ajusta 10–40px a gusto */
 }
 
 /* Solo mueve los botones (no el copyright si lo tienes) */
@@ -2356,7 +2360,7 @@ nav.navbar.bg-body-tertiary.fixed-top .btn:focus-visible{
 }
 
 .nl-nav1-left{
-  transform: translateX(-420px);   /* ajusta: -20px / -60px */
+  transform: translateX(-490px);   /* ajusta: -20px / -60px */
 }
 
 /* Copyright blanco puro */
@@ -2439,4 +2443,184 @@ nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger{
 nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger:hover,
 nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger:focus-visible{
   transform: translateX(var(--x)) translateY(-2px);
+}
+
+/* =========================================
+   Footer pills: SOLO borde (no cambia fondo)
+   Ruta: src/styles/principal.css (AL FINAL)
+   ========================================= */
+
+:root{
+  --footer-b1: rgba(0,231,255,.45);   /* celeste más tenue */
+  --footer-b2: rgba(255,255,255,.30); /* blanco más suave */
+  --footer-bw: 1.4px;                /* un pelín más fino */
+}
+
+/* Base: NO tocar background, solo dibujar borde encima */
+.nl-nav1 .nl-nav1-item{
+  position: relative;
+  border: 0 !important;            /* tu base tenía border:0 */
+  background: rgba(2,20,27,.55);   /* deja tu fondo tal cual */
+  color: #cfefff;                  /* deja tu color */
+  border-radius: 12px;
+  overflow: visible;               /* que el borde no se corte raro */
+}
+
+/* Borde degradado real (solo borde) */
+.nl-nav1 .nl-nav1-item::before{
+  content:"";
+  position:absolute;
+  inset: 0;
+  padding: var(--footer-bw);
+  border-radius: inherit;
+  pointer-events:none;
+
+  background: linear-gradient(90deg, var(--footer-b1), var(--footer-b2), var(--footer-b1));
+
+  /* Deja solo el “marco” */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  opacity: .95;
+}
+
+/* Hover: solo iluminar el borde (sin cambiar el fondo) */
+.nl-nav1 .nl-nav1-item:hover::before,
+.nl-nav1 .nl-nav1-item:focus-visible::before{
+  opacity: 1;
+  filter: drop-shadow(0 0 10px rgba(0,231,255,.30));
+}
+
+/* ===============================
+   Footer: elevar un poco los botones
+   =============================== */
+
+:root{
+  --footer-btn-lift: -3px; /* ajusta: -2px, -4px, -8px */
+}
+
+/* Solo los botones del footer */
+.nl-nav1 .nl-nav1-item{
+  transform: translateY(var(--footer-btn-lift));
+}
+
+/* Si quieres que al hover no “salte” distinto */
+.nl-nav1 .nl-nav1-item:hover,
+.nl-nav1 .nl-nav1-item:focus-visible{
+  transform: translateY(var(--footer-btn-lift)) translateY(-2px);
+}
+
+/* ===============================
+   FIX: La hamburguesa NO debe moverse al abrir (dropdown/collapse)
+   Ruta: src/styles/principal.css
+   =============================== */
+
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger{
+  --x: 14px;                       /* tu offset */
+  transform: translateX(var(--x)) !important;
+}
+
+/* Cuando está abierto, mantener el X (NO transform:none) */
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger[aria-expanded="true"]{
+  transform: translateX(var(--x)) !important;
+  box-shadow: none;
+}
+
+/* Hover/focus: suma el Y, pero conserva X */
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger:hover,
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger:focus-visible{
+  transform: translateX(var(--x)) translateY(-2px) !important;
+}
+
+/* ===============================
+   Subir botones de categoría de saga
+   (Películas / Videojuegos / Accesorios)
+   =============================== */
+
+:root{
+  --saga-btn-lift: -15px;   /* prueba -6px, -10px, -14px */
+}
+
+.saga-category-buttons{
+  position: relative;
+}
+
+.saga-category-buttons .saga-cat-btn{
+  transform: translateY(var(--saga-btn-lift));
+}
+
+/* Mantener el lift base también en hover/focus */
+.saga-category-buttons .saga-cat-btn:hover,
+.saga-category-buttons .saga-cat-btn:focus-visible{
+  transform: translateY(calc(var(--saga-btn-lift) - 2px));
+}
+
+/* ===============================
+   Saga buttons: NO aclarar fondo en hover/focus
+   (Películas / Videojuegos / Accesorios)
+   =============================== */
+
+/* Fondo fijo (oscuro) */
+.saga-category-buttons .saga-cat-btn{
+  background: rgba(3, 7, 18, 0.88) !important;
+}
+
+/* Hover/Focus: NO cambiar background, solo glow/borde */
+.saga-category-buttons .saga-cat-btn:hover,
+.saga-category-buttons .saga-cat-btn:focus-visible{
+  background: rgba(3, 7, 18, 0.88) !important; /* se mantiene igual */
+  /* opcional: si querís que el texto no cambie */
+  color: #7ff7ff !important;
+
+  /* mantenemos el efecto sin “aclarar” */
+  box-shadow:
+    0 0 18px rgba(0, 231, 255, 0.6),
+    0 0 24px rgba(153, 29, 255, 0.38),
+    0 0 30px rgba(255, 37, 208, 0.3) !important;
+}
+
+/* Si también te queda “claro” por un estado active */
+.saga-category-buttons .saga-cat-btn:active{
+  background: rgba(3, 7, 18, 0.88) !important;
+}
+
+/* Gap estándar entre secciones (Películas → Videojuegos y Videojuegos → Accesorios) */
+:root{
+  --gap-secciones: clamp(7rem, 9vw, 10rem);
+}
+@media (max-width: 768px){
+  :root{
+    --gap-secciones: 5rem;
+  }
+}
+
+/* 1) Películas → Videojuegos */
+.productos-container > .producto.card#peliculas{
+  margin-bottom: var(--gap-secciones) !important;
+}
+
+/* 2) Videojuegos → Accesorios (misma distancia) */
+#accesorios-title{
+  margin-top: var(--gap-secciones) !important;
+}
+
+/* 3) Accesorios → Footer (cero espacio) */
+.productos-container > .producto.card#accesorios{
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+#accesorios .nl-carousel{
+  margin-bottom: -1.5rem !important;
+}
+
+@media (max-width: 768px){
+  #accesorios .nl-carousel{
+    margin-bottom: -1.5rem !important;
+  }
+}
+
+.nl-nav1-center{
+  transform: translateX(var(--subbrand-shift-x));
 }

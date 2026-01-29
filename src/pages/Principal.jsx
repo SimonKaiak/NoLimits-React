@@ -751,7 +751,7 @@ export default function Principal() {
                 scroller.scrollTo("accesorios", {
                   smooth: true,
                   duration: 1,
-                  offset: -(navH - 110),
+                  offset: -(navH - 140),
                 })
               }
             >
@@ -865,14 +865,11 @@ export default function Principal() {
                 className="nl-nav1-item"
                 to="top"
                 smooth={true}
-                offset={-(navH - 735)}
+                offset={-(navH - 727)}
                 duration={5}
               >
                 ↕️ <span>- Sagas destacadas - ⬆️ </span>
               </Link>
-
-              {/* ✅ AHORA VA AQUÍ (entre sagas y all in one) */}
-              <small className="footer-copy">- © 2025 NoLimits SPA -</small>
             </div>
 
             {/* CENTRO: All in One */}
@@ -896,4 +893,3 @@ export default function Principal() {
     </div>
   );
 }
-

@@ -90,19 +90,27 @@
   width: var(--avatar);
   height: var(--avatar);
   border-radius: 50%;
-  background: rgb(6,7,70);
+  background: transparent;
   border: 4px solid #986844;
   position: relative;
   overflow: hidden;
   cursor: pointer;
   animation: neon-border 3s linear infinite;
   transition: all .5s ease-in-out;
-  margin: 0;
   z-index: 2;
+
+  
 }
 .image { position: absolute; inset: 0; width: 100%; height: 100%; animation: avatar 5s ease-in-out infinite; }
-.avatar { width: 100%; height: 100%; object-fit: cover; object-position: 50% 48%; border-radius: 50%; }
-
+.avatar{
+  width: 96%;
+  height: 96%;
+  object-fit: cover;
+  object-position: 50% 48%;
+  border-radius: 50%;
+  margin: auto;
+  display: block;
+}
 /* ===== Marca ===== */
 .brand {
   grid-row: 1;
