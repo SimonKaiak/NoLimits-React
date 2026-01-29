@@ -47,16 +47,6 @@ export default function NavbarNL() {
       <div className="nl-nav-inner">
         {/* IZQUIERDA */}
         <div className="nl-left">
-          {location.pathname === "/" && (
-            <a
-              href="/manual/ManualUsuario_NoLimits.pdf"
-              download
-              className="btn_manual"
-            >
-              - Manual de Usuario -
-            </a>
-          )}
-
           {isAuthRoute && (
             <button className="btnSalirNav" onClick={() => navigate("/")}>
               - Salir al Lobby -

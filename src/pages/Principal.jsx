@@ -641,16 +641,6 @@ export default function Principal() {
                       Perfil
                     </button>
                   </li>
-
-                  <li>
-                    <button
-                      className="dropdown-item"
-                      onClick={() => setFavsOpen((v) => !v)}
-                    >
-                      Favoritos ⭐ ({favs.length})
-                    </button>
-                  </li>
-
                   <li>
                     <hr className="dropdown-divider" />
                   </li>
@@ -868,6 +858,8 @@ export default function Principal() {
       <footer>
         <nav className="nl-nav1">
           <div className="nl-nav1-inner">
+
+            {/* IZQUIERDA: sagas + copyright */}
             <div className="nl-nav1-left">
               <Link
                 className="nl-nav1-item"
@@ -878,12 +870,18 @@ export default function Principal() {
               >
                 ↕️ <span>- Sagas destacadas - ⬆️ </span>
               </Link>
+
+              {/* ✅ AHORA VA AQUÍ (entre sagas y all in one) */}
+              <small className="footer-copy">- © 2025 NoLimits SPA -</small>
             </div>
+
+            {/* CENTRO: All in One */}
             <div className="nl-nav1-center">
               <span id="sub-brand">_.-°-._ All in One _.-°-._</span>
             </div>
+
+            {/* DERECHA: links */}
             <div className="nl-nav1-right">
-              <small className="footer-copy">- © 2025 NoLimits SPA -</small>
               <a className="nl-nav1-item" href="#">
                 📄 <span>- Términos - 📄</span>
               </a>
@@ -891,6 +889,7 @@ export default function Principal() {
                 🔒 <span>- Privacidad - 🔒</span>
               </a>
             </div>
+
           </div>
         </nav>
       </footer>

@@ -239,7 +239,7 @@ html, body{
 /* Sub-brand en footer: NO absoluto */
 .nl-nav1 #sub-brand{
   position:static !important;
-  transform:none !important;
+  transform: translateX(-12px) !important; /* ← mueve a la izquierda */
   left:auto !important;
   top:auto !important;
   margin:0 !important;

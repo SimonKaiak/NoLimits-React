@@ -1032,8 +1032,7 @@ nav.navbar.bg-body-tertiary.fixed-top .btn-categoria:focus-visible{
 
 .nl-nav1-inner{
   display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
+  grid-template-columns:1.3fr auto 0.7fr;  align-items:center;
   gap:16px;
   height:100%;
   /* ANTES: padding: 12px 20px; */
@@ -1665,17 +1664,6 @@ html{ scroll-behavior:smooth; }
   display: none !important;
 }
 
-.btn-hamburger:hover,
-.btn-hamburger:focus-visible {
-  transform: translateY(-2px);
-  background: rgba(2, 20, 27, 0.85);
-  color: #bdf3ff;
-  box-shadow:
-    0 0 18px rgba(0, 231, 255, .45),
-    0 0 22px rgba(123, 92, 255, .28),
-    0 0 26px rgba(255, 77, 236, .22);
-}
-
 /* Dropdown con estilo Glass NoLimits */
 .user-menu.dropdown-menu {
   background: rgba(2, 20, 27, .94) !important;
@@ -2036,8 +2024,6 @@ button.btn.nl-fav-btn{
 button.btn.nl-fav-btn:hover{
   background: rgba(24, 227, 255, 0.95);
   color: #000;
-  transform: translateY(-2px);
-  box-shadow: 0 0 22px rgba(24, 227, 255, .75);
 }
 
 button.btn.nl-fav-btn:focus-visible{
@@ -2265,3 +2251,192 @@ body.favs-open .saga-category-buttons{
   }
 }
 
+/*  Botones Fav */
+:root{
+  --favs-actions-shift-x: 50px; /* ajusta: 6px, 12px, 18px, 24px */
+}
+
+@media (min-width: 721px){
+  .favs-actions{
+    transform: translateX(calc(-1 * var(--favs-actions-shift-x)));
+  }
+}
+
+/* Ruta: src/styles/principal.css */
+/* Quitar el subrayado TRON a TODOS los .btn del navbar */
+.navbar .btn::after{
+  display: none !important;
+}
+
+/* Ruta: src/styles/principal.css */
+/* ===============================
+   Hover dorado + fondo negro (NO cambia color)
+   =============================== */
+
+:root{
+  --nl-gold: #d6b14a;         /* dorado principal */
+  --nl-gold-2: #ffda6a;       /* dorado brillo */
+}
+
+/* 1) Si el botón es Bootstrap (.btn) */
+.navbar .btn:hover,
+.navbar .btn:focus-visible{
+  background: #000 !important;
+  color: var(--nl-gold-2) !important;
+  border-color: var(--nl-gold) !important;
+  box-shadow:
+    0 0 10px rgba(214, 177, 74, .45),
+    0 0 18px rgba(255, 218, 106, .28) !important;
+}
+
+/* 2) Si el botón es del footer/nav inferior (.nl-nav1-item) */
+.nl-nav1-item:hover,
+.nl-nav1-item:focus-visible{
+  background: #000 !important;
+  color: var(--nl-gold-2) !important;
+  border: 1.5px solid var(--nl-gold) !important;
+  box-shadow:
+    0 0 10px rgba(214, 177, 74, .45),
+    0 0 18px rgba(255, 218, 106, .28) !important;
+}
+
+/* 3) Quitar definitivamente el subrayado TRON (por si igual aplica) */
+.navbar .btn::after,
+.nl-nav1-item::after{
+  display: none !important;
+  width: 0 !important;
+  box-shadow: none !important;
+}
+
+/* ===============================
+   ANULAR EFECTO DORADO EN TODOS LOS BOTONES
+   (navbar + nav inferior)
+   =============================== */
+
+:root{
+  --nl-gold: transparent;
+  --nl-gold-2: inherit;
+}
+
+/* Navbar: no dorado */
+nav.navbar.bg-body-tertiary.fixed-top .btn:hover,
+nav.navbar.bg-body-tertiary.fixed-top .btn:focus-visible{
+  background: rgba(2,20,27,.75) !important;
+  color: #bdf3ff !important;
+  border-color: var(--pill-border) !important;
+  box-shadow:
+    0 0 18px rgba(0,231,255,.45),
+    0 0 22px rgba(123,92,255,.28),
+    0 0 26px rgba(255,77,236,.22) !important;
+}
+
+/* Nav inferior: no dorado */
+.nl-nav1-item:hover,
+.nl-nav1-item:focus-visible{
+  background: rgba(2,20,27,.75) !important;
+  color: #bdf3ff !important;
+  border: 0 !important; /* tu .nl-nav1-item base tiene border:0 */
+  box-shadow:
+    0 0 18px rgba(0,231,255,.45),
+    0 0 22px rgba(123,92,255,.28),
+    0 0 26px rgba(255,77,236,.22) !important;
+}
+
+/* ===============================
+   Footer: mover "Términos" y "Privacidad" más a la derecha
+   =============================== */
+
+:root{
+  --footer-right-shift: 420px; /* ajusta 10–40px a gusto */
+}
+
+/* Solo mueve los botones (no el copyright si lo tienes) */
+.nl-nav1-right .nl-nav1-item{
+  translate: var(--footer-right-shift) 0;
+}
+
+.nl-nav1-left{
+  transform: translateX(-420px);   /* ajusta: -20px / -60px */
+}
+
+/* Copyright blanco puro */
+.nl-nav1-meta,
+.footer-copy{
+  color: #ffffff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.btn-hamburger{
+  transform: translateX(5px);
+}
+
+/* ===============================
+   Hamburguesa = mismo efecto que los otros pills
+   =============================== */
+
+/* Base (igual look) */
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 14px;
+  cursor: pointer;
+
+  background: rgba(0, 0, 0, 0.55);
+  color: #78d2ff;
+  border: 1.5px solid var(--pill-border);
+
+  /* IMPORTANTE: no heredar cosas raras si además tiene .btn */
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  -webkit-text-fill-color: currentColor !important;
+  text-shadow: none !important;
+  animation: none !important;
+
+  transition:
+    transform .18s ease,
+    box-shadow .25s ease,
+    background .25s ease,
+    color .25s ease;
+}
+
+/* Quitar efectos heredados del nav (ya lo tenías, lo dejamos reforzado) */
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger::before,
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger::after{
+  display: none !important;
+}
+
+/* Hover/Focus (MISMO que .btn-cerrarSesion / .btn-perfil / .btn-categoria) */
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger:hover,
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger:focus-visible{
+  transform: translateY(-2px);
+  background: rgba(2,20,27,.75);
+  box-shadow:
+    0 0 18px rgba(0,231,255,.45),
+    0 0 22px rgba(123,92,255,.28),
+    0 0 26px rgba(255,77,236,.22);
+  outline: none;
+}
+
+/* (Opcional) si el dropdown está abierto, que NO haga hover/levantado */
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger[aria-expanded="true"]{
+  transform: none;
+  box-shadow: none;
+}
+
+/* Posición base del botón */
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger{
+  --x: 14px;               /* cuánto está corrido a la derecha */
+  transform: translateX(var(--x));
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+/* Hover: solo se agrega el Y, se mantiene el X */
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger:hover,
+nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger:focus-visible{
+  transform: translateX(var(--x)) translateY(-2px);
+}
