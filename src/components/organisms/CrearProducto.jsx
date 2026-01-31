@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 // Servicios del recurso Producto (crear / editar)
 import { crearProducto, editarProducto } from "../../services/productos";
 
-// Servicios de catálogos (desde el mismo productos.js)
+// ✅ CSS
+import "../../styles/crearProducto.css";
+
+// Servicios de catálogos
 import {
   obtenerTiposProducto,
   obtenerClasificaciones,
@@ -22,7 +25,6 @@ const INITIAL_FORM = {
   estadoId: "",
   saga: "",
   portadaSaga: "",
-  // campos para listas (se guardan como texto "1,2,3")
   plataformasIds: [],
   generosIds: [],
   empresasIds: [],
@@ -30,11 +32,88 @@ const INITIAL_FORM = {
   imagenes: "",
 };
 
+/* ---------------- MultiSelect ---------------- */
+function MultiSelect({ label, items = [], selectedIds = [], onChange, placeholder }) {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef(null);
+
+  const current = Array.isArray(selectedIds) ? selectedIds : [];
+  const selectedItems = items.filter((it) => current.includes(it.id));
+
+  function toggle(id) {
+    const exists = current.includes(id);
+    const next = exists ? current.filter((x) => x !== id) : [...current, id];
+    onChange(next);
+  }
+
+  function remove(id) {
+    onChange(current.filter((x) => x !== id));
+  }
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="ms" ref={wrapperRef}>
+      <label className="ms__label">{label}</label>
+
+      <button type="button" className="ms__control" onClick={() => setOpen((v) => !v)}>
+        <div className="ms__chips">
+          {selectedItems.length === 0 ? (
+            <span className="ms__placeholder">{placeholder}</span>
+          ) : (
+            selectedItems.map((it) => (
+              <span key={it.id} className="ms__chip">
+                {it.nombre}
+                <button
+                  type="button"
+                  className="ms__chipx"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    remove(it.id);
+                  }}
+                >
+                  ×
+                </button>
+              </span>
+            ))
+          )}
+        </div>
+        <span className="ms__caret">{open ? "▲" : "▼"}</span>
+      </button>
+
+      {open && (
+        <div className="ms__panel">
+          {items.map((it) => (
+            <label key={it.id} className="ms__item">
+              <input
+                type="checkbox"
+                checked={current.includes(it.id)}
+                onChange={() => toggle(it.id)}
+              />
+              <span>{it.nombre}</span>
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------------- Componente principal ---------------- */
 export default function CrearProducto({
   modo = "crear",
   productoInicial = null,
   onFinish,
-  onCancel, // ✅ nuevo prop para cancelar (solo edición)
+  onCancel, // ✅ cancelar edición
 }) {
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [error, setError] = useState("");
@@ -49,11 +128,10 @@ export default function CrearProducto({
   const [empresas, setEmpresas] = useState([]);
   const [desarrolladores, setDesarrolladores] = useState([]);
 
-  // ✅ Campos nuevos: compra (se guardan en backend como urlCompra / labelCompra)
-  const [urlCompra, setUrlCompra] = useState("");
-  const [labelCompra, setLabelCompra] = useState("");
+  // ✅ Links de compra por plataforma: { [plataformaId]: url }
+  const [urlsCompra, setUrlsCompra] = useState({});
 
-  // Cargar catálogos al iniciar
+  // Cargar catálogos
   useEffect(() => {
     async function cargar() {
       try {
@@ -90,17 +168,22 @@ export default function CrearProducto({
     cargar();
   }, []);
 
-  // Cargar datos si se edita (esperando catálogos para mapear nombres -> ids)
+  // Mapper nombre->id para edición (si el backend manda nombres)
+  function mapNamesToIds(names = [], catalog = []) {
+    const set = new Set(names.map((n) => String(n).trim().toLowerCase()));
+    return catalog
+      .filter((item) => set.has(String(item.nombre).trim().toLowerCase()))
+      .map((item) => item.id);
+  }
+
+  // Cargar datos en modo editar (esperando catálogos)
   useEffect(() => {
-    // Si no hay producto, resetea (modo crear)
     if (!productoInicial) {
       setFormData(INITIAL_FORM);
-      setUrlCompra("");
-      setLabelCompra("");
+      setUrlsCompra({});
       return;
     }
 
-    // Esperar a que estén listos los catálogos necesarios
     const catalogsReady =
       plataformas.length > 0 &&
       generos.length > 0 &&
@@ -120,37 +203,35 @@ export default function CrearProducto({
       portadaSaga: productoInicial.portadaSaga ?? "",
       imagenes: (productoInicial.imagenes || []).join(", "),
 
-      // ✅ acá el mapeo nombre -> id
+      // si productoInicial trae nombres:
       plataformasIds: mapNamesToIds(productoInicial.plataformas ?? [], plataformas),
       generosIds: mapNamesToIds(productoInicial.generos ?? [], generos),
       empresasIds: mapNamesToIds(productoInicial.empresas ?? [], empresas),
       desarrolladoresIds: mapNamesToIds(productoInicial.desarrolladores ?? [], desarrolladores),
     });
 
-    setUrlCompra(productoInicial.urlCompra ?? "");
-    setLabelCompra(productoInicial.labelCompra ?? "");
+    // ✅ Cargar linksCompra si viene
+    setUrlsCompra(
+      (productoInicial.linksCompra ?? []).reduce((acc, it) => {
+        acc[it.plataformaId] = it.url;
+        return acc;
+      }, {})
+    );
   }, [productoInicial, plataformas, generos, empresas, desarrolladores]);
+
+  // ✅ Si desmarcas plataformas, elimina sus urlsCompra
+  useEffect(() => {
+    setUrlsCompra((prev) => {
+      const next = {};
+      for (const pid of formData.plataformasIds) {
+        if (prev[pid]) next[pid] = prev[pid];
+      }
+      return next;
+    });
+  }, [formData.plataformasIds]);
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
-
-  function handleMultiSelectChange(e) {
-    const { name, options } = e.target;
-
-    const selected = Array.from(options)
-      .filter((opt) => opt.selected)
-      .map((opt) => Number(opt.value))
-      .filter((n) => !Number.isNaN(n));
-
-    setFormData((prev) => ({ ...prev, [name]: selected }));
-  }
-
-  function mapNamesToIds(names = [], catalog = []) {
-    const set = new Set(names.map(n => String(n).trim().toLowerCase()));
-    return catalog
-      .filter(item => set.has(String(item.nombre).trim().toLowerCase()))
-      .map(item => item.id);
   }
 
   const parseStrings = (value) =>
@@ -163,35 +244,53 @@ export default function CrearProducto({
     e.preventDefault();
     setError("");
 
+    if (!formData.clasificacionId) {
+      setError("Debe seleccionar una clasificación.");
+      return;
+    }
+
+    if (!formData.tipoProductoId) {
+      setError("Debe seleccionar un tipo de producto.");
+      return;
+    }
+
+    if (!formData.estadoId) {
+      setError("Debe seleccionar un estado.");
+      return;
+    }
+
     const payload = {
       nombre: formData.nombre,
       precio: Number(formData.precio),
       tipoProductoId: Number(formData.tipoProductoId),
-      clasificacionId: formData.clasificacionId ? Number(formData.clasificacionId) : null,
+      clasificacionId: Number(formData.clasificacionId),
       estadoId: Number(formData.estadoId),
       saga: formData.saga || null,
       portadaSaga: formData.portadaSaga || null,
-
-      // ✅ NUEVO: link de compra y texto del botón
-      urlCompra: urlCompra.trim() !== "" ? urlCompra.trim() : null,
-      labelCompra: labelCompra.trim() !== "" ? labelCompra.trim() : null,
     };
 
-    // Solo mandamos listas si el usuario seleccionó algo
-    if (formData.plataformasIds.length > 0) {
-      payload.plataformasIds = formData.plataformasIds;
-    }
-    if (formData.generosIds.length > 0) {
-      payload.generosIds = formData.generosIds;
-    }
-    if (formData.empresasIds.length > 0) {
-      payload.empresasIds = formData.empresasIds;
-    }
-    if (formData.desarrolladoresIds.length > 0) {
+    // Listas
+    if (formData.plataformasIds.length > 0) payload.plataformasIds = formData.plataformasIds;
+    if (formData.generosIds.length > 0) payload.generosIds = formData.generosIds;
+    if (formData.empresasIds.length > 0) payload.empresasIds = formData.empresasIds;
+    if (formData.desarrolladoresIds.length > 0)
       payload.desarrolladoresIds = formData.desarrolladoresIds;
-    }
+
+    // Imágenes
     if (formData.imagenes.trim() !== "") {
       payload.imagenesRutas = parseStrings(formData.imagenes);
+    }
+
+    // ✅ Links de compra por plataforma (dinámico)
+    const linksCompra = Object.entries(urlsCompra)
+      .filter(([_, url]) => url && url.trim() !== "")
+      .map(([plataformaId, url]) => ({
+        plataformaId: Number(plataformaId),
+        url: url.trim(),
+      }));
+
+    if (linksCompra.length > 0) {
+      payload.linksCompra = linksCompra;
     }
 
     try {
@@ -204,16 +303,13 @@ export default function CrearProducto({
 
       if (modo === "crear") {
         setFormData(INITIAL_FORM);
-
-        // ✅ limpiar también los campos nuevos
-        setUrlCompra("");
-        setLabelCompra("");
+        setUrlsCompra({});
       }
 
       if (onFinish) onFinish(result || null);
     } catch (err) {
       console.error(err);
-      setError("Error al guardar: " + err.message);
+      setError("Error al guardar: " + (err?.message || "desconocido"));
     }
   }
 
@@ -263,8 +359,9 @@ export default function CrearProducto({
         name="clasificacionId"
         value={formData.clasificacionId}
         onChange={handleChange}
+        required
       >
-        <option value="">Sin clasificación</option>
+        <option value="">Seleccione clasificación</option>
         {clasificaciones.map((c) => (
           <option key={c.id} value={c.id}>
             {c.nombre}
@@ -272,13 +369,9 @@ export default function CrearProducto({
         ))}
       </select>
 
+
       {/* Estado */}
-      <select
-        name="estadoId"
-        value={formData.estadoId}
-        onChange={handleChange}
-        required
-      >
+      <select name="estadoId" value={formData.estadoId} onChange={handleChange} required>
         <option value="">Seleccione estado</option>
         {estados.map((e) => (
           <option key={e.id} value={e.id}>
@@ -306,98 +399,89 @@ export default function CrearProducto({
       />
 
       {/* Plataformas */}
-      <select
-        name="plataformasIds"
-        value={formData.plataformasIds}
-        onChange={handleMultiSelectChange}
-        multiple
-        size={5}
-      >
-        {plataformas.map((p) => (
-          <option key={p.id} value={p.id}>
-            {p.nombre}
-          </option>
-        ))}
-      </select>
-
-      {/* Géneros */}
-      <select
-        name="generosIds"
-        value={formData.generosIds}
-        onChange={handleMultiSelectChange}
-        multiple
-        size={5}
-      >
-        {generos.map((g) => (
-          <option key={g.id} value={g.id}>
-            {g.nombre}
-          </option>
-        ))}
-      </select>
-
-      {/* Empresas */}
-      <select
-        name="empresasIds"
-        value={formData.empresasIds}
-        onChange={handleMultiSelectChange}
-        multiple
-        size={5}
-      >
-        {empresas.map((emp) => (
-          <option key={emp.id} value={emp.id}>
-            {emp.nombre}
-          </option>
-        ))}
-      </select>
-
-      {/* Desarrolladores */}
-      <select
-        name="desarrolladoresIds"
-        value={formData.desarrolladoresIds}
-        onChange={handleMultiSelectChange}
-        multiple
-        size={5}
-      >
-        {desarrolladores.map((d) => (
-          <option key={d.id} value={d.id}>
-            {d.nombre}
-          </option>
-        ))}
-      </select>
-
-      {/* Imágenes */}
-      <input
-        type="text"
-        name="imagenes"
-        placeholder="URLs de imágenes separadas por coma"
-        value={formData.imagenes}
-        onChange={handleChange}
+      <MultiSelect
+        label="Plataformas"
+        items={plataformas}
+        selectedIds={formData.plataformasIds}
+        onChange={(ids) => setFormData((prev) => ({ ...prev, plataformasIds: ids }))}
+        placeholder="Selecciona plataformas..."
       />
 
-      {/* URL de compra */}
-      <div className="form-group">
-        <label>URL de compra</label>
-        <input
-          type="url"
-          value={urlCompra}
-          onChange={(e) => setUrlCompra(e.target.value)}
-          placeholder="https://store.steampowered.com/app/..."
-        />
+      {/* ✅ Links de compra por plataforma */}
+      <div className="buy-links">
+        <h4 className="buy-links__title">Links de compra por plataforma</h4>
+
+        {formData.plataformasIds.length === 0 ? (
+          <p className="buy-links__hint">Selecciona plataformas para agregar links.</p>
+        ) : (
+          formData.plataformasIds.map((pid) => {
+            const plat = plataformas.find((p) => p.id === pid);
+            const nombrePlat = plat?.nombre ?? `Plataforma ${pid}`;
+
+            return (
+              <div key={pid} className="buy-links__row">
+                <span className="buy-links__label">{nombrePlat}</span>
+
+                <input
+                  type="url"
+                  className="buy-links__input"
+                  placeholder={`URL para ${nombrePlat}`}
+                  value={urlsCompra[pid] ?? ""}
+                  onChange={(e) =>
+                    setUrlsCompra((prev) => ({
+                      ...prev,
+                      [pid]: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            );
+          })
+        )}
       </div>
 
-      {/* Label de compra */}
-      <div className="form-group">
-        <label>Texto del botón</label>
+      {/* Géneros */}
+      <MultiSelect
+        label="Géneros"
+        items={generos}
+        selectedIds={formData.generosIds}
+        onChange={(ids) => setFormData((prev) => ({ ...prev, generosIds: ids }))}
+        placeholder="Selecciona géneros..."
+      />
+
+      {/* Empresas */}
+      <MultiSelect
+        label="Empresas"
+        items={empresas}
+        selectedIds={formData.empresasIds}
+        onChange={(ids) => setFormData((prev) => ({ ...prev, empresasIds: ids }))}
+        placeholder="Selecciona empresas..."
+      />
+
+      {/* Desarrolladores */}
+      <MultiSelect
+        label="Desarrolladores"
+        items={desarrolladores}
+        selectedIds={formData.desarrolladoresIds}
+        onChange={(ids) => setFormData((prev) => ({ ...prev, desarrolladoresIds: ids }))}
+        placeholder="Selecciona desarrolladores..."
+      />
+
+      {/* ✅ Imagen del producto */}
+      <div className="img-row">
+        <span className="img-row__label">Imagen del producto</span>
+
         <input
           type="text"
-          value={labelCompra}
-          onChange={(e) => setLabelCompra(e.target.value)}
-          maxLength={60}
-          placeholder="Comprar en Steam"
+          name="imagenes"
+          className="img-row__input"
+          placeholder="Url de imagen"
+          value={formData.imagenes}
+          onChange={handleChange}
         />
       </div>
 
-      {/* Fila de botones: cancelar izquierda, guardar derecha */}
+      {/* Botones */}
       <div className="admin-products-actions-row">
         {modo === "editar" && onCancel && (
           <button
@@ -409,15 +493,8 @@ export default function CrearProducto({
           </button>
         )}
 
-        <button
-          type="submit"
-          className={
-            modo === "editar"
-              ? "btn-nl btn-nl-secondary admin-products-btn-cancel" // mismo estilo
-              : "btn-nl btn-nl-secondary"
-          }
-        >
-          {modo === "editar" ? "Guardar" : "Guardar"}
+        <button type="submit" className="btn-nl btn-nl-secondary">
+          Guardar
         </button>
       </div>
     </form>
