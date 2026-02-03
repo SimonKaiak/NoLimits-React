@@ -76,11 +76,6 @@ export default function PerfilUsuario() {
       nombre: formData.nombre,
       apellidos: formData.apellidos,
       telefono: formData.telefono ? Number(formData.telefono) : null,
-      calle: formData.calle,
-      numero: formData.numero,
-      complemento: formData.complemento,
-      comunaNombre: formData.comuna || null,
-      regionNombre: formData.region || null,
     };
 
     try {
@@ -194,43 +189,6 @@ export default function PerfilUsuario() {
                 >
                   Cambiar contraseña
                 </button>
-              </div>
-            </div>
-
-            {/* Columna derecha: datos de dirección */}
-            <div className="perfil-col-direccion">
-              <h3 className="perfil-subtitle">Dirección</h3>
-
-              <div className="perfil-grid-tres-vertical">
-                <div className="perfil-field">
-                  <label>Calle</label>
-                  <input
-                    type="text"
-                    name="calle"
-                    value={formData.calle}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="perfil-field">
-                  <label>Número</label>
-                  <input
-                    type="text"
-                    name="numero"
-                    value={formData.numero}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="perfil-field">
-                  <label>Complemento</label>
-                  <input
-                    type="text"
-                    name="complemento"
-                    value={formData.complemento}
-                    onChange={handleChange}
-                  />
-                </div>
               </div>
             </div>
           </div>
