@@ -2038,7 +2038,6 @@ button.btn.nl-fav-btn:focus-visible{
     0 0 0 2px rgba(24, 227, 255, .6),
     0 0 22px rgba(24, 227, 255, .75);
 }
-/* Ruta: src/styles/principal.css */
 
 /* ===============================
    FAVORITOS COMPACTO (desktop)
@@ -2202,9 +2201,10 @@ body.favs-open nav.navbar .user-menu.dropdown-menu{
 /* 1) Ocultamos el lado izquierdo completo */
 body.favs-open .nl-nav1-left{
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(18px);
   pointer-events: none;
 }
+
 
 /* 2) En el lado derecho, ocultamos SOLO los links/botones, NO el copyright */
 body.favs-open .nl-nav1-right .nl-nav1-item{
@@ -2228,18 +2228,6 @@ body.favs-open .nl-nav1-right .footer-copy{
   transform: translateY(0);
   pointer-events: auto;
   transition: opacity .25s ease, transform .25s ease;
-}
-
-body.favs-open .sagas-section .sagas-title{
-  opacity: 0;
-  transform: translateY(-12px); /* hacia arriba */
-  pointer-events: none;
-}
-
-body.favs-open .saga-category-buttons{
-  opacity: 0;
-  transform: translateY(12px);  /* hacia abajo */
-  pointer-events: none;
 }
 
 /* Accesibilidad */
@@ -2266,13 +2254,11 @@ body.favs-open .saga-category-buttons{
   }
 }
 
-/* Ruta: src/styles/principal.css */
 /* Quitar el subrayado TRON a TODOS los .btn del navbar */
 .navbar .btn::after{
   display: none !important;
 }
 
-/* Ruta: src/styles/principal.css */
 /* ===============================
    Hover dorado + fondo negro (NO cambia color)
    =============================== */
@@ -2359,9 +2345,7 @@ nav.navbar.bg-body-tertiary.fixed-top .btn:focus-visible{
   translate: var(--footer-right-shift) 0;
 }
 
-.nl-nav1-left{
-  transform: translateX(-490px);   /* ajusta: -20px / -60px */
-}
+
 
 /* Copyright blanco puro */
 .nl-nav1-meta,
@@ -2623,4 +2607,145 @@ nav.navbar.bg-body-tertiary.fixed-top .btn-hamburger:focus-visible{
 
 .nl-nav1-center{
   transform: translateX(var(--subbrand-shift-x));
+}
+
+.nl-nav1-left{
+  transform: translateX(-490px) !important;
+}
+
+/* ===============================
+   Modal Legal: Términos / Privacidad
+   =============================== */
+
+.nl-legal-btn{
+  border: 0;
+  outline: none;
+}
+
+/* Overlay encima de todo */
+.nl-legal-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 3000; /* por encima del nav/footer */
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 18px;
+}
+
+/* Caja modal */
+.nl-legal-modal{
+  width: min(900px, 96vw);
+  max-height: min(78vh, 720px);
+  overflow: hidden;
+
+  border-radius: 18px;
+  background: rgba(2, 20, 27, .88);
+  border: 1.5px solid rgba(0,231,255,.35);
+
+  box-shadow:
+    0 0 22px rgba(0,231,255,.20),
+    0 0 28px rgba(123,92,255,.18),
+    0 0 34px rgba(255,37,208,.14);
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===============================
+   Header del modal legal
+   =============================== */
+
+/* Contenedor */
+.nl-legal-header{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* título perfectamente centrado */
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+/* Título centrado */
+.nl-legal-title{
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #83e2ff; /* celeste NoLimits */
+  text-shadow: 0 0 10px rgba(0,231,255,.35);
+}
+
+.nl-legal-close{
+  border: 1px solid rgba(0,231,255,.6);
+  background: rgba(0,0,0,.85);
+  color: #83e2ff;
+  border-radius: 12px;
+
+  width: 42px;
+  height: 42px;
+
+  padding-left: 11.5px;
+  padding-top: 8px;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1;
+
+  cursor: pointer;
+
+  /* Bloquea cualquier movimiento */
+  transform: none !important;
+  transition: box-shadow .2s ease, background .2s ease;
+}
+
+/* Hover sin movimiento */
+.nl-legal-close:hover{
+  background: rgba(0,0,0,1);
+  box-shadow: 0 0 18px rgba(0,231,255,.6);
+}
+
+/* Active sin desplazamiento */
+.nl-legal-close:active{
+  transform: none !important;
+}
+
+/* Focus limpio */
+.nl-legal-close:focus-visible{
+  outline: 2px solid rgba(0,231,255,.8);
+  outline-offset: 2px;
+}
+
+/* Body con scroll */
+.nl-legal-body{
+  padding: 14px 16px;
+  overflow: auto;
+}
+
+.nl-legal-text{
+  margin: 0;
+  white-space: pre-wrap; /* respeta saltos */
+  font-family: inherit;  /* no estilo "consola" */
+  color: #cfefff;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+/* Footer */
+.nl-legal-footer{
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,.10);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Elevar botones de plataformas (Disney+, Apple TV, etc) */
+.nl-platforms-buttons{
+    position: relative;
+    top: -5px;   /* Ajusta este valor a tu gusto */
 }

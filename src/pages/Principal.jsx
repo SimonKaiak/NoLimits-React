@@ -105,6 +105,7 @@ function Carousel({
   const slides = productos || [];
   const [i, setI] = useState(0);
   const [openInfo, setOpenInfo] = useState(false);
+  const [infoTab, setInfoTab] = useState("details");
   const ctaRef = useRef(null);
 
   const hasSlides = slides.length > 0;
@@ -116,19 +117,12 @@ function Carousel({
 
   const current = hasSlides ? slides[safeIndex] : null;
 
-  const goToLink = () => {
-    if (!current?.urlCompra) {
-      alert("Este producto no tiene link configurado todavía.");
-      return;
-    }
-    window.open(current.urlCompra, "_blank", "noopener,noreferrer");
-  };
-
   useEffect(() => {
     if (!hasSlides) return;
     if (i >= slides.length) {
       setI(0);
       setOpenInfo(false);
+      setInfoTab("details"); // reset
     }
   }, [hasSlides, slides.length, i]);
 
@@ -149,6 +143,7 @@ function Carousel({
     if (idx !== -1) {
       setI(idx);
       setOpenInfo(true);
+      setInfoTab("details");
     }
   }, [hasSlides, targetName, slides]);
 
@@ -178,6 +173,7 @@ function Carousel({
 
   const go = (dir) => {
     setOpenInfo(false);
+    setInfoTab("details"); // reset
     setI((prev) => (prev + dir + slides.length) % slides.length);
   };
 
@@ -234,17 +230,24 @@ function Carousel({
             <>
               {/* ✅ Ya NO mostramos el precio arriba */}
               <div className="nl-actions">
-                <button className="btn btn-info" onClick={() => setOpenInfo(true)}>
-                  - Más información -
+                <button
+                  className="btn btn-info"
+                  onClick={() => {
+                    setOpenInfo(true);
+                    setInfoTab("details");
+                  }}
+                >
+                  - Más Información -
                 </button>
 
-                {/* ✅ El precio ocupa el lugar del favorito */}
-                <strong className="nl-price" style={{ margin: 0 }}>
-                  {clp(current.price)}
-                </strong>
-
-                <button className="btn btn-success nl-add" onClick={goToLink}>
-                  {current?.labelCompra || "Ir al sitio"}
+                <button
+                  className="btn btn-success nl-add"
+                  onClick={() => {
+                    setOpenInfo(true);
+                    setInfoTab("platforms");
+                  }}
+                >
+                  {current?.labelCompra || "- Ver Plataformas -"}
                 </button>
               </div>
             </>
@@ -261,16 +264,29 @@ function Carousel({
                   justifyContent: "center",
                 }}
               >
-                <button className="btn btn-info" onClick={() => setOpenInfo(false)}>
-                  - Menos información -
+                <button
+                  className="btn btn-info"
+                  onClick={() => {
+                    setOpenInfo(false);
+                    setInfoTab("details");
+                  }}
+                >
+                  - Menos Información -
                 </button>
 
                 <strong className="nl-price" style={{ margin: 0 }}>
                   {clp(current.price)}
                 </strong>
 
-                <button className="btn btn-success nl-add" onClick={goToLink}>
-                  {current?.labelCompra || "Ir al sitio"}
+                <button
+                  className="btn btn-success nl-add"
+                  onClick={() => {
+                    setInfoTab((t) => (t === "platforms" ? "details" : "platforms"));
+                  }}
+                >
+                  {infoTab === "platforms"
+                    ? "- Ver Detalles -"
+                    : (current?.labelCompra || "- Ver Plataformas -")}
                 </button>
               </div>
 
@@ -282,35 +298,79 @@ function Carousel({
                     {current.name}
                   </h3>
 
-                  {/* GRID DE ATRIBUTOS */}
-                  <div className="nl-product-grid">
+                  {/* ✅ DETALLES */}
+                  {infoTab === "details" && (
+                    <div className="nl-product-grid">
+                      {/* IZQUIERDA: Categoría, Clasificación, Géneros */}
+                      <div className="nl-product-col">
+                        {current.tipo && (
+                          <p><strong>Categoría:</strong> {current.tipo}</p>
+                        )}
 
-                    <div className="nl-product-col">
-                      {current?.id && <p><strong>ID:</strong> #{current.id}</p>}
-                      {current.tipo && <p><strong>Categoría:</strong> {current.tipo}</p>}
-                      {current.clasificacion && <p><strong>Clasificación:</strong> {current.clasificacion}</p>}
-                      {current.estado && <p><strong>Estado:</strong> {current.estado}</p>}
-                      {current.saga && <p><strong>Saga:</strong> {current.saga}</p>}
+                        {current.clasificacion && (
+                          <p><strong>Clasificación:</strong> {current.clasificacion}</p>
+                        )}
+
+                        {current.generos?.length > 0 && (
+                          <p><strong>Géneros:</strong> {current.generos.join(" · ")}</p>
+                        )}
+                      </div>
+
+                      {/* DERECHA: Empresas, Desarrolladores, Plataformas, Estado */}
+                      <div className="nl-product-col">
+                        {current.empresas?.length > 0 && (
+                          <p><strong>Empresas:</strong> {current.empresas.join(" · ")}</p>
+                        )}
+
+                        {current.desarrolladores?.length > 0 && (
+                          <p><strong>Desarrolladores:</strong> {current.desarrolladores.join(" · ")}</p>
+                        )}
+
+                        {current.plataformas?.length > 0 && (
+                          <p><strong>Plataformas:</strong> {current.plataformas.join(" · ")}</p>
+                        )}
+
+                        {current.estado && (
+                          <p><strong>Estado:</strong> {current.estado}</p>
+                        )}
+                      </div>
                     </div>
+                  )}
 
-                    <div className="nl-product-col">
-                      <p><strong>Precio:</strong> {clp(current.price)}</p>
+                  {/* PLATAFORMAS */}
+                  {infoTab === "platforms" && (
+                    <div className="nl-platforms mt-2">
+                      {(current.plataformas?.length > 0) ? (
+                        <div className="nl-platforms-buttons">
+                          {current.plataformas.map((pl, idx) => (
+                            <button
+                              key={`${pl}-${idx}`}
+                              className="btn btn-outline-info"
+                              onClick={() => {
+                                const key = pl
+                                  .toString()
+                                  .toLowerCase()
+                                  .normalize("NFD")
+                                  .replace(/[\u0300-\u036f]/g, "")
+                                  .replace(/[^a-z0-9]/g, "");
 
-                      {current.plataformas?.length > 0 && (
-                        <p><strong>Plataformas:</strong> {current.plataformas.join(" · ")}</p>
-                      )}
-                      {current.generos?.length > 0 && (
-                        <p><strong>Géneros:</strong> {current.generos.join(" · ")}</p>
-                      )}
-                      {current.empresas?.length > 0 && (
-                        <p><strong>Empresas:</strong> {current.empresas.join(" · ")}</p>
-                      )}
-                      {current.desarrolladores?.length > 0 && (
-                        <p><strong>Desarrolladores:</strong> {current.desarrolladores.join(" · ")}</p>
+                                const url = current.platformUrlMap?.[key];
+
+                                if (url) window.open(url, "_blank", "noopener,noreferrer");
+                                else alert(`No hay URL registrada para: ${pl}`);
+                              }}
+                            >
+                              {pl}
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <p style={{ textAlign: "center", margin: 0 }}>
+                          No hay plataformas registradas para este producto.
+                        </p>
                       )}
                     </div>
-
-                  </div>
+                  )}
                 </div>
               </div>
 
@@ -370,6 +430,128 @@ export default function Principal() {
   // Funcion para scrollear a las secciones.
   const [navH, setNavH] = useState(120);
 
+  // ✅ Modal / Panel: Términos y Privacidad
+  const [legalOpen, setLegalOpen] = useState(false);
+  const [legalType, setLegalType] = useState(null); // "terms" | "privacy"
+
+  const LEGAL_CONTENT = {
+    terms: {
+      title: "Términos y Condiciones",
+      body: `
+  Bienvenido/a a NoLimits (el “Sitio”).
+
+  1) Naturaleza del Sitio
+  - NoLimits es un catálogo informativo que exhibe productos (películas, videojuegos y accesorios).
+  - El Sitio puede incluir enlaces a plataformas y sitios externos para que el usuario revise información y/o realice compras fuera de NoLimits.
+
+  2) Aceptación de los Términos
+  - Al acceder, navegar o utilizar el Sitio, el usuario declara haber leído y aceptado estos Términos y Condiciones.
+  - Si el usuario no está de acuerdo con estos Términos, debe abstenerse de utilizar el Sitio.
+
+  3) Uso permitido
+  - El usuario puede navegar, buscar productos, guardar favoritos y visualizar información disponible.
+  - Se prohíbe el uso del Sitio con fines ilegales, fraudulentos, abusivos, o para realizar scraping masivo o automatizado.
+  - Se prohíbe intentar vulnerar, interferir o afectar la disponibilidad del Sitio, su API o sus sistemas asociados.
+
+  4) Enlaces externos y transacciones
+  - Los botones y enlaces del tipo “Ir al sitio” redirigen a páginas de terceros.
+  - NoLimits no procesa pagos, compras ni ventas dentro del Sitio.
+  - Precios, stock, despacho, garantías, devoluciones y condiciones finales son definidos por el tercero.
+  - NoLimits no se responsabiliza por cambios, caídas, condiciones, contenidos o políticas de terceros.
+
+  5) Información de productos
+  - NoLimits procura mantener la información actualizada; sin embargo, pueden existir errores u omisiones (precio, descripción, clasificación, disponibilidad, etc.).
+  - Imágenes, nombres y descripciones pueden ser referenciales y/o de carácter ilustrativo.
+
+  6) Cuenta y sesión (si aplica)
+  - Cuando exista inicio de sesión, el usuario es responsable de la confidencialidad de sus credenciales y del uso de su cuenta.
+  - El usuario debe notificar cualquier uso no autorizado cuando corresponda.
+
+  7) Propiedad intelectual
+  - El diseño, estructura, código y contenido original del Sitio pertenecen a sus autores o titulares.
+  - Marcas, logos, nombres comerciales y contenidos de terceros pertenecen a sus respectivos titulares.
+
+  8) Limitación de responsabilidad
+  - El Sitio se proporciona “tal cual” y “según disponibilidad”.
+  - NoLimits no garantiza disponibilidad ininterrumpida ni ausencia de errores.
+  - NoLimits no responde por daños directos o indirectos derivados del uso del Sitio o de enlaces externos, salvo que la ley aplicable disponga lo contrario.
+
+  9) Modificaciones
+  - NoLimits puede actualizar estos Términos en cualquier momento.
+  - El uso continuado del Sitio implica aceptación de las modificaciones publicadas.
+
+  10) Contacto
+  - Correo: nolimits@gmail.com
+  - Proyecto: NoLimits (uso académico / informativo)
+
+  Última actualización: 02-02-2026
+      `.trim(),
+    },
+
+    privacy: {
+      title: "Política de Privacidad",
+      body: `
+  NoLimits respeta la privacidad de sus usuarios.
+
+  1) Datos y almacenamiento
+  - El Sitio puede almacenar información local en el navegador (LocalStorage) para funcionalidades como favoritos (por ejemplo, "nl_favoritos").
+  - El Sitio puede almacenar preferencias básicas de experiencia y, si existe autenticación, tokens o datos de sesión según la implementación.
+
+  2) Tratamiento de datos
+  - NoLimits no comercializa datos personales.
+  - NoLimits no comparte datos personales con terceros con fines comerciales.
+  - NoLimits no realiza cobros ni procesa pagos dentro del Sitio.
+
+  3) Cookies y tecnologías similares
+  - NoLimits puede utilizar almacenamiento local o tecnologías equivalentes para:
+    - Guardar favoritos.
+    - Mantener sesión (si aplica).
+    - Recordar preferencias del usuario.
+  - El usuario puede eliminar estos datos desde la configuración de su navegador.
+
+  4) Enlaces a terceros
+  - Al abandonar NoLimits mediante un enlace externo, aplican los términos y la política de privacidad del tercero.
+  - Se recomienda revisar dichas políticas antes de registrarse o realizar compras en sitios externos.
+
+  5) Seguridad
+  - NoLimits aplica medidas razonables para proteger el Sitio.
+  - Aun así, ningún sistema es completamente infalible.
+
+  6) Derechos del usuario
+  - El usuario puede eliminar favoritos y preferencias locales borrando el almacenamiento del navegador o mediante funcionalidades del Sitio (si existieran, por ejemplo “Limpiar favoritos”).
+  - Si en el futuro se implementa una cuenta con datos persistidos en backend, esta sección deberá ampliarse para contemplar derechos de acceso, rectificación y eliminación conforme a la normativa aplicable.
+
+  7) Contacto
+  - Correo: nolimits@gmail.com
+  - Proyecto: NoLimits (uso académico / informativo)
+
+  Última actualización: 02-02-2026
+      `.trim(),
+    },
+  };
+
+  const openLegal = (type) => {
+    setLegalType(type);
+    setLegalOpen(true);
+  };
+
+  const closeLegal = () => {
+    setLegalOpen(false);
+    setLegalType(null);
+  };
+
+  // Escape cierra modal legal (además del favs)
+  useEffect(() => {
+    const k = (e) => {
+      if (e.key === "Escape") {
+        setFavsOpen(false);
+        closeLegal();
+      }
+    };
+    document.addEventListener("keydown", k);
+    return () => document.removeEventListener("keydown", k);
+  }, []);
+
   // Precargar productos en segundo plano al entrar a /principal
   useEffect(() => {
     listarProductos()
@@ -397,14 +579,12 @@ export default function Principal() {
     return () => document.body.classList.remove("route-principal");
   }, []);
 
-  // Escape cierra favoritos
+  // Bloquear scroll del fondo cuando Favoritos o Legal estén abiertos
   useEffect(() => {
-    const k = (e) => {
-      if (e.key === "Escape") setFavsOpen(false);
-    };
-    document.addEventListener("keydown", k);
-    return () => document.removeEventListener("keydown", k);
-  }, []);
+    const block = favsOpen || legalOpen;
+    document.body.style.overflow = block ? "hidden" : "";
+    return () => (document.body.style.overflow = "");
+  }, [favsOpen, legalOpen]);
 
   // Cargar productos SOLO cuando haya saga seleccionada
   useEffect(() => {
@@ -473,6 +653,44 @@ export default function Principal() {
           // src que se muestra ahora
           const finalSrc = imgHttp ? imgHttp : (img(imgRel) || img(localImage));
 
+          // NUEVO: mapa plataforma -> url (usando p.linksCompra)
+          const normKey = (s = "") =>
+            s
+              .toString()
+              .toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .replace(/[^a-z0-9]/g, ""); 
+
+          const linksCompraArr = Array.isArray(p.linksCompra) ? p.linksCompra : [];
+          const plataformasArr = Array.isArray(p.plataformas) ? p.plataformas : [];
+
+          const platformUrlMap = {};
+
+          plataformasArr.forEach((plName, idx) => {
+            const k = normKey(plName);
+
+            // 1) por orden (fallback)
+            const byIndex = linksCompraArr[idx]?.url || null;
+
+            // 2) por "dominio" (mejor para Disney/Apple aunque venga desordenado)
+            const byContains =
+              linksCompraArr.find((lk) => {
+                const u = (lk?.url || "").toLowerCase();
+                if (k.includes("disney")) return u.includes("disney");
+                if (k.includes("apple")) return u.includes("apple");
+                if (k.includes("prime")) return u.includes("primevideo") || u.includes("amazon");
+                if (k.includes("steam")) return u.includes("store.steampowered") || u.includes("steampowered") || u.includes("steam");
+                if (k.includes("playstation")) return u.includes("playstation");
+                if (k.includes("xbox")) return u.includes("xbox");
+                if (k.includes("epic")) return u.includes("epicgames");
+                return false;
+              })?.url || null;
+
+            platformUrlMap[k] = byContains || byIndex;
+          });
+          console.log("MAP", p.nombre, platformUrlMap);
+
           return {
             id: p.id,
             name: p.nombre,
@@ -484,8 +702,8 @@ export default function Principal() {
             alt: p.nombre,
 
             // lo que Favoritos usará para resolver siempre bien
-            imgRel,   // "peliculas/spiderman/PSpiderman1.webp" o "logos/NoLimits.webp"
-            imgHttp,  // URL si viene remoto real
+            imgRel,
+            imgHttp,
 
             urlCompra: p.urlCompra || null,
             labelCompra: p.labelCompra || null,
@@ -495,11 +713,10 @@ export default function Principal() {
             estado: p.estadoNombre || null,
             saga: p.saga || null,
             plataformas: Array.isArray(p.plataformas) ? p.plataformas : [],
+            platformUrlMap,
             generos: Array.isArray(p.generos) ? p.generos : [],
             empresas: Array.isArray(p.empresas) ? p.empresas : [],
-            desarrolladores: Array.isArray(p.desarrolladores)
-              ? p.desarrolladores
-              : [],
+            desarrolladores: Array.isArray(p.desarrolladores) ? p.desarrolladores : [],
           };
         };
 
@@ -879,17 +1096,60 @@ export default function Principal() {
 
             {/* DERECHA: links */}
             <div className="nl-nav1-right">
-              <a className="nl-nav1-item" href="#">
+              <button
+                type="button"
+                className="nl-nav1-item nl-legal-btn"
+                onClick={() => openLegal("terms")}
+              >
                 📄 <span>- Términos - 📄</span>
-              </a>
-              <a className="nl-nav1-item" href="#">
-                🔒 <span>- Privacidad - 🔒</span>
-              </a>
-            </div>
+              </button>
 
+              <button
+                type="button"
+                className="nl-nav1-item nl-legal-btn"
+                onClick={() => openLegal("privacy")}
+              >
+                🔒 <span>- Privacidad - 🔒</span>
+              </button>
+            </div>
           </div>
         </nav>
       </footer>
+       {/* ✅ MODAL LEGAL (Términos / Privacidad) */}
+      {legalOpen && legalType && (
+        <div
+          className="nl-legal-overlay"
+          onClick={closeLegal} // click fuera cierra
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="nl-legal-modal"
+            onClick={(e) => e.stopPropagation()} // evita cerrar al hacer click dentro
+          >
+            <div className="nl-legal-header">
+              <h2 className="nl-legal-title">
+                {LEGAL_CONTENT[legalType]?.title}
+              </h2>
+
+              <button
+                type="button"
+                className="nl-legal-close"
+                onClick={closeLegal}
+                aria-label="Cerrar"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="nl-legal-body">
+              <pre className="nl-legal-text">
+                {LEGAL_CONTENT[legalType]?.body}
+              </pre>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
