@@ -16,6 +16,7 @@ import Registro from "./pages/Registro.jsx";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage.jsx";
 import PaymentMethod from "./pages/PaymentMethod.jsx";
 import { Comprobante } from "./pages/Comprobante.jsx";
+import AsistenteNL from "./components/organisms/AsistenteNL.jsx";
 
 // Usuario normal
 import Principal from "./pages/Principal.jsx";
@@ -251,6 +252,7 @@ export default function App() {
 
       {/* Footer solo si corresponde */}
       {!ocultarLayout && <FooterNL />}
+      <AsistenteNL />
     </>
   );
 }
