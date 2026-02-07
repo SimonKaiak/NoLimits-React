@@ -1,0 +1,180 @@
+.nl-assist-fab{
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+
+  background: rgba(0,0,0,0.7);
+  color: #5de6ff;
+  border: 1px solid rgba(93,230,255,0.7);
+  box-shadow: 0 0 14px rgba(93,230,255,0.25);
+
+  font-weight: 900;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 9999;
+}
+
+.nl-assist-panel{
+  position: fixed;
+  right: 18px;
+  bottom: 84px;
+  width: 340px;
+  max-height: 520px;
+  border-radius: 18px;
+
+  background: rgba(0,0,0,0.85);
+  border: 1px solid rgba(93,230,255,0.35);
+  color: rgba(255,255,255,0.92);
+
+  overflow: hidden;
+  transform: translateY(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  z-index: 9999;
+}
+
+.nl-assist-panel.is-open{
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nl-assist-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 12px;
+  border-bottom: 1px solid rgba(93,230,255,0.2);
+}
+
+.nl-assist-title{
+  font-weight: 800;
+  color: #5de6ff;
+}
+
+.nl-assist-close{
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.85);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.nl-assist-context{
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(93,230,255,0.12);
+}
+
+.nl-assist-context-path{
+  font-size: 12px;
+  opacity: 0.9;
+  margin-bottom: 6px;
+}
+
+.nl-assist-tips{
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.nl-assist-chat{
+  padding: 10px 12px;
+  display: grid;
+  gap: 8px;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.nl-msg{
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  white-space: pre-line;
+}
+
+.nl-msg.bot{
+  background: rgba(93,230,255,0.10);
+  border: 1px solid rgba(93,230,255,0.18);
+}
+
+.nl-msg.me{
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  justify-self: end;
+}
+
+.nl-assist-input{
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid rgba(93,230,255,0.18);
+}
+
+.nl-assist-input input{
+  flex: 1;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(93,230,255,0.25);
+  color: rgba(255,255,255,0.92);
+  border-radius: 12px;
+  padding: 10px 10px;
+  outline: none;
+}
+
+.nl-assist-input button{
+  background: rgba(0,0,0,0.55);
+  color: #5de6ff;
+  border: 1px solid rgba(93,230,255,0.6);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.nl-assist-fab{
+  position: fixed;
+  bottom: 96px;
+  right: 24px;
+
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+
+  padding: 0;              /* importante */
+  overflow: hidden;        /* recorta imagen al círculo */
+
+  background: rgba(0,0,0,0.6);
+  border: 2px solid rgba(93,230,255,0.9);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  z-index: 9999;
+
+  box-shadow:
+    0 0 20px rgba(93,230,255,0.75),
+    inset 0 0 12px rgba(93,230,255,0.35);
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nl-assist-fab:hover{
+  transform: scale(1.08);
+  box-shadow:
+    0 0 30px rgba(93,230,255,0.95),
+    inset 0 0 16px rgba(93,230,255,0.45);
+}
+
+.nl-assist-icon{
+  width: 100px;
+  height: 65px;
+  object-fit: cover;
+
+  filter: drop-shadow(0 0 6px rgba(93,230,255,0.9));
+}

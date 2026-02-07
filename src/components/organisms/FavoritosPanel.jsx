@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 
+import "../../styles/favoritosPanel.css";
 // Carga todo lo que haya bajo /src/assets/img y deja lista la URL para usarla en <img src="...">
 const IMGS = import.meta.glob("../../assets/img/**/*", { eager: true, as: "url" });
 
@@ -99,16 +100,27 @@ export default function FavoritosPanel({
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const join = (arr) =>
-    Array.isArray(arr) && arr.length ? arr.join(" · ") : "";
-
-  const Chip = ({ label, value }) => {
+  const Chip = ({ label, value, className = "" }) => {
     const v = (value ?? "").toString().trim();
     if (!v) return null;
+
     return (
-      <span className="favs-attr">
-        {label}: {v}
-      </span>
+      <div className={`favs-chip ${className}`}>
+        <span className="favs-chip__label">{label}:</span>
+        <span className="favs-chip__value">{v}</span>
+      </div>
+    );
+  };
+
+  const GroupChip = ({ label, values, className = "" }) => {
+    const arr = Array.isArray(values) ? values.filter(Boolean) : [];
+    if (arr.length === 0) return null;
+
+    return (
+      <div className={`favs-chip favs-chip--group ${className}`}>
+        <span className="favs-chip__label">{label}:</span>
+        <span className="favs-chip__value">{arr.join(" · ")}</span>
+      </div>
     );
   };
 
@@ -138,6 +150,9 @@ export default function FavoritosPanel({
               const finalSrc = resolveFavSrc(p);
               const fallbackLogo = img("logos/NoLimits.webp");
 
+              const devs = Array.isArray(p?.desarrolladores) ? p.desarrolladores.filter(Boolean) : [];
+              const devsLong = devs.join(" · ").length > 25 || devs.length >= 3
+
               return (
                 <article key={p.id} className="favs-card">
                   <div className="favs-product">
@@ -157,20 +172,24 @@ export default function FavoritosPanel({
                     <div className="favs-info">
                       <h3 className="favs-title">{p.name}</h3>
 
-                      <div className="favs-attrs">
-                        <Chip label="Categoría" value={p.tipo} />
-                        <Chip label="Clasificación" value={p.clasificacion} />
-                        <Chip label="Estado" value={p.estado} />
-                        <Chip label="Saga" value={p.saga} />
+                      <div className="favs-attrs favs-attrs--layout">
+                        <Chip className="attr-categoria" label="Categoría" value={p.tipo} />
+                        <Chip className="attr-clasificacion" label="Clasificación" value={p.clasificacion} />
+                        <Chip className="attr-estado" label="Estado" value={p.estado} />
 
-                        <Chip label="Plataformas" value={join(p.plataformas)} />
-                        <Chip label="Géneros" value={join(p.generos)} />
-                        <Chip label="Empresas" value={join(p.empresas)} />
-                        <Chip
+                        <Chip className="attr-saga" label="Saga" value={p.saga} />
+
+                        <GroupChip className="attr-plataformas" label="Plataformas" values={p.plataformas} />
+                        <GroupChip className="attr-generos" label="Géneros" values={p.generos} />
+
+                        <GroupChip className="attr-empresas" label="Empresas" values={p.empresas} />
+                        <GroupChip
+                          className={`attr-desarrolladores ${devsLong ? "attr-desarrolladores--wide" : ""}`}
                           label="Desarrolladores"
-                          value={join(p.desarrolladores)}
+                          values={p.desarrolladores}
                         />
                       </div>
+
 
                       {(() => {
                         const d = (p?.desc || "").trim();
@@ -194,7 +213,7 @@ export default function FavoritosPanel({
                       </button>
 
                       <button
-                        className="favs-btn favs-btn--primary"
+                        className="favs-btn favs-btn--primary favs-btn--platforms"
                         onClick={() => goToVendor(p)}
                         disabled={!(p?.urlCompra || p?.vendorUrl)}
                         title={
@@ -203,7 +222,7 @@ export default function FavoritosPanel({
                             : ""
                         }
                       >
-                        Ir al sitio
+                        Ver plataformas
                       </button>
 
                       <button

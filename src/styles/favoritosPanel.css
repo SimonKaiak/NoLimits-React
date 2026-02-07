@@ -1,0 +1,219 @@
+/* Asegura alineación y legibilidad */
+.favs-info{
+  text-align: left;
+}
+
+/* Contenedores */
+.favs-attrs { display: grid; gap: 12px; }
+.favs-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.favs-multis{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 16px;
+}
+
+@media (max-width: 900px){
+  .favs-multis{ grid-template-columns: 1fr; }
+}
+
+/* ====== ESTILO CHIP (lo que te falta) ====== */
+.favs-chip{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 12px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(0, 255, 255, 0.30);
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.92);
+
+  white-space: nowrap;
+}
+
+.favs-chip__label{
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.favs-chip__value{
+  opacity: 0.95;
+}
+
+/* Bloques multi */
+.favs-field__label{
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+
+.favs-field__chips{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* chips de items (más compactos) */
+.favs-chip--item{
+  padding: 6px 10px;
+}
+
+.favs-grid-attrs{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  gap: 12px 16px;
+  align-content: start;
+}
+
+@media (max-width: 1000px){
+  .favs-grid-attrs{ grid-template-columns: 1fr; }
+}
+
+/* Group chip ocupa más espacio y permite wrap */
+.favs-chip--group{
+  border-radius: 16px;         /* más “rectángulo” */
+  white-space: normal;         /* que pueda saltar de línea */
+  align-items: flex-start;
+}
+
+.favs-chip--group .favs-chip__value{
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.favs-attrs--layout{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas:
+    "categoria clasificacion estado"
+    "saga plataformas generos"
+    "empresas desarrolladores generos2";
+  gap: 14px 16px;
+  align-items: start;
+}
+
+/* Botón Ver plataformas */
+.favs-btn--platforms{
+  background: rgba(0, 0, 0, 0.55);
+  color: #5de6ff; /* celeste */
+  border: 1px solid rgba(93, 230, 255, 0.6);
+
+  font-weight: 700;
+  letter-spacing: 0.3px;
+
+  transition: all 0.25s ease;
+}
+
+.favs-btn--platforms:hover{
+  background: rgba(93, 230, 255, 0.15);
+  box-shadow: 0 0 12px rgba(93, 230, 255, 0.45);
+  transform: translateY(-1px);
+}
+
+.favs-btn--platforms:disabled{
+  opacity: 0.4;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+/* Botón precio*/
+.favs-btn--price{
+  background: rgba(0, 0, 0, 0.55);
+  color: #5de6ff;
+  border: 1px solid rgba(93, 230, 255, 0.6);
+  font-weight: 800;
+}
+
+
+/* Asignación de áreas */
+.attr-categoria{ grid-area: categoria; }
+.attr-clasificacion{ grid-area: clasificacion; }
+.attr-estado{ grid-area: estado; }
+
+.attr-saga{ grid-area: saga; }
+.attr-plataformas{ grid-area: plataformas; }
+.attr-generos{ grid-area: generos; }
+
+.attr-empresas{ grid-area: empresas; }
+.attr-desarrolladores{ grid-area: desarrolladores; }
+.attr-desarrolladores .favs-chip__value{
+  white-space: normal;
+  word-break: break-word;
+}
+
+.attr-desarrolladores--wide{
+  grid-column: span 2;   /* ahora sí ocupa 2 columnas solo cuando conviene */
+}
+
+/* Responsive */
+@media (max-width: 1000px){
+  .favs-attrs--layout{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      "categoria clasificacion estado"
+      "saga plataformas generos"
+      "empresas desarrolladores .";
+    gap: 14px 16px;
+    align-items: start;
+  }
+}
+
+/* Hover: más brillo (solo para el botón clickeable) */
+.favs-btn--platforms:hover{
+  box-shadow:
+    0 0 16px rgba(93, 230, 255, 0.55),
+    inset 0 0 12px rgba(93, 230, 255, 0.14);
+  text-shadow:
+    0 0 14px rgba(93, 230, 255, 0.85);
+  transform: translateY(-1px);
+}
+
+/* Muchos proyectos apagan los disabled con opacity */
+.favs-actions .favs-btn--price:disabled{
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 10px rgba(0, 9, 10, 0.55)) !important;
+}
+
+/* Hover más glow para el botón clickeable */
+.favs-actions .favs-btn--platforms:hover{
+  box-shadow: 0 0 26px rgba(93, 230, 255, 0.75) !important;
+  text-shadow: 0 0 18px rgba(93, 230, 255, 1) !important;
+  filter: drop-shadow(0 0 14px rgba(93, 230, 255, 0.75)) !important;
+  transform: translateY(-1px);
+}
+
+/* Fuerza glow SOLO para Ver plataformas */
+.favs-actions button.favs-btn--platforms{
+  background: rgba(0, 0, 0, 0.62) !important;
+  color: #5de6ff !important;
+  border: 1px solid rgba(93, 230, 255, 0.95) !important;
+
+  text-shadow: 0 0 14px rgba(93, 230, 255, 0.95) !important;
+  box-shadow:
+    0 0 18px rgba(93, 230, 255, 0.55),
+    inset 0 0 10px rgba(93, 230, 255, 0.12) !important;
+
+  filter: drop-shadow(0 0 10px rgba(93, 230, 255, 0.55)) !important;
+  opacity: 1 !important;
+}
+
+/* Hover más brillo */
+.favs-actions button.favs-btn--platforms:not(:disabled):hover{
+  box-shadow:
+    0 0 26px rgba(93, 230, 255, 0.75),
+    inset 0 0 12px rgba(93, 230, 255, 0.18) !important;
+  text-shadow: 0 0 18px rgba(93, 230, 255, 1) !important;
+  filter: drop-shadow(0 0 14px rgba(93, 230, 255, 0.75)) !important;
+  transform: translateY(-1px);
+}
+
+/* Si está deshabilitado, que NO se apague tanto */
+.favs-actions button.favs-btn--platforms:disabled{
+  opacity: 0.65 !important;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
