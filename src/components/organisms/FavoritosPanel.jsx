@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import "../../styles/favoritosPanel.css";
 // Carga todo lo que haya bajo /src/assets/img y deja lista la URL para usarla en <img src="...">
@@ -94,11 +94,10 @@ export default function FavoritosPanel({
   onClose,
   onRemove,
 }) {
-  const goToVendor = (p) => {
-    const url = p?.urlCompra || p?.vendorUrl;
-    if (!url) return;
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
+
+  const [showPlatformsById, setShowPlatformsById] = useState({});
+  const togglePlatforms = (id) =>
+    setShowPlatformsById((prev) => ({ ...prev, [id]: !prev[id] }));
 
   const Chip = ({ label, value, className = "" }) => {
     const v = (value ?? "").toString().trim();
@@ -133,13 +132,55 @@ export default function FavoritosPanel({
     };
   }, [isOpen]);
 
+  const normKey = (s = "") =>
+    s
+      .toString()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]/g, "");
+
+  const getPlatformLinks = (p) => {
+    const names = Array.isArray(p?.plataformas) ? p.plataformas.filter(Boolean) : [];
+
+    // 1) ✅ Como Principal: platformUrlMap (por nombre normalizado)
+    if (p?.platformUrlMap && typeof p.platformUrlMap === "object") {
+      const out = names.map((pl) => {
+        const k = normKey(pl);
+        const url = (p.platformUrlMap?.[k] || "").toString().trim();
+        return { label: String(pl).trim(), url };
+      });
+      // si al menos una trae url, listo
+      if (out.some((x) => x.url)) return out;
+    }
+
+    // 2) ✅ Tu caso backend: linksCompra (por índice)
+    if (Array.isArray(p?.linksCompra) && p.linksCompra.length > 0) {
+      const out = names.map((pl, idx) => ({
+        label: String(pl).trim(),
+        url: (p.linksCompra[idx]?.url || "").toString().trim(),
+      }));
+      if (out.some((x) => x.url)) return out;
+    }
+
+    // 3) ✅ Fallback: si no hay url por plataforma, usar urlCompra como link general
+    const fallback = (p?.urlCompra || p?.vendorUrl || "").toString().trim();
+    return names.map((pl) => ({ label: String(pl).trim(), url: fallback }));
+  };
+
+  const goToUrl = (url) => {
+    const u = String(url || "").trim();
+    if (!u) return;
+    window.open(u, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div
       className={`favs-overlay ${isOpen ? "is-open" : ""}`}
       style={{ top: `${topOffsetPx}px`, bottom: `${bottomOffsetPx}px` }}
       onClick={onClose}
     >
-      <div className="favs-panel" onClick={(e) => e.stopPropagation()}>
+      <div className="favs-panel" data-theme="magenta" onClick={(e) => e.stopPropagation()}>
         {/* sin header: se cierra con Dejar de ver / ESC / clic afuera */}
 
         {favoritos.length === 0 ? (
@@ -170,26 +211,75 @@ export default function FavoritosPanel({
 
                     {/* CENTRO */}
                     <div className="favs-info">
-                      <h3 className="favs-title">{p.name}</h3>
 
-                      <div className="favs-attrs favs-attrs--layout">
-                        <Chip className="attr-categoria" label="Categoría" value={p.tipo} />
-                        <Chip className="attr-clasificacion" label="Clasificación" value={p.clasificacion} />
-                        <Chip className="attr-estado" label="Estado" value={p.estado} />
+                      <div className="favs-info">
+                        {showPlatformsById[p.id] ? (
+                          <div className="favs-platforms">
+                              <div className="favs-platforms__title">Plataformas</div>
 
-                        <Chip className="attr-saga" label="Saga" value={p.saga} />
+                            <div className="favs-platforms__grid">
+                              {(() => {
+                                const links = getPlatformLinks(p);
 
-                        <GroupChip className="attr-plataformas" label="Plataformas" values={p.plataformas} />
-                        <GroupChip className="attr-generos" label="Géneros" values={p.generos} />
+                                if (links.length === 0) {
+                                  return (
+                                    <div className="favs-platforms__empty">
+                                      No hay plataformas configuradas para este producto.
+                                    </div>
+                                  );
+                                }
 
-                        <GroupChip className="attr-empresas" label="Empresas" values={p.empresas} />
-                        <GroupChip
-                          className={`attr-desarrolladores ${devsLong ? "attr-desarrolladores--wide" : ""}`}
-                          label="Desarrolladores"
-                          values={p.desarrolladores}
-                        />
+                                return links.map((it, idx) => {
+                                  const url = String(it.url || p?.urlCompra || p?.vendorUrl || "").trim();
+                                  const hasUrl = !!url;
+
+                                  return (
+                                    <button
+                                      key={`${p.id}-plat-${idx}`}
+                                      type="button"
+                                      className="favs-plat-btn"
+                                      onClick={() => hasUrl && goToUrl(url)}
+                                      disabled={!hasUrl} // si quieres que NUNCA se deshabilite, borra esta línea.
+                                      title={hasUrl ? `Abrir: ${it.label}` : "No hay URL configurada"}
+                                    >
+                                      {it.label}
+                                    </button>
+                                  );
+                                });
+                              })()}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="favs-details">
+                            <div className="favs-details__title">Detalles</div>
+
+                            <div className="favs-attrs favs-attrs--layout">
+                              <Chip className="attr-categoria" label="Categoría" value={p.tipo} />
+                              <Chip className="attr-clasificacion" label="Clasificación" value={p.clasificacion} />
+                              <Chip className="attr-estado" label="Estado" value={p.estado} />
+
+                              <Chip className="attr-saga" label="Saga" value={p.saga} />
+
+                              <GroupChip className="attr-plataformas" label="Plataformas" values={p.plataformas} />
+                              <GroupChip className="attr-generos" label="Géneros" values={p.generos} />
+
+                              <GroupChip className="attr-empresas" label="Empresas" values={p.empresas} />
+                              <GroupChip
+                                className={`attr-desarrolladores ${devsLong ? "attr-desarrolladores--wide" : ""}`}
+                                label="Desarrolladores"
+                                values={p.desarrolladores}
+                              />
+                            </div>
+                          </div>
+                        )}
+                        {/* si quieres que la descripción NO aparezca cuando estás en "Ver plataformas": */}
+                        {!showPlatformsById[p.id] && (() => {
+                          const d = (p?.desc || "").trim();
+                          const n = (p?.name || "").trim();
+                          const show = d.length > 0 && d.toLowerCase() !== n.toLowerCase();
+                          return show ? <p className="favs-desc">{d}</p> : null;
+                        })()}
                       </div>
-
 
                       {(() => {
                         const d = (p?.desc || "").trim();
@@ -204,25 +294,19 @@ export default function FavoritosPanel({
 
                     {/* DERECHA */}
                     <div className="favs-actions">
-                      <button
-                        className="favs-btn favs-btn--price"
-                        type="button"
-                        disabled
-                      >
+                      <div className="favs-actions__title">{p.name}</div>
+
+                      <button className="favs-btn favs-btn--price" type="button" disabled>
                         {clp(p.price)}
                       </button>
 
                       <button
-                        className="favs-btn favs-btn--primary favs-btn--platforms"
-                        onClick={() => goToVendor(p)}
-                        disabled={!(p?.urlCompra || p?.vendorUrl)}
-                        title={
-                          !(p?.urlCompra || p?.vendorUrl)
-                            ? "Este producto no tiene link de compra"
-                            : ""
-                        }
+                        type="button"
+                        className="favs-btn favs-btn--platforms"
+                        onClick={() => togglePlatforms(p.id)}
+                        aria-pressed={!!showPlatformsById[p.id]}
                       >
-                        Ver plataformas
+                        {showPlatformsById[p.id] ? "Ver detalles" : "Ver plataformas"}
                       </button>
 
                       <button

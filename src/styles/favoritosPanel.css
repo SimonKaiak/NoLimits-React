@@ -86,12 +86,16 @@
 
 .favs-attrs--layout{
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+
+  /* mejor que max-content para que no se descontrole el ancho */
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+
   grid-template-areas:
-    "categoria clasificacion estado"
-    "saga plataformas generos"
-    "empresas desarrolladores generos2";
-  gap: 14px 16px;
+    "categoria      clasificacion     estado"
+    "saga           plataformas       generos"
+    "empresas       desarrolladores   generos";
+
+  gap: 18px 26px;
   align-items: start;
 }
 
@@ -151,12 +155,12 @@
 @media (max-width: 1000px){
   .favs-attrs--layout{
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, max-content);
     grid-template-areas:
       "categoria clasificacion estado"
       "saga plataformas generos"
       "empresas desarrolladores .";
-    gap: 14px 16px;
+    gap: 12px;
     align-items: start;
   }
 }
@@ -185,35 +189,632 @@
   transform: translateY(-1px);
 }
 
-/* Fuerza glow SOLO para Ver plataformas */
-.favs-actions button.favs-btn--platforms{
-  background: rgba(0, 0, 0, 0.62) !important;
-  color: #5de6ff !important;
-  border: 1px solid rgba(93, 230, 255, 0.95) !important;
-
-  text-shadow: 0 0 14px rgba(93, 230, 255, 0.95) !important;
-  box-shadow:
-    0 0 18px rgba(93, 230, 255, 0.55),
-    inset 0 0 10px rgba(93, 230, 255, 0.12) !important;
-
-  filter: drop-shadow(0 0 10px rgba(93, 230, 255, 0.55)) !important;
-  opacity: 1 !important;
-}
-
-/* Hover más brillo */
-.favs-actions button.favs-btn--platforms:not(:disabled):hover{
-  box-shadow:
-    0 0 26px rgba(93, 230, 255, 0.75),
-    inset 0 0 12px rgba(93, 230, 255, 0.18) !important;
-  text-shadow: 0 0 18px rgba(93, 230, 255, 1) !important;
-  filter: drop-shadow(0 0 14px rgba(93, 230, 255, 0.75)) !important;
-  transform: translateY(-1px);
-}
-
 /* Si está deshabilitado, que NO se apague tanto */
 .favs-actions button.favs-btn--platforms:disabled{
   opacity: 0.65 !important;
   filter: none !important;
   box-shadow: none !important;
   text-shadow: none !important;
+}
+
+.favs-actions{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; /* controla separación entre title/precio/botones */
+}
+
+.favs-actions__title{
+  margin-bottom: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+
+  font-weight: 800;
+  text-align: center;
+
+  color: #5de6ff;
+  border: 1px solid rgba(93, 230, 255, 0.55);
+  background: rgba(0,0,0,0.35);
+
+  text-shadow: 0 0 12px rgba(93, 230, 255, 0.65);
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================================
+   NoLimits Buttons (Favoritos)
+   ========================================= */
+
+/* Base NoLimits para todos los botones del panel */
+.favs-actions .favs-btn{
+  width: 170px;                 /* opcional: uniforma */
+  padding: 10px 14px;
+  border-radius: 999px;
+
+  background: rgba(0,0,0,0.62);
+  color: rgba(255,255,255,0.92);
+
+  font-weight: 800;
+  letter-spacing: .4px;
+  text-transform: none;
+
+  border: 1px solid rgba(0, 255, 255, 0.55); /* cyan default */
+  box-shadow:
+    0 0 14px rgba(0, 255, 255, 0.22),
+    inset 0 0 10px rgba(0, 255, 255, 0.08);
+
+  text-shadow: 0 0 12px rgba(0, 255, 255, 0.35);
+
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
+}
+
+/* Hover NoLimits (solo si no está disabled) */
+.favs-actions .favs-btn:not(:disabled):hover{
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 12px rgba(0,255,255,0.35));
+  box-shadow:
+    0 0 26px rgba(0, 255, 255, 0.45),
+    inset 0 0 12px rgba(0, 255, 255, 0.12);
+  text-shadow: 0 0 16px rgba(0, 255, 255, 0.65);
+}
+
+/* Estado apretado */
+.favs-actions .favs-btn:not(:disabled):active{
+  transform: translateY(0px);
+}
+
+/* ========= Variantes NoLimits ========= */
+
+/* Precio: más “badge” cyan, siempre prendido aunque disabled */
+.favs-actions .favs-btn--price{
+  border-color: rgba(93, 230, 255, 0.95);
+  color: #5de6ff;
+  text-shadow: 0 0 14px rgba(93, 230, 255, 0.9);
+  box-shadow:
+    0 0 18px rgba(93, 230, 255, 0.55),
+    inset 0 0 10px rgba(93, 230, 255, 0.12);
+}
+
+/* si está disabled (como el precio), que NO se apague */
+.favs-actions .favs-btn--price:disabled{
+  opacity: 1;
+  cursor: default;
+  filter: drop-shadow(0 0 12px rgba(93,230,255,0.35));
+}
+
+/* Ver plataformas: cyan fuerte + glow */
+.favs-actions .favs-btn--platforms{
+  border-color: rgba(0, 255, 255, 0.85);
+  color: rgba(0, 255, 255, 0.95);
+  text-shadow: 0 0 14px rgba(0, 255, 255, 0.85);
+}
+
+/* Quitar: magenta/pink NoLimits */
+.favs-actions .favs-btn--danger{
+  border-color: rgba(255, 37, 208, 0.9);
+  color: rgba(255, 120, 230, 0.95);
+  text-shadow: 0 0 14px rgba(255, 37, 208, 0.75);
+  box-shadow:
+    0 0 18px rgba(255, 37, 208, 0.35),
+    inset 0 0 10px rgba(255, 37, 208, 0.10);
+}
+
+/* Hover magenta para Quitar */
+.favs-actions .favs-btn--danger:not(:disabled):hover{
+  filter: drop-shadow(0 0 14px rgba(255,37,208,0.45));
+  box-shadow:
+    0 0 26px rgba(255, 37, 208, 0.55),
+    inset 0 0 12px rgba(255, 37, 208, 0.14);
+  text-shadow: 0 0 18px rgba(255, 37, 208, 0.95);
+}
+
+/* Disabled general (por ejemplo: plataformas sin URL) */
+.favs-actions .favs-btn:disabled{
+  opacity: 0.55;
+  cursor: not-allowed;
+  text-shadow: none;
+  box-shadow: none;
+  filter: none;
+}
+
+/*  Título 25% más grande: */
+
+.favs-actions__title{
+  margin-bottom: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+
+  /* 25% más grande que los botones */
+  font-size: 1.25em;
+  font-weight: 900;
+  letter-spacing: .4px;
+
+  text-align: center;
+  max-width: 240px;
+
+  background: #000;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.92);
+
+  text-shadow: 0 0 10px rgba(255,255,255,0.25);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========================================= */
+
+/* =========================================================
+   FIX: "Ver plataformas" SIN efectos de luz (sin glow)
+   Pegar al FINAL del CSS
+   ========================================================= */
+
+.favs-actions .favs-btn--platforms{
+  /* mantén tu look (colores/borde) pero SIN luz */
+  background: rgba(0,0,0,0.62) !important;
+  border-color: rgba(0, 255, 255, 0.85) !important;
+  color: rgba(0, 255, 255, 0.95) !important;
+
+  /* apaga glow */
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+
+  /* sin animaciones raras */
+  transition: none !important;
+}
+
+.favs-actions .favs-btn--platforms:not(:disabled):hover{
+  /* anula hover genérico y hover propio */
+  transform: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+
+  /* opcional: que ni cambie el fondo al pasar el mouse */
+  background: rgba(0,0,0,0.62) !important;
+}
+
+.favs-actions .favs-btn--platforms:disabled{
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* Ruta: src/styles/favoritosPanel.css */
+
+/* Vista "plataformas" (reemplaza chips cuando está activo) */
+.favs-platforms{
+  display: grid;
+  gap: 10px;
+}
+
+.favs-platforms__title{
+  font-weight: 900;
+  letter-spacing: .3px;
+  opacity: .9;
+}
+
+.favs-platforms__grid{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Botones de plataforma */
+.favs-plat-btn{
+  padding: 10px 14px;
+  border-radius: 999px;
+
+  background: rgba(0,0,0,0.62);
+  color: rgba(255,255,255,0.92);
+
+  font-weight: 900;
+  letter-spacing: .3px;
+
+  border: 1px solid rgba(0, 255, 255, 0.55);
+  box-shadow:
+    0 0 14px rgba(0, 255, 255, 0.22),
+    inset 0 0 10px rgba(0, 255, 255, 0.08);
+
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+
+.favs-plat-btn:not(:disabled):hover{
+  transform: scale(1.07);
+  filter: drop-shadow(0 0 12px rgba(0,255,255,0.35));
+  box-shadow:
+    0 0 26px rgba(0, 255, 255, 0.45),
+    inset 0 0 12px rgba(0, 255, 255, 0.12);
+}
+
+.favs-plat-btn:disabled{
+  opacity: .55;
+  cursor: not-allowed;
+  box-shadow: none;
+  filter: none;
+}
+
+.favs-platforms__empty{
+  opacity: .8;
+  font-weight: 700;
+}
+
+/* ---- Hover: agrandar SOLO el elemento ---- */
+.favs-actions .favs-btn:not(:disabled):hover{
+  transform: scale(1.07);
+}
+
+.favs-plat-btn:not(:disabled):hover{
+  transform: scale(1.07);
+}
+
+.favs-chip:hover{
+  transform: scale(1.05);
+}
+
+/* para teclado (bonus) */
+.favs-actions .favs-btn:focus-visible,
+.favs-plat-btn:focus-visible{
+  transform: scale(1.07);
+}
+
+/* Animación base */
+.favs-actions__title,
+.favs-actions .favs-btn{
+  transition: transform .16s ease;
+  transform-origin: center;
+}
+
+/* Hover individual */
+.favs-actions__title:hover{
+  transform: scale(1.06);
+}
+
+.favs-actions .favs-btn:not(:disabled):hover{
+  transform: scale(1.07);
+}
+
+/* =========================================
+   BOTONES SIN SHADOW (override final)
+   ========================================= */
+
+.favs-actions .favs-btn,
+.favs-actions .favs-btn:hover,
+.favs-actions .favs-btn:active,
+.favs-actions .favs-btn:focus,
+.favs-actions .favs-btn:disabled,
+.favs-plat-btn,
+.favs-plat-btn:hover{
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+/* =========================================================
+   FIX SCALE: precio (disabled) y botón platforms
+   Ruta: src/styles/favoritosPanel.css
+   Pegar al FINAL
+   ========================================================= */
+
+/* 1) Todos los botones: sin shadow (como querías) */
+.favs-actions .favs-btn,
+.favs-actions .favs-btn:hover,
+.favs-actions .favs-btn:active,
+.favs-actions .favs-btn:focus,
+.favs-actions .favs-btn:disabled,
+.favs-plat-btn,
+.favs-plat-btn:hover{
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+/* 2) Permitir TRANSFORM en platforms (tu CSS lo bloqueaba) */
+.favs-actions .favs-btn--platforms{
+  transition: transform .16s ease !important; /* antes: none */
+}
+
+.favs-actions .favs-btn--platforms:not(:disabled):hover{
+  transform: scale(1.07) !important; /* antes: none */
+}
+
+/* 3) Precio: aunque esté disabled, igual que escale al hover */
+.favs-actions .favs-btn--price{
+  transition: transform .16s ease !important;
+}
+
+.favs-actions .favs-btn--price:hover{
+  transform: scale(1.07);
+}
+
+/* 4) Los demás botones (Quitar, etc.) */
+.favs-actions .favs-btn:not(:disabled):hover{
+  transform: scale(1.07);
+}
+
+/* Precio: aunque esté disabled, que igual escale */
+.favs-actions .favs-btn--price{
+  transition: transform .16s ease !important;
+}
+
+/* Cuando el mouse esté sobre el precio, escálalo (robusto aunque esté disabled) */
+.favs-actions .favs-btn--price:disabled{
+  pointer-events: auto !important; /* permite hover */
+}
+
+.favs-actions .favs-btn--price:disabled:hover{
+  transform: scale(1.07) !important;
+}
+
+/* Título: que sea "hoverable" y que el scale se vea */
+.favs-actions__title{
+  display: inline-block;          /* importante para que el scale se note */
+  pointer-events: auto !important;
+  transition: transform .16s ease !important;
+  transform-origin: center;
+  will-change: transform;
+  z-index: 2;                     /* por si estaba quedando debajo */
+  position: relative;             /* z-index requiere position */
+}
+
+.favs-actions__title:hover{
+  transform: scale(1.08) !important;
+}
+
+/* Si algún contenedor está cortando el scale, esto lo arregla */
+.favs-actions{
+  overflow: visible !important;
+}
+
+.favs-actions__title,
+.favs-actions .favs-btn--price{
+  cursor: default !important;   /* cursor normal */
+}
+
+/* =========================================================
+   FIX FINAL — Plataformas y Quitar sin efecto hover visual
+   (solo scale)
+   ========================================================= */
+
+/* -------- PLATAFORMAS -------- */
+.favs-plat-btn:not(:disabled):hover{
+  transform: scale(1.07) !important;
+
+  /* mata el hover global */
+  background: rgba(0,0,0,0.62) !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+/* -------- BOTÓN QUITAR -------- */
+.favs-actions .favs-btn--danger:not(:disabled):hover{
+  transform: scale(1.07) !important;
+
+  /* mata el hover global */
+  background: rgba(0,0,0,0.62) !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+/* =========================
+   IMAGEN: mantener distancia + glow solo en hover
+   ========================= */
+
+/* Importante: que NO se recorte ni la imagen ni el glow */
+.favs-image{
+  overflow: visible !important;
+
+  /* aquí mantienes la “distancia” como en tu 2da imagen */
+  padding-left: 18px;  /* ajusta a gusto */
+  padding-top: 14px;
+  padding-bottom: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* La imagen respeta tu padding (NO absolute) */
+.favs-image img{
+  display: block;
+  height: 320px;        /* o el alto que uses */
+  width: auto;
+
+  border-radius: 24px;
+
+  /* Si quieres moverla en X sin romper el hover: usa esta variable */
+  /* Mover Imagen */
+  --img-x: 125px;
+  transform: translateX(var(--img-x)) scale(1);
+
+  /* SIN luz por defecto */
+  filter: none;
+
+  transition: transform .18s ease, filter .18s ease;
+  will-change: transform, filter;
+}
+
+/* Hover: crece + luz blanca suave (solo aquí aparece) */
+.favs-image:hover img{
+  transform: translateX(var(--img-x)) scale(1.06);
+  filter: drop-shadow(0 0 18px rgba(255,255,255,0.18));
+}
+
+/* =========================
+   IMAGEN: sin glow por defecto
+   (pegar al FINAL del archivo)
+   ========================= */
+
+/* mata cualquier sombra fija venga de donde venga */
+.favs-image,
+.favs-image img{
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* por si el glow lo hace un pseudo-elemento del contenedor */
+.favs-image::before,
+.favs-image::after{
+  content: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.favs-platforms__title{
+  text-align: center;
+
+  font-size: 1.6rem;     /* más grande */
+  font-weight: 900;
+  letter-spacing: .6px;
+
+  color: #ffffff;
+  opacity: 1;
+
+  margin-bottom: 12px;
+
+  text-shadow: 0 0 10px rgba(255,255,255,0.25);
+
+  /* comportamiento */
+  cursor: default;       /* no clickeable */
+  display: inline-block; /* necesario para que el scale se vea */
+  transition: transform .16s ease;
+  transform-origin: center;
+}
+
+/* Hover: solo agrandar */
+.favs-platforms__title:hover{
+  transform: scale(1.08);
+}
+
+/* AIRE entre título / precio / botones + separarlos del borde derecho */
+.favs-actions{
+  gap: 16px !important;           /* aire entre cada item (antes 10px) */
+
+  padding-right: 26px !important; /* los aleja de la derecha */
+  padding-top: 44px !important;   /* opcional: aire arriba */
+  padding-bottom: 14px !important;/* opcional: aire abajo */
+
+  justify-self: end;              /* por si estás en grid */
+  align-self: start;
+}
+
+/* Wrapper detalles */
+.favs-details{
+  display: grid;
+  gap: 10px;
+}
+
+/* Título "Detalles" igual a "Plataformas" */
+.favs-details__title{
+  text-align: center;
+
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: .6px;
+
+  color: #ffffff;
+  opacity: 1;
+
+  margin-bottom: 6px;
+
+  text-shadow: 0 0 10px rgba(255,255,255,0.25);
+
+  cursor: default;
+  display: inline-block;
+  transition: transform .16s ease;
+  transform-origin: center;
+}
+
+.favs-details__title:hover{
+  transform: scale(1.08);
+}
+
+/* QUE "DETALLES" NO TENGA HITBOX GIGANTE */
+.favs-details__title{
+  display: block;              /* evita comportamientos raros en grid */
+  width: fit-content;          /* la caja mide SOLO el texto */
+  margin: 0 auto 20px;         /* centrado + mismo margen abajo */
+}
+
+/* hover (solo cuando realmente estás encima) */
+.favs-details__title:hover{
+  transform: scale(1.08);
+}
+
+/* Chips de "Detalles": que NO parezcan clickeables */
+.favs-attrs .favs-chip,
+.favs-attrs .favs-chip *{
+  cursor: default !important;   /* o: cursor: not-allowed; si quieres más explícito */
+}
+
+/* ---------------------------------------------*/
+/* Título */
+.favs-actions__title{
+  background:#000 !important;
+  border-color:rgba(255,255,255,.35) !important;
+  color:#fff !important;
+}
+
+.favs-actions__title:hover{
+  color: #ffffff !important;
+}
+/* ---------------------------------------------*/
+/* Precio */
+.favs-actions .favs-btn--price{
+  background:#000 !important;
+  border-color:rgba(0,183,255,.6) !important;
+  color:#fff !important;
+}
+.favs-actions .favs-btn--price:hover{
+  color: rgb(176, 233, 255) !important;
+}
+/* ---------------------------------------------*/
+/*  Plataformas */
+.favs-actions .favs-btn--platforms{
+  background:#000 !important;
+  border-color:rgba(153,29,255,.6) !important;
+  color:#fff !important;
+}
+
+.favs-actions .favs-btn--platforms:hover{
+  background: rgba(153,29,255,0.18) !important;
+  color: #caa6ff !important;
+}
+/* ---------------------------------------------*/
+/*  Quitar */
+.favs-actions .favs-btn--danger{
+  background:#000 !important;
+  border-color:rgba(255,70,70,.6) !important;
+  color:#fff !important;
+}
+
+.favs-actions .favs-btn--danger:hover{
+  background: rgba(255,70,70,0.18) !important;
+  color: #ffa3a3 !important;
+}
+/* ---------------------------------------------*/
+
+/* ===== FIX BLANCO MÁS FUERTE (pegar al FINAL) ===== */
+
+/* Chips: texto full blanco */
+.favs-chip{
+  color: #fff !important;
+}
+
+/* Label y value: elimina el apagado por opacity */
+.favs-chip__label,
+.favs-chip__value{
+  opacity: 1 !important;
+  color: #fff !important;
+}
+
+/* Si tus chips están dentro de favs-attrs, por si acaso */
+.favs-attrs .favs-chip,
+.favs-attrs .favs-chip *{
+  color: #fff !important;
 }
